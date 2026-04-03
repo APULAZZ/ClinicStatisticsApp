@@ -3,6 +3,7 @@ using ClinicStatisticsApp.Services;
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Win32;
 
 namespace ClinicStatisticsApp.UI
 {
@@ -10,6 +11,7 @@ namespace ClinicStatisticsApp.UI
     {
         private readonly CurrentUserInfo _currentUser;
         private readonly BranchReportStatusService _statusService = new BranchReportStatusService();
+        private readonly BranchReportExcelExportService _excelExportService = new BranchReportExcelExportService();
 
         private readonly int _branchId;
         private readonly string _branchName;
@@ -71,6 +73,32 @@ namespace ClinicStatisticsApp.UI
             MonthComboBox.Items.Add(new ComboBoxItem { Content = "Декабрь", Tag = 12 });
 
             MonthComboBox.SelectedIndex = DateTime.Now.Month - 1;
+        }
+
+        private void ExportExcelButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (_branchId <= 0)
+                    return;
+
+                var saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "Excel files (*.xlsx)|*.xlsx",
+                    FileName = $"Отчет_{_branchName}_{SelectedYear}_{SelectedMonth:00}.xlsx"
+                };
+
+                if (saveFileDialog.ShowDialog() != true)
+                    return;
+
+                _excelExportService.Export(saveFileDialog.FileName, _branchId, _branchName, SelectedYear, SelectedMonth);
+
+                MessageBox.Show("Файл Excel успешно сохранен.", "Экспорт", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка экспорта", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private int SelectedYear => (int)(YearComboBox.SelectedItem ?? DateTime.Now.Year);

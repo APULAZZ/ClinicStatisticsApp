@@ -44,17 +44,24 @@
 
 				<StackPanel Orientation="Horizontal">
 					<Button x:Name="ClosePeriodButton"
-                            Content="Закрыть период"
-                            Width="140"
-                            Height="34"
-                            Margin="0,0,10,0"
-                            Click="ClosePeriodButton_Click"/>
+							Content="Закрыть период"
+							Width="140"
+							Height="34"
+							Margin="0,0,10,0"
+							Click="ClosePeriodButton_Click"/>
 
 					<Button x:Name="ReopenPeriodButton"
-                            Content="Открыть период"
-                            Width="140"
-                            Height="34"
-                            Click="ReopenPeriodButton_Click"/>
+							Content="Открыть период"
+							Width="140"
+							Height="34"
+							Margin="0,0,10,0"
+							Click="ReopenPeriodButton_Click"/>
+
+					<Button x:Name="ExportExcelButton"
+							Content="Экспорт в Excel"
+							Width="150"
+							Height="34"
+							Click="ExportExcelButton_Click"/>
 				</StackPanel>
 			</StackPanel>
 		</Border>

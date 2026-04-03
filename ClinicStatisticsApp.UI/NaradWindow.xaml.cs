@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Microsoft.Win32;
 
 namespace ClinicStatisticsApp.UI
 {
@@ -12,6 +13,7 @@ namespace ClinicStatisticsApp.UI
     {
         private readonly CurrentUserInfo _currentUser;
         private readonly NaradService _naradService = new NaradService();
+        private readonly NaradExcelExportService _excelExportService = new NaradExcelExportService();
 
         private ObservableCollection<NaradEntryViewModel> _items = new();
 
@@ -59,6 +61,34 @@ namespace ClinicStatisticsApp.UI
             MonthComboBox.Items.Add(new ComboBoxItem { Content = "Декабрь", Tag = 12 });
 
             MonthComboBox.SelectedIndex = DateTime.Now.Month - 1;
+        }
+
+        private void ExportExcelButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "Excel files (*.xlsx)|*.xlsx",
+                    FileName = $"Наряд_{_currentUser.BranchName}_{SelectedYear}_{SelectedMonth:00}.xlsx"
+                };
+
+                if (saveFileDialog.ShowDialog() != true)
+                    return;
+
+                _excelExportService.Export(
+                    saveFileDialog.FileName,
+                    _currentUser.BranchName ?? "Филиал",
+                    SelectedYear,
+                    SelectedMonth,
+                    _items.ToList());
+
+                MessageBox.Show("Файл Excel успешно сохранен.", "Экспорт", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Ошибка экспорта", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private int SelectedYear => (int)(YearComboBox.SelectedItem ?? DateTime.Now.Year);

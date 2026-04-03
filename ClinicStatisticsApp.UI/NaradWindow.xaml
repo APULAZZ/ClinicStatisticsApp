@@ -32,8 +32,9 @@
             <TextBlock Text="Месяц:" VerticalAlignment="Center" Margin="0,0,8,0"/>
             <ComboBox x:Name="MonthComboBox" Width="140" Margin="0,0,20,0"/>
 
-            <Button Content="Открыть" Width="120" Height="34" Margin="0,0,10,0" Click="OpenButton_Click"/>
-            <Button Content="Сохранить" Width="120" Height="34" Click="SaveButton_Click"/>
+			<Button Content="Открыть" Width="120" Height="34" Margin="0,0,10,0" Click="OpenButton_Click"/>
+			<Button Content="Сохранить" Width="120" Height="34" Margin="0,0,10,0" Click="SaveButton_Click"/>
+			<Button Content="Экспорт в Excel" Width="150" Height="34" Click="ExportExcelButton_Click"/>
         </StackPanel>
 
         <DataGrid Grid.Row="4"
