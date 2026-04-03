@@ -1,0 +1,101 @@
+<Window x:Class="ClinicStatisticsApp.UI.NaradWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Наряд"
+        Height="650"
+        Width="1100"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="15"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="15"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="15"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBlock Text="Наряд по мотивационной оплате"
+                       FontSize="24"
+                       FontWeight="SemiBold"/>
+            <TextBlock x:Name="HeaderTextBlock"
+                       FontSize="15"
+                       Margin="0,5,0,0"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal">
+            <TextBlock Text="Год:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <ComboBox x:Name="YearComboBox" Width="100" Margin="0,0,20,0"/>
+
+            <TextBlock Text="Месяц:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <ComboBox x:Name="MonthComboBox" Width="140" Margin="0,0,20,0"/>
+
+            <Button Content="Открыть" Width="120" Height="34" Margin="0,0,10,0" Click="OpenButton_Click"/>
+            <Button Content="Сохранить" Width="120" Height="34" Click="SaveButton_Click"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="4"
+                  x:Name="NaradDataGrid"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False"
+                  SelectionMode="Single"
+                  SelectionUnit="FullRow">
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="Включен"
+                                        Width="90"
+                                        Binding="{Binding IsIncluded, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <DataGridTextColumn Header="Сотрудник"
+                                    Width="250"
+                                    IsReadOnly="True"
+                                    Binding="{Binding EmployeeFullName}"/>
+
+                <DataGridTextColumn Header="Отправлено СМС"
+                                    Width="130"
+                                    IsReadOnly="True"
+                                    Binding="{Binding SmsSentCount}"/>
+
+                <DataGridTextColumn Header="Оставлено отзывов"
+                                    Width="150"
+                                    IsReadOnly="True"
+                                    Binding="{Binding ReviewsLeftCount}"/>
+
+                <DataGridTextColumn Header="Оплата за 1 отзыв"
+                                    Width="160"
+                                    Binding="{Binding PaymentPerReview, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <DataGridTextColumn Header="Сумма к оплате"
+                                    Width="150"
+                                    IsReadOnly="True"
+                                    Binding="{Binding TotalPayment}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
+            <TextBlock Text="Итого:"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       VerticalAlignment="Center"
+                       Margin="0,0,15,0"/>
+
+            <TextBlock x:Name="SmsTotalTextBlock"
+                       FontSize="16"
+                       Width="130"
+                       TextAlignment="Center"/>
+
+            <TextBlock x:Name="ReviewsTotalTextBlock"
+                       FontSize="16"
+                       Width="150"
+                       TextAlignment="Center"/>
+
+            <TextBlock Width="160"/>
+
+            <TextBlock x:Name="PaymentTotalTextBlock"
+                       FontSize="16"
+                       Width="150"
+                       TextAlignment="Center"/>
+        </StackPanel>
+    </Grid>
+</Window>

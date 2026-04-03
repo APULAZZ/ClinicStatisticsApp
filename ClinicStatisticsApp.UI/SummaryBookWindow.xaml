@@ -1,0 +1,105 @@
+<Window x:Class="ClinicStatisticsApp.UI.SummaryBookWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Сводная книга"
+        Height="750"
+        Width="900"
+        WindowStartupLocation="CenterOwner">
+    <Grid Background="#F5F5F5" Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Background="White" CornerRadius="10" Padding="20">
+            <StackPanel>
+                <TextBlock Text="Сводная книга"
+                           FontSize="24"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,10"/>
+
+                <TextBlock Text="Выберите нужный сводный лист."
+                           FontSize="15"
+                           Foreground="#555555"/>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="2"
+                      VerticalScrollBarVisibility="Auto">
+            <UniformGrid Grid.Row="2" Rows="6" Columns="2" Margin="0,10,0,0">
+                <Button Content="Статистика общая"
+            Margin="10"
+            FontSize="18"
+            Height="100"
+            Click="SummaryGeneralButton_Click"/>
+
+                <Button Content="Статистика проф. осмотров"
+            Margin="10"
+            FontSize="18"
+            Height="100"
+            Click="SummaryProfoButton_Click"/>
+
+                <Button Content="Статистика по администраторам"
+            Margin="10"
+            FontSize="18"
+            Height="100"
+            Click="SummaryAdminButton_Click"/>
+
+                <Button Content="Отзывы ПроДокторов"
+            Margin="10"
+            FontSize="18"
+            Height="100"
+            Click="SummaryProDoctorButton_Click"/>
+
+                <Button Content="Динамика"
+            Margin="10"
+            FontSize="18"
+            Height="100"
+            Click="DynamicsButton_Click"/>
+
+                <Button Content="Сравнительная статистика ПЕРК"
+            Margin="10"
+            FontSize="18"
+            Height="100"
+            Click="ComparativePerkButton_Click"/>
+
+                <Button Content="Сравнительная статистика ПРОФЫ"
+            Margin="10"
+            FontSize="18"
+            Height="100"
+            Click="ComparativeProfiButton_Click"/>
+
+                <Button Content="Статистика абсолютных первичных"
+            Margin="10"
+            FontSize="18"
+            Height="100"
+            Click="AbsolutePrimaryButton_Click"/>
+
+                <Button Content="Скоро..."
+            Margin="10"
+            FontSize="18"
+            Height="100"
+            Click="StubButton_Click"/>
+
+                <Button Content="Скоро..."
+            Margin="10"
+            FontSize="18"
+            Height="100"
+            Click="StubButton_Click"/>
+
+                <Button Content="Скоро..."
+            Margin="10"
+            FontSize="18"
+            Height="100"
+            Click="StubButton_Click"/>
+
+                <Button Content="Скоро..."
+            Margin="10"
+            FontSize="18"
+            Height="100"
+            Click="StubButton_Click"/>
+            </UniformGrid>
+        </ScrollViewer>
+    </Grid>
+</Window>

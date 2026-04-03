@@ -1,0 +1,88 @@
+<Window x:Class="ClinicStatisticsApp.UI.BranchReportWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Филиальный отчет"
+        Height="560"
+        Width="760"
+        WindowStartupLocation="CenterOwner">
+	<Grid Background="#F5F5F5" Margin="15">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="15"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="20"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+
+		<Border Background="White" CornerRadius="10" Padding="20">
+			<StackPanel>
+				<TextBlock x:Name="HeaderTextBlock"
+                           FontSize="24"
+                           FontWeight="SemiBold"
+                           Margin="0,0,0,10"/>
+
+				<TextBlock x:Name="PeriodTextBlock"
+                           FontSize="15"
+                           Foreground="#555555"/>
+			</StackPanel>
+		</Border>
+
+		<Border Grid.Row="2" Background="White" CornerRadius="10" Padding="15">
+			<StackPanel>
+				<StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+					<TextBlock Text="Год:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+					<ComboBox x:Name="YearComboBox" Width="100" Margin="0,0,20,0" SelectionChanged="PeriodChanged"/>
+
+					<TextBlock Text="Месяц:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+					<ComboBox x:Name="MonthComboBox" Width="140" Margin="0,0,20,0" SelectionChanged="PeriodChanged"/>
+
+					<TextBlock Text="Статус:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+					<TextBlock x:Name="StatusTextBlock"
+                               FontWeight="Bold"
+                               VerticalAlignment="Center"/>
+				</StackPanel>
+
+				<StackPanel Orientation="Horizontal">
+					<Button x:Name="ClosePeriodButton"
+                            Content="Закрыть период"
+                            Width="140"
+                            Height="34"
+                            Margin="0,0,10,0"
+                            Click="ClosePeriodButton_Click"/>
+
+					<Button x:Name="ReopenPeriodButton"
+                            Content="Открыть период"
+                            Width="140"
+                            Height="34"
+                            Click="ReopenPeriodButton_Click"/>
+				</StackPanel>
+			</StackPanel>
+		</Border>
+
+		<UniformGrid Grid.Row="4" Rows="2" Columns="2" Margin="0,10,0,0">
+			<Button Content="ПЕРК"
+                    Margin="10"
+                    FontSize="20"
+                    Height="120"
+                    Click="PerkButton_Click"/>
+
+			<Button Content="ПРОФЫ"
+                    Margin="10"
+                    FontSize="20"
+                    Height="120"
+                    Click="ProfiButton_Click"/>
+
+			<Button Content="ЧАСЫ"
+                    Margin="10"
+                    FontSize="20"
+                    Height="120"
+                    Click="HoursButton_Click"/>
+
+			<Button Content="ОТЗЫВЫ"
+                    Margin="10"
+                    FontSize="20"
+                    Height="120"
+                    Click="ReviewsButton_Click"/>
+		</UniformGrid>
+	</Grid>
+</Window>

@@ -1,0 +1,66 @@
+<Window x:Class="ClinicStatisticsApp.UI.SummaryProfoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Статистика проф. осмотров"
+        Height="850"
+        Width="1400"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="15"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="15"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="15"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Text="Год:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <ComboBox x:Name="YearComboBox" Width="100" Margin="0,0,20,0"/>
+
+            <TextBlock Text="Месяц:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <ComboBox x:Name="MonthComboBox" Width="140" Margin="0,0,20,0"/>
+
+            <Button Content="Загрузить" Width="140" Height="34" Margin="0,0,10,0" Click="LoadButton_Click"/>
+            <Button Content="Сохранить" Width="140" Height="34" Click="SaveButton_Click"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="2"
+                  x:Name="ProfoDataGrid"
+                  AutoGenerateColumns="False"
+                  CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Филиал" Binding="{Binding BranchName}" Width="130" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Администратор" Binding="{Binding EmployeeFullName}" Width="220" IsReadOnly="True"/>
+
+                <DataGridComboBoxColumn Header="Ставка"
+                                        Width="100"
+                                        SelectedItemBinding="{Binding Rate, UpdateSourceTrigger=PropertyChanged}"
+                                        x:Name="RateColumn"/>
+
+                <DataGridTextColumn Header="Пригласили" Binding="{Binding InvitedCount}" Width="110" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Записались" Binding="{Binding BookedCount}" Width="110" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Пришли" Binding="{Binding ArrivedCount}" Width="110" IsReadOnly="True"/>
+
+                <DataGridComboBoxColumn Header="Категория"
+                                        Width="180"
+                                        SelectedValueBinding="{Binding ProfoCategoryId, UpdateSourceTrigger=PropertyChanged}"
+                                        SelectedValuePath="Id"
+                                        DisplayMemberPath="Name"
+                                        x:Name="CategoryColumn"/>
+
+                <DataGridTextColumn Header="Премия" Binding="{Binding Premium}" Width="130" IsReadOnly="True"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Grid.Row="4">
+            <TextBlock x:Name="TotalsTextBlock" FontSize="16" FontWeight="SemiBold"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="6">
+            <TextBlock x:Name="ConversionTextBlock" FontSize="16" FontWeight="SemiBold"/>
+        </StackPanel>
+    </Grid>
+</Window>

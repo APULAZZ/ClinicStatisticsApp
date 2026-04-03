@@ -1,0 +1,207 @@
+﻿using ClinicStatisticsApp.Models;
+using ClinicStatisticsApp.Services;
+using System;
+using System.Windows;
+using System.Windows.Controls;
+
+namespace ClinicStatisticsApp.UI
+{
+    public partial class BranchReportWindow : Window
+    {
+        private readonly CurrentUserInfo _currentUser;
+        private readonly BranchReportStatusService _statusService = new BranchReportStatusService();
+
+        private readonly int _branchId;
+        private readonly string _branchName;
+
+        public BranchReportWindow(CurrentUserInfo currentUser)
+        {
+            InitializeComponent();
+
+            _currentUser = currentUser;
+            _branchId = currentUser.BranchId ?? 0;
+            _branchName = currentUser.BranchName ?? "не задан";
+
+            HeaderTextBlock.Text = "Филиальный отчет";
+            PeriodTextBlock.Text = $"Филиал: {_branchName}";
+
+            LoadPeriods();
+            UpdateStatus();
+            ConfigureButtons();
+        }
+
+        public BranchReportWindow(SelectedBranchContext context)
+        {
+            InitializeComponent();
+
+            _currentUser = context.CurrentUser;
+            _branchId = context.BranchId;
+            _branchName = context.BranchName;
+
+            HeaderTextBlock.Text = "Филиальный отчет";
+            PeriodTextBlock.Text = $"Филиал: {_branchName}";
+
+            LoadPeriods();
+            UpdateStatus();
+            ConfigureButtons();
+        }
+
+        private void LoadPeriods()
+        {
+            var currentYear = DateTime.Now.Year;
+
+            for (int year = currentYear - 5; year <= currentYear + 2; year++)
+            {
+                YearComboBox.Items.Add(year);
+            }
+
+            YearComboBox.SelectedItem = currentYear;
+
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Январь", Tag = 1 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Февраль", Tag = 2 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Март", Tag = 3 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Апрель", Tag = 4 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Май", Tag = 5 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Июнь", Tag = 6 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Июль", Tag = 7 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Август", Tag = 8 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Сентябрь", Tag = 9 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Октябрь", Tag = 10 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Ноябрь", Tag = 11 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Декабрь", Tag = 12 });
+
+            MonthComboBox.SelectedIndex = DateTime.Now.Month - 1;
+        }
+
+        private int SelectedYear => (int)(YearComboBox.SelectedItem ?? DateTime.Now.Year);
+
+        private int SelectedMonth
+        {
+            get
+            {
+                if (MonthComboBox.SelectedItem is ComboBoxItem item && item.Tag is int month)
+                    return month;
+
+                return DateTime.Now.Month;
+            }
+        }
+
+        private void PeriodChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!IsLoaded)
+                return;
+
+            UpdateStatus();
+            ConfigureButtons();
+        }
+
+        private void UpdateStatus()
+        {
+            if (_branchId <= 0)
+            {
+                StatusTextBlock.Text = "Филиал не задан";
+                return;
+            }
+
+            var status = _statusService.GetStatus(_branchId, SelectedYear, SelectedMonth);
+            StatusTextBlock.Text = status == "Closed" ? "Закрыт" : "Черновик";
+        }
+
+        private void ConfigureButtons()
+        {
+            var isAdmin = _currentUser.RoleCode == "Admin";
+            var isBranchUser = _currentUser.RoleCode == "BranchUser";
+
+            ClosePeriodButton.IsEnabled = isAdmin || isBranchUser;
+            ReopenPeriodButton.IsEnabled = isAdmin;
+        }
+
+        private void ClosePeriodButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (_branchId <= 0)
+                    return;
+
+                if (!_statusService.Exists(_branchId, SelectedYear, SelectedMonth))
+                {
+                    MessageBox.Show("Нельзя закрыть пустой период без созданного отчета.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                _statusService.ClosePeriod(_branchId, SelectedYear, SelectedMonth);
+                UpdateStatus();
+
+                MessageBox.Show("Период закрыт.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка закрытия периода", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ReopenPeriodButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (_branchId <= 0)
+                    return;
+
+                _statusService.ReopenPeriod(_branchId, SelectedYear, SelectedMonth);
+                UpdateStatus();
+
+                MessageBox.Show("Период открыт.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Ошибка открытия периода", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void PerkButton_Click(object sender, RoutedEventArgs e)
+        {
+            var userContext = CloneUserWithSelectedBranch();
+            var window = new PerkReportWindow(userContext) { Owner = this };
+            window.ShowDialog();
+            UpdateStatus();
+        }
+
+        private void ProfiButton_Click(object sender, RoutedEventArgs e)
+        {
+            var userContext = CloneUserWithSelectedBranch();
+            var window = new ProfiReportWindow(userContext) { Owner = this };
+            window.ShowDialog();
+            UpdateStatus();
+        }
+
+        private void HoursButton_Click(object sender, RoutedEventArgs e)
+        {
+            var userContext = CloneUserWithSelectedBranch();
+            var window = new HoursReportWindow(userContext) { Owner = this };
+            window.ShowDialog();
+            UpdateStatus();
+        }
+
+        private void ReviewsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var userContext = CloneUserWithSelectedBranch();
+            var window = new ReviewReportWindow(userContext) { Owner = this };
+            window.ShowDialog();
+            UpdateStatus();
+        }
+
+        private CurrentUserInfo CloneUserWithSelectedBranch()
+        {
+            return new CurrentUserInfo
+            {
+                UserId = _currentUser.UserId,
+                Login = _currentUser.Login,
+                FullName = _currentUser.FullName,
+                RoleCode = _currentUser.RoleCode,
+                RoleName = _currentUser.RoleName,
+                BranchId = _branchId,
+                BranchName = _branchName
+            };
+        }
+    }
+}
