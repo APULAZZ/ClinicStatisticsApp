@@ -198,12 +198,23 @@ namespace ClinicStatisticsApp.UI
 
         private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            if (sender is PerkEntryViewModel item && e.PropertyName == nameof(PerkEntryViewModel.EmployeeId))
+            {
+                UpdateEmployeeName(item);
+            }
+
             if (e.PropertyName == nameof(PerkEntryViewModel.AttendanceCount) ||
                 e.PropertyName == nameof(PerkEntryViewModel.AbsenceCount) ||
                 e.PropertyName == nameof(PerkEntryViewModel.Total))
             {
                 RecalculateTotals();
             }
+        }
+
+        private void UpdateEmployeeName(PerkEntryViewModel item)
+        {
+            var employee = Employees.FirstOrDefault(x => x.Id == item.EmployeeId);
+            item.EmployeeFullName = employee?.FullName ?? string.Empty;
         }
 
         private void AddRowButton_Click(object sender, RoutedEventArgs e)
@@ -271,6 +282,11 @@ namespace ClinicStatisticsApp.UI
                 PerkDataGrid.CommitEdit(DataGridEditingUnit.Cell, true);
                 PerkDataGrid.CommitEdit(DataGridEditingUnit.Row, true);
 
+                foreach (var item in _items)
+                {
+                    UpdateEmployeeName(item);
+                }
+
                 var invalidRows = _items.Where(i => i.EmployeeId <= 0).ToList();
                 if (invalidRows.Any())
                 {
@@ -324,11 +340,24 @@ namespace ClinicStatisticsApp.UI
 
         private void PerkDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            Dispatcher.BeginInvoke(new Action(RecalculateTotals));
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (e.Row.Item is PerkEntryViewModel item)
+                {
+                    UpdateEmployeeName(item);
+                }
+
+                RecalculateTotals();
+            }));
         }
 
         private void PerkDataGrid_CurrentCellChanged(object? sender, EventArgs e)
         {
+            if (PerkDataGrid.SelectedItem is PerkEntryViewModel item)
+            {
+                UpdateEmployeeName(item);
+            }
+
             RecalculateTotals();
         }
 
