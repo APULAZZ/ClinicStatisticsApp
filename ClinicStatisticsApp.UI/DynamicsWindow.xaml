@@ -6,7 +6,8 @@
         Width="1580"
         MinHeight="920"
         MinWidth="1380"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource PageBackgroundSoftBrush}">
 
     <Grid Margin="12">
         <Grid.RowDefinitions>
@@ -17,7 +18,11 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}" Padding="10">
+        <Border Grid.Row="0"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="10"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -35,7 +40,7 @@
                 </StackPanel>
 
                 <Border Grid.Column="1"
-                        Background="{StaticResource PrimaryLightBrush}"
+                        Background="{StaticResource SubtleAccentBrush}"
                         BorderBrush="#BFDBFE"
                         BorderThickness="1"
                         CornerRadius="8"
@@ -49,7 +54,11 @@
             </Grid>
         </Border>
 
-        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="10">
+        <Border Grid.Row="2"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="10"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -89,8 +98,8 @@
                                FontSize="15"/>
 
                     <Border Margin="0,6,0,0"
-                            Background="{StaticResource MutedBackgroundBrush}"
-                            BorderBrush="{StaticResource BorderBrushCustom}"
+                            Background="{StaticResource PanelBackgroundBrush}"
+                            BorderBrush="{StaticResource SoftBorderBrush}"
                             BorderThickness="1"
                             CornerRadius="10"
                             Padding="10">
@@ -100,7 +109,11 @@
             </Grid>
         </Border>
 
-        <Border Grid.Row="4" Style="{StaticResource CardBorderStyle}" Padding="8">
+        <Border Grid.Row="4"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="8"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled">
                 <StackPanel x:Name="BlocksPanel"/>

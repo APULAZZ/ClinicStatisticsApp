@@ -6,7 +6,8 @@
         Width="1560"
         MinHeight="860"
         MinWidth="1380"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource PageBackgroundSoftBrush}">
 
     <Window.Resources>
         <Style x:Key="CenteredCellStyle" TargetType="TextBlock">
@@ -30,7 +31,11 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}" Padding="10">
+        <Border Grid.Row="0"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="10"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -48,7 +53,7 @@
                 </StackPanel>
 
                 <Border Grid.Column="1"
-                        Background="{StaticResource PrimaryLightBrush}"
+                        Background="{StaticResource SubtleAccentBrush}"
                         BorderBrush="#BFDBFE"
                         BorderThickness="1"
                         CornerRadius="8"
@@ -62,7 +67,11 @@
             </Grid>
         </Border>
 
-        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="10">
+        <Border Grid.Row="2"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="10"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="130"/>
@@ -101,7 +110,11 @@
             </Grid>
         </Border>
 
-        <Border Grid.Row="4" Style="{StaticResource CardBorderStyle}" Padding="8">
+        <Border Grid.Row="4"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="8"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
@@ -162,8 +175,8 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    <Border Background="{StaticResource MutedBackgroundBrush}"
-                            BorderBrush="{StaticResource BorderBrushCustom}"
+                    <Border Background="{StaticResource PanelBackgroundBrush}"
+                            BorderBrush="{StaticResource SoftBorderBrush}"
                             BorderThickness="1"
                             CornerRadius="10"
                             Padding="10"
@@ -231,8 +244,8 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    <Border Background="{StaticResource MutedBackgroundBrush}"
-                            BorderBrush="{StaticResource BorderBrushCustom}"
+                    <Border Background="{StaticResource PanelBackgroundBrush}"
+                            BorderBrush="{StaticResource SoftBorderBrush}"
                             BorderThickness="1"
                             CornerRadius="10"
                             Padding="10"
@@ -244,7 +257,7 @@
                                    TextWrapping="Wrap"/>
                     </Border>
 
-                    <Border Background="{StaticResource PrimaryLightBrush}"
+                    <Border Background="{StaticResource SubtleAccentBrush}"
                             BorderBrush="#BFDBFE"
                             BorderThickness="1"
                             CornerRadius="12"

@@ -6,7 +6,8 @@
         Width="1180"
         MinHeight="820"
         MinWidth="1080"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource PageBackgroundSoftBrush}">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled">
@@ -22,7 +23,9 @@
             <!-- Шапка -->
             <Border Grid.Row="0"
                     Style="{StaticResource CardBorderStyle}"
-                    Padding="12">
+                    Padding="12"
+                    Background="{StaticResource CardBackgroundBrush}"
+                    BorderBrush="{StaticResource SoftBorderBrush}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -41,7 +44,7 @@
                     </StackPanel>
 
                     <Border Grid.Column="1"
-                            Background="{StaticResource PrimaryLightBrush}"
+                            Background="{StaticResource SubtleAccentBrush}"
                             BorderBrush="#BFDBFE"
                             BorderThickness="1"
                             CornerRadius="10"
@@ -55,10 +58,12 @@
                 </Grid>
             </Border>
 
-            <!-- Сначала: Сводные листы -->
+            <!-- Сводные листы -->
             <Border Grid.Row="2"
                     Style="{StaticResource CardBorderStyle}"
-                    Padding="12">
+                    Padding="12"
+                    Background="{StaticResource CardBackgroundBrush}"
+                    BorderBrush="{StaticResource SoftBorderBrush}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -278,10 +283,12 @@
                 </Grid>
             </Border>
 
-            <!-- Потом: Параметры экспорта -->
+            <!-- Параметры экспорта -->
             <Border Grid.Row="4"
                     Style="{StaticResource CardBorderStyle}"
-                    Padding="12">
+                    Padding="12"
+                    Background="{StaticResource CardBackgroundBrush}"
+                    BorderBrush="{StaticResource SoftBorderBrush}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>

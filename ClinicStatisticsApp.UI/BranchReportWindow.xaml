@@ -6,7 +6,8 @@
         Width="920"
         MinHeight="700"
         MinWidth="920"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource PageBackgroundSoftBrush}">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled">
@@ -22,7 +23,9 @@
             <!-- Шапка -->
             <Border Grid.Row="0"
                     Style="{StaticResource CardBorderStyle}"
-                    Padding="12">
+                    Padding="12"
+                    Background="{StaticResource CardBackgroundBrush}"
+                    BorderBrush="{StaticResource SoftBorderBrush}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -41,7 +44,7 @@
                     </StackPanel>
 
                     <Border Grid.Column="1"
-                            Background="{StaticResource PrimaryLightBrush}"
+                            Background="{StaticResource SubtleAccentBrush}"
                             BorderBrush="#BFDBFE"
                             BorderThickness="1"
                             CornerRadius="10"
@@ -55,10 +58,12 @@
                 </Grid>
             </Border>
 
-            <!-- Сначала: Заполнить отчет -->
+            <!-- Заполнить отчет -->
             <Border Grid.Row="2"
                     Style="{StaticResource CardBorderStyle}"
-                    Padding="12">
+                    Padding="12"
+                    Background="{StaticResource CardBackgroundBrush}"
+                    BorderBrush="{StaticResource SoftBorderBrush}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -178,10 +183,12 @@
                 </Grid>
             </Border>
 
-            <!-- Потом: Сохранить и закрыть период отчета -->
+            <!-- Сохранить и закрыть период -->
             <Border Grid.Row="4"
                     Style="{StaticResource CardBorderStyle}"
-                    Padding="12">
+                    Padding="12"
+                    Background="{StaticResource CardBackgroundBrush}"
+                    BorderBrush="{StaticResource SoftBorderBrush}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
@@ -195,7 +202,6 @@
                                Style="{StaticResource SectionTextStyle}"
                                FontSize="17"/>
 
-                    <!-- Верхняя строка -->
                     <Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="160"/>
@@ -209,51 +215,45 @@
                         <StackPanel Grid.Column="0">
                             <Label Content="Год"/>
                             <ComboBox x:Name="YearComboBox"
-                  Width="160"
-                  Height="40"
-                  Style="{StaticResource ModernComboBoxStyle}"
-                  SelectionChanged="PeriodChanged"/>
+                                      Width="160"
+                                      Height="40"
+                                      FontSize="12"
+                                      Style="{StaticResource ModernComboBoxStyle}"
+                                      SelectionChanged="PeriodChanged"/>
                         </StackPanel>
 
                         <StackPanel Grid.Column="2">
                             <Label Content="Месяц"/>
                             <ComboBox x:Name="MonthComboBox"
-                  Width="160"
-                  Height="40"
-                  Style="{StaticResource ModernComboBoxStyle}"
-                  SelectionChanged="PeriodChanged"/>
+                                      Width="160"
+                                      Height="40"
+                                      FontSize="12"
+                                      Style="{StaticResource ModernComboBoxStyle}"
+                                      SelectionChanged="PeriodChanged"/>
                         </StackPanel>
 
-                        <Grid Grid.Column="4">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="6"/>
-                                <RowDefinition Height="40"/>
-                            </Grid.RowDefinitions>
-
+                        <StackPanel Grid.Column="4">
                             <Label Content="Статус"/>
-
-                            <Border Grid.Row="2"
-                x:Name="StatusBadgeBorder"
-                Width="160"
-                Height="40"
-                Background="{StaticResource MutedBackgroundBrush}"
-                BorderBrush="{StaticResource BorderBrushCustom}"
-                BorderThickness="1"
-                CornerRadius="10"
-                Padding="10,0"
-                VerticalAlignment="Center">
+                            <Border x:Name="StatusBadgeBorder"
+                                    Width="160"
+                                    Height="40"
+                                    Background="{StaticResource PanelBackgroundBrush}"
+                                    BorderBrush="{StaticResource SoftBorderBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="10"
+                                    Padding="10,0"
+                                    VerticalAlignment="Center">
                                 <TextBlock x:Name="StatusTextBlock"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                       TextAlignment="Center"
-                       FontWeight="SemiBold"
-                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           TextAlignment="Center"
+                                           FontWeight="SemiBold"
+                                           FontSize="12"
+                                           Foreground="{StaticResource TextPrimaryBrush}"/>
                             </Border>
-                        </Grid>
+                        </StackPanel>
                     </Grid>
 
-                    <!-- Нижняя строка -->
                     <Grid Grid.Row="4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="140"/>

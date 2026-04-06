@@ -16,6 +16,10 @@
         <SolidColorBrush x:Key="MutedBackgroundBrush" Color="#F8FAFC"/>
         <SolidColorBrush x:Key="SuccessBrush" Color="#16A34A"/>
         <SolidColorBrush x:Key="DangerBrush" Color="#DC2626"/>
+        <SolidColorBrush x:Key="PageBackgroundSoftBrush" Color="#EEF2F7"/>
+        <SolidColorBrush x:Key="PanelBackgroundBrush" Color="#F6F8FB"/>
+        <SolidColorBrush x:Key="SubtleAccentBrush" Color="#EEF4FF"/>
+        <SolidColorBrush x:Key="SoftBorderBrush" Color="#D9E1EA"/>
 
         <!-- Окна -->
         <Style TargetType="Window">

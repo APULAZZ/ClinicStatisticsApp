@@ -6,7 +6,8 @@
         Width="1480"
         MinHeight="860"
         MinWidth="1320"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource PageBackgroundSoftBrush}">
 
     <Window.Resources>
         <Style x:Key="CenteredCellStyle" TargetType="TextBlock">
@@ -34,7 +35,11 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}" Padding="10">
+        <Border Grid.Row="0"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="10"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -52,7 +57,7 @@
                 </StackPanel>
 
                 <Border Grid.Column="1"
-                        Background="{StaticResource PrimaryLightBrush}"
+                        Background="{StaticResource SubtleAccentBrush}"
                         BorderBrush="#BFDBFE"
                         BorderThickness="1"
                         CornerRadius="8"
@@ -66,7 +71,11 @@
             </Grid>
         </Border>
 
-        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="10">
+        <Border Grid.Row="2"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="10"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="130"/>
@@ -116,7 +125,11 @@
             </Grid>
         </Border>
 
-        <Border Grid.Row="4" Style="{StaticResource CardBorderStyle}" Padding="8">
+        <Border Grid.Row="4"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="8"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <DataGrid x:Name="ProfoDataGrid"
                       AutoGenerateColumns="False"
                       CanUserAddRows="False"
@@ -203,7 +216,9 @@
 
         <Border Grid.Row="6"
                 Style="{StaticResource CardBorderStyle}"
-                Padding="8">
+                Padding="8"
+                Background="{StaticResource PanelBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <TextBlock x:Name="TotalsTextBlock"
                        FontSize="13"
                        FontWeight="SemiBold"
@@ -214,7 +229,7 @@
         <Border Grid.Row="8"
                 Style="{StaticResource CardBorderStyle}"
                 Padding="8"
-                Background="{StaticResource PrimaryLightBrush}"
+                Background="{StaticResource SubtleAccentBrush}"
                 BorderBrush="#BFDBFE">
             <TextBlock x:Name="ConversionTextBlock"
                        FontSize="13"
