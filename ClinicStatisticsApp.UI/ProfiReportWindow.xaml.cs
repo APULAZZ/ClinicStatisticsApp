@@ -354,6 +354,12 @@ namespace ClinicStatisticsApp.UI
             }));
         }
 
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            _previousWindow?.Show();
+            Close();
+        }
+
         private void ProfiDataGrid_CurrentCellChanged(object? sender, EventArgs e)
         {
             if (ProfiDataGrid.SelectedItem is ProfiEntryViewModel item)

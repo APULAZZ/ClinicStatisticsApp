@@ -352,6 +352,12 @@ namespace ClinicStatisticsApp.UI
             }));
         }
 
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            _previousWindow?.Show();
+            Close();
+        }
+
         private void HoursDataGrid_CurrentCellChanged(object? sender, EventArgs e)
         {
             if (HoursDataGrid.SelectedItem is HoursEntryViewModel item)

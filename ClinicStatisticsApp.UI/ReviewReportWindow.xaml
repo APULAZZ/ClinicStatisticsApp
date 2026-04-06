@@ -32,24 +32,39 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}" Padding="10">
+        <!-- Шапка -->
+        <Border Grid.Row="0"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="10">
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="10"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel>
+                <Button Grid.Column="0"
+                        Content="← Назад"
+                        Width="82"
+                        Height="30"
+                        Margin="0"
+                        FontSize="11"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Click="BackButton_Click"/>
+
+                <StackPanel Grid.Column="2">
                     <TextBlock Text="Раздел ОТЗЫВЫ"
                                Style="{StaticResource TitleTextStyle}"
                                FontSize="18"/>
-                    <TextBlock Text="СМС и оставленные отзывы."
+
+                    <TextBlock Text="СМС и оставленные отзывы"
                                Style="{StaticResource BodyTextStyle}"
                                Margin="0,2,0,0"
                                FontSize="11"/>
                 </StackPanel>
 
-                <Border Grid.Column="1"
+                <Border Grid.Column="3"
                         Background="{StaticResource PrimaryLightBrush}"
                         BorderBrush="#BFDBFE"
                         BorderThickness="1"
@@ -64,7 +79,10 @@
             </Grid>
         </Border>
 
-        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="10">
+        <!-- Период и действия -->
+        <Border Grid.Row="2"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="10">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="118"/>
@@ -147,7 +165,10 @@
             </Grid>
         </Border>
 
-        <Border Grid.Row="4" Style="{StaticResource CardBorderStyle}" Padding="8">
+        <!-- Таблица -->
+        <Border Grid.Row="4"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="8">
             <DataGrid x:Name="ReviewDataGrid"
                       AutoGenerateColumns="False"
                       CanUserAddRows="False"
@@ -217,7 +238,10 @@
             </DataGrid>
         </Border>
 
-        <Border Grid.Row="6" Style="{StaticResource CardBorderStyle}" Padding="8">
+        <!-- Итоги -->
+        <Border Grid.Row="6"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="8">
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>

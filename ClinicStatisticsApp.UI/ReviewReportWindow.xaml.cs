@@ -353,6 +353,12 @@ namespace ClinicStatisticsApp.UI
             }));
         }
 
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            _previousWindow?.Show();
+            Close();
+        }
+
         private void ReviewDataGrid_CurrentCellChanged(object? sender, EventArgs e)
         {
             if (ReviewDataGrid.SelectedItem is ReviewEntryViewModel item)
