@@ -1,6 +1,7 @@
 ﻿using ClinicStatisticsApp.Models;
 using ClinicStatisticsApp.Services;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -12,6 +13,12 @@ namespace ClinicStatisticsApp.UI
         private readonly SummaryProfoService _summaryProfoService = new SummaryProfoService();
 
         public Employee Employee { get; private set; }
+
+        private class ProfoRateOption
+        {
+            public string DisplayName { get; set; } = string.Empty;
+            public decimal? Value { get; set; }
+        }
 
         public EmployeeEditWindow(Employee employee)
         {
@@ -25,7 +32,17 @@ namespace ClinicStatisticsApp.UI
 
         private void LoadReferences()
         {
-            DefaultProfoRateComboBox.ItemsSource = new decimal?[] { null, 0.5m, 1.0m };
+            var rateOptions = new List<ProfoRateOption>
+            {
+                new ProfoRateOption { DisplayName = "— не задано —", Value = null },
+                new ProfoRateOption { DisplayName = "0.5", Value = 0.5m },
+                new ProfoRateOption { DisplayName = "1.0", Value = 1.0m }
+            };
+
+            DefaultProfoRateComboBox.ItemsSource = rateOptions;
+            DefaultProfoRateComboBox.DisplayMemberPath = "DisplayName";
+            DefaultProfoRateComboBox.SelectedValuePath = "Value";
+
             DefaultProfoCategoryComboBox.ItemsSource = _summaryProfoService.GetCategories();
         }
 
@@ -36,7 +53,7 @@ namespace ClinicStatisticsApp.UI
             IsCallCenterCheckBox.IsChecked = Employee.IsCallCenter;
             RateTextBox.Text = Employee.DefaultReviewPaymentRate?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
 
-            DefaultProfoRateComboBox.SelectedItem = Employee.DefaultProfoRate;
+            DefaultProfoRateComboBox.SelectedValue = Employee.DefaultProfoRate;
             DefaultProfoCategoryComboBox.SelectedValue = Employee.DefaultProfoCategoryId;
 
             CommentTextBox.Text = Employee.Comment ?? string.Empty;
@@ -87,9 +104,9 @@ namespace ClinicStatisticsApp.UI
             }
 
             decimal? defaultProfoRate = null;
-            if (DefaultProfoRateComboBox.SelectedItem is decimal rateValue)
+            if (DefaultProfoRateComboBox.SelectedItem is ProfoRateOption selectedRateOption)
             {
-                defaultProfoRate = rateValue;
+                defaultProfoRate = selectedRateOption.Value;
             }
 
             int? defaultProfoCategoryId = null;
