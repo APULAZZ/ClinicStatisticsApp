@@ -140,82 +140,58 @@ namespace ClinicStatisticsApp.UI
 
         private void SummaryGeneralButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = new SummaryGeneralWindow
-            {
-                Owner = this
-            };
-
-            window.ShowDialog();
+            var window = new SummaryGeneralWindow(this);
+            Hide();
+            window.Show();
         }
 
         private void SummaryProfoButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = new SummaryProfoWindow
-            {
-                Owner = this
-            };
-
-            window.ShowDialog();
+            var window = new SummaryProfoWindow(this);
+            Hide();
+            window.Show();
         }
 
         private void SummaryAdminButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = new SummaryAdminWindow
-            {
-                Owner = this
-            };
-
-            window.ShowDialog();
+            var window = new SummaryAdminWindow(this);
+            Hide();
+            window.Show();
         }
 
         private void SummaryProDoctorButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = new SummaryProDoctorWindow
-            {
-                Owner = this
-            };
-
-            window.ShowDialog();
+            var window = new SummaryProDoctorWindow(this);
+            Hide();
+            window.Show();
         }
 
         private void DynamicsButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = new DynamicsWindow
-            {
-                Owner = this
-            };
-
-            window.ShowDialog();
+            var window = new DynamicsWindow(this);
+            Hide();
+            window.Show();
         }
 
         private void ComparativePerkButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = new ComparativePerkWindow
-            {
-                Owner = this
-            };
-
-            window.ShowDialog();
+            var window = new ComparativePerkWindow(this);
+            Hide();
+            window.Show();
         }
 
         private void ComparativeProfiButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = new ComparativeProfiWindow
-            {
-                Owner = this
-            };
-
-            window.ShowDialog();
+            var window = new ComparativeProfiWindow(this);
+            Hide();
+            window.Show();
         }
 
         private void AbsolutePrimaryButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = new AbsolutePrimaryWindow
-            {
-                Owner = this
-            };
-
-            window.ShowDialog();
+            var window = new AbsolutePrimaryWindow(this);
+            Hide();
+            window.Show();
         }
 
         private void StubButton_Click(object sender, RoutedEventArgs e)

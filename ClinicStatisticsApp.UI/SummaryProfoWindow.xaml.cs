@@ -11,13 +11,16 @@ namespace ClinicStatisticsApp.UI
     public partial class SummaryProfoWindow : Window
     {
         private readonly SummaryProfoService _summaryProfoService = new SummaryProfoService();
+        private readonly Window? _previousWindow;
 
         private ObservableCollection<SummaryProfoRowViewModel> _rows = new();
         private ObservableCollection<ProfoCategory> _categories = new();
 
-        public SummaryProfoWindow()
+        public SummaryProfoWindow(Window? previousWindow = null)
         {
             InitializeComponent();
+
+            _previousWindow = previousWindow;
 
             LoadPeriods();
             LoadReferenceData();
@@ -145,6 +148,22 @@ namespace ClinicStatisticsApp.UI
                     "Ошибка сохранения",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
+            }
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            _previousWindow?.Show();
+            Close();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            if (_previousWindow != null && !_previousWindow.IsVisible)
+            {
+                _previousWindow.Show();
             }
         }
     }

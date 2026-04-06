@@ -31,6 +31,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
+        <!-- Шапка -->
         <Border Grid.Row="0"
                 Style="{StaticResource CardBorderStyle}"
                 Padding="10"
@@ -38,11 +39,22 @@
                 BorderBrush="{StaticResource SoftBorderBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="10"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel>
+                <Button Grid.Column="0"
+                        Content="← Назад"
+                        Width="82"
+                        Height="30"
+                        Margin="0"
+                        FontSize="11"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Click="BackButton_Click"/>
+
+                <StackPanel Grid.Column="2">
                     <TextBlock Text="Статистика общая"
                                Style="{StaticResource TitleTextStyle}"
                                FontSize="18"/>
@@ -52,7 +64,7 @@
                                FontSize="11"/>
                 </StackPanel>
 
-                <Border Grid.Column="1"
+                <Border Grid.Column="3"
                         Background="{StaticResource SubtleAccentBrush}"
                         BorderBrush="#BFDBFE"
                         BorderThickness="1"
@@ -67,6 +79,7 @@
             </Grid>
         </Border>
 
+        <!-- Параметры -->
         <Border Grid.Row="2"
                 Style="{StaticResource CardBorderStyle}"
                 Padding="10"
@@ -110,6 +123,7 @@
             </Grid>
         </Border>
 
+        <!-- Контент -->
         <Border Grid.Row="4"
                 Style="{StaticResource CardBorderStyle}"
                 Padding="8"

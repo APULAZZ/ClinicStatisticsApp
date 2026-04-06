@@ -8,10 +8,12 @@ namespace ClinicStatisticsApp.UI
     public partial class SummaryAdminWindow : Window
     {
         private readonly SummaryAdminService _summaryAdminService = new SummaryAdminService();
+        private readonly Window? _previousWindow;
 
-        public SummaryAdminWindow()
+        public SummaryAdminWindow(Window? previousWindow = null)
         {
             InitializeComponent();
+            _previousWindow = previousWindow;
             LoadPeriods();
         }
 
@@ -99,6 +101,22 @@ namespace ClinicStatisticsApp.UI
                     "Ошибка построения отчета",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
+            }
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            _previousWindow?.Show();
+            Close();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            if (_previousWindow != null && !_previousWindow.IsVisible)
+            {
+                _previousWindow.Show();
             }
         }
     }

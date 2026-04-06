@@ -12,10 +12,12 @@ namespace ClinicStatisticsApp.UI
     public partial class ComparativePerkWindow : Window
     {
         private readonly ComparativePerkService _service = new ComparativePerkService();
+        private readonly Window? _previousWindow;
 
-        public ComparativePerkWindow()
+        public ComparativePerkWindow(Window? previousWindow = null)
         {
             InitializeComponent();
+            _previousWindow = previousWindow;
             LoadYears();
         }
 
@@ -198,6 +200,22 @@ namespace ClinicStatisticsApp.UI
         private System.Windows.Media.SolidColorBrush CreateBrush(string hex)
         {
             return (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString(hex)!;
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            _previousWindow?.Show();
+            Close();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            if (_previousWindow != null && !_previousWindow.IsVisible)
+            {
+                _previousWindow.Show();
+            }
         }
     }
 }

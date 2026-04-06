@@ -46,11 +46,22 @@
                 BorderBrush="{StaticResource SoftBorderBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="10"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel>
+                <Button Grid.Column="0"
+                        Content="← Назад"
+                        Width="82"
+                        Height="30"
+                        Margin="0"
+                        FontSize="11"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Click="BackButton_Click"/>
+
+                <StackPanel Grid.Column="2">
                     <TextBlock Text="Статистика абсолютных первичных"
                                Style="{StaticResource TitleTextStyle}"
                                FontSize="18"/>
@@ -61,7 +72,7 @@
                                FontSize="11"/>
                 </StackPanel>
 
-                <Border Grid.Column="1"
+                <Border Grid.Column="3"
                         Background="{StaticResource SubtleAccentBrush}"
                         BorderBrush="#BFDBFE"
                         BorderThickness="1"

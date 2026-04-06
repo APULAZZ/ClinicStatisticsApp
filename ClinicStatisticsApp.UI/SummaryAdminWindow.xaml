@@ -6,7 +6,8 @@
         Width="1320"
         MinHeight="840"
         MinWidth="1200"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource PageBackgroundSoftBrush}">
 
     <Window.Resources>
         <Style x:Key="CenteredCellStyle" TargetType="TextBlock">
@@ -32,14 +33,27 @@
 
         <Border Grid.Row="0"
                 Style="{StaticResource CardBorderStyle}"
-                Padding="10">
+                Padding="10"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="10"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel>
+                <Button Grid.Column="0"
+                        Content="← Назад"
+                        Width="82"
+                        Height="30"
+                        Margin="0"
+                        FontSize="11"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Click="BackButton_Click"/>
+
+                <StackPanel Grid.Column="2">
                     <TextBlock Text="Статистика по администраторам"
                                Style="{StaticResource TitleTextStyle}"
                                FontSize="18"/>
@@ -50,8 +64,8 @@
                                FontSize="11"/>
                 </StackPanel>
 
-                <Border Grid.Column="1"
-                        Background="{StaticResource PrimaryLightBrush}"
+                <Border Grid.Column="3"
+                        Background="{StaticResource SubtleAccentBrush}"
                         BorderBrush="#BFDBFE"
                         BorderThickness="1"
                         CornerRadius="8"
@@ -67,7 +81,9 @@
 
         <Border Grid.Row="2"
                 Style="{StaticResource CardBorderStyle}"
-                Padding="10">
+                Padding="10"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="130"/>
@@ -108,7 +124,9 @@
 
         <Border Grid.Row="4"
                 Style="{StaticResource CardBorderStyle}"
-                Padding="8">
+                Padding="8"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <ScrollViewer VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
@@ -176,8 +194,8 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    <Border Background="{StaticResource MutedBackgroundBrush}"
-                            BorderBrush="{StaticResource BorderBrushCustom}"
+                    <Border Background="{StaticResource PanelBackgroundBrush}"
+                            BorderBrush="{StaticResource SoftBorderBrush}"
                             BorderThickness="1"
                             CornerRadius="10"
                             Padding="10"
@@ -252,8 +270,8 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    <Border Background="{StaticResource MutedBackgroundBrush}"
-                            BorderBrush="{StaticResource BorderBrushCustom}"
+                    <Border Background="{StaticResource PanelBackgroundBrush}"
+                            BorderBrush="{StaticResource SoftBorderBrush}"
                             BorderThickness="1"
                             CornerRadius="10"
                             Padding="10"
@@ -265,7 +283,7 @@
                                    TextWrapping="Wrap"/>
                     </Border>
 
-                    <Border Background="{StaticResource PrimaryLightBrush}"
+                    <Border Background="{StaticResource SubtleAccentBrush}"
                             BorderBrush="#BFDBFE"
                             BorderThickness="1"
                             CornerRadius="12"

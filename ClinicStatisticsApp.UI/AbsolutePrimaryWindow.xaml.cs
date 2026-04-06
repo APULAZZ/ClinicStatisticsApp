@@ -7,10 +7,12 @@ namespace ClinicStatisticsApp.UI
     public partial class AbsolutePrimaryWindow : Window
     {
         private readonly AbsolutePrimaryService _service = new AbsolutePrimaryService();
+        private readonly Window? _previousWindow;
 
-        public AbsolutePrimaryWindow()
+        public AbsolutePrimaryWindow(Window? previousWindow = null)
         {
             InitializeComponent();
+            _previousWindow = previousWindow;
             LoadYears();
         }
 
@@ -58,6 +60,22 @@ namespace ClinicStatisticsApp.UI
                     "Ошибка построения",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
+            }
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            _previousWindow?.Show();
+            Close();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            if (_previousWindow != null && !_previousWindow.IsVisible)
+            {
+                _previousWindow.Show();
             }
         }
     }

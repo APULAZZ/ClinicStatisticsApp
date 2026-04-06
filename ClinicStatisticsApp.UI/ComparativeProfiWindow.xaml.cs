@@ -12,10 +12,12 @@ namespace ClinicStatisticsApp.UI
     public partial class ComparativeProfiWindow : Window
     {
         private readonly ComparativeProfiService _service = new ComparativeProfiService();
+        private readonly Window? _previousWindow;
 
-        public ComparativeProfiWindow()
+        public ComparativeProfiWindow(Window? previousWindow = null)
         {
             InitializeComponent();
+            _previousWindow = previousWindow;
             LoadYears();
         }
 
@@ -198,6 +200,22 @@ namespace ClinicStatisticsApp.UI
         private System.Windows.Media.SolidColorBrush CreateBrush(string hex)
         {
             return (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString(hex)!;
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            _previousWindow?.Show();
+            Close();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            if (_previousWindow != null && !_previousWindow.IsVisible)
+            {
+                _previousWindow.Show();
+            }
         }
     }
 }

@@ -13,10 +13,12 @@ namespace ClinicStatisticsApp.UI
     public partial class DynamicsWindow : Window
     {
         private readonly DynamicsService _service = new DynamicsService();
+        private readonly Window? _previousWindow;
 
-        public DynamicsWindow()
+        public DynamicsWindow(Window? previousWindow = null)
         {
             InitializeComponent();
+            _previousWindow = previousWindow;
             LoadYears();
         }
 
@@ -349,6 +351,22 @@ namespace ClinicStatisticsApp.UI
         private SolidColorBrush CreateBrush(string hex)
         {
             return (SolidColorBrush)new BrushConverter().ConvertFromString(hex)!;
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            _previousWindow?.Show();
+            Close();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            if (_previousWindow != null && !_previousWindow.IsVisible)
+            {
+                _previousWindow.Show();
+            }
         }
     }
 }
