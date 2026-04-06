@@ -9,12 +9,6 @@
         WindowStartupLocation="CenterOwner">
 
     <Window.Resources>
-        <Style x:Key="CenteredHeaderStyle" TargetType="TextBlock">
-            <Setter Property="TextAlignment" Value="Center"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
-            <Setter Property="VerticalAlignment" Value="Center"/>
-        </Style>
-
         <Style x:Key="CenteredCellStyle" TargetType="TextBlock">
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -80,9 +74,9 @@
                 Padding="10">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="118"/>
                     <ColumnDefinition Width="6"/>
-                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="118"/>
                     <ColumnDefinition Width="8"/>
                     <ColumnDefinition Width="90"/>
                     <ColumnDefinition Width="6"/>
@@ -99,16 +93,18 @@
                 <StackPanel Grid.Column="0">
                     <Label Content="Год"/>
                     <ComboBox x:Name="YearComboBox"
-                              Width="130"
+                              Width="118"
                               Height="30"
+                              FontSize="12"
                               Style="{StaticResource ModernComboBoxStyle}"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="2">
                     <Label Content="Месяц"/>
                     <ComboBox x:Name="MonthComboBox"
-                              Width="130"
+                              Width="118"
                               Height="30"
+                              FontSize="12"
                               Style="{StaticResource ModernComboBoxStyle}"/>
                 </StackPanel>
 
@@ -171,21 +167,27 @@
                       CurrentCellChanged="PerkDataGrid_CurrentCellChanged"
                       RowHeight="26"
                       ColumnHeaderHeight="30"
-                      FontSize="12">
+                      FontSize="12"
+                      GridLinesVisibility="All"
+                      HorizontalGridLinesBrush="#E5E7EB"
+                      VerticalGridLinesBrush="#E5E7EB">
                 <DataGrid.Resources>
                     <Style TargetType="DataGridCell">
-                        <Setter Property="Padding" Value="4,2"/>
-                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="Padding" Value="6,2"/>
+                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                        <Setter Property="BorderBrush" Value="#E5E7EB"/>
                         <Setter Property="VerticalContentAlignment" Value="Center"/>
                     </Style>
 
                     <Style TargetType="DataGridColumnHeader">
-                        <Setter Property="Padding" Value="6,4"/>
+                        <Setter Property="Padding" Value="8,4"/>
                         <Setter Property="FontSize" Value="11"/>
                         <Setter Property="FontWeight" Value="SemiBold"/>
                         <Setter Property="Height" Value="30"/>
                         <Setter Property="HorizontalContentAlignment" Value="Center"/>
                         <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="BorderBrush" Value="#D1D5DB"/>
+                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
                     </Style>
                 </DataGrid.Resources>
 
@@ -213,17 +215,17 @@
                     </DataGridTemplateColumn>
 
                     <DataGridTextColumn Header="Явка"
-                                        Width="90"
+                                        Width="95"
                                         Binding="{Binding AttendanceCount, UpdateSourceTrigger=PropertyChanged}"
                                         ElementStyle="{StaticResource CenteredCellStyle}"/>
 
                     <DataGridTextColumn Header="Неявка"
-                                        Width="90"
+                                        Width="95"
                                         Binding="{Binding AbsenceCount, UpdateSourceTrigger=PropertyChanged}"
                                         ElementStyle="{StaticResource CenteredCellStyle}"/>
 
                     <DataGridTextColumn Header="Всего"
-                                        Width="90"
+                                        Width="95"
                                         IsReadOnly="True"
                                         Binding="{Binding Total}"
                                         ElementStyle="{StaticResource CenteredCellStyle}"/>
@@ -239,9 +241,9 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="75"/>
-                    <ColumnDefinition Width="90"/>
-                    <ColumnDefinition Width="90"/>
-                    <ColumnDefinition Width="90"/>
+                    <ColumnDefinition Width="95"/>
+                    <ColumnDefinition Width="95"/>
+                    <ColumnDefinition Width="95"/>
                 </Grid.ColumnDefinitions>
 
                 <TextBlock Grid.Column="1"
