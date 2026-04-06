@@ -2,130 +2,140 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Пользователь"
-        Height="700"
-        Width="560"
-        MinHeight="700"
-        MinWidth="560"
+        Height="660"
+        Width="540"
+        MinHeight="620"
+        MinWidth="540"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto"
                   HorizontalScrollBarVisibility="Disabled">
-        <Grid Margin="24">
+        <Grid Margin="16">
             <Border Style="{StaticResource CardBorderStyle}"
                     VerticalAlignment="Center"
-                    Padding="28">
+                    Padding="16">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="6"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="14"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="24"/>
+                        <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="16"/>
+                        <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="16"/>
+                        <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="16"/>
+                        <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="16"/>
+                        <RowDefinition Height="12"/>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="16"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="18"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="18"/>
+                        <RowDefinition Height="14"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <!-- Заголовок -->
                     <TextBlock Text="Редактирование пользователя"
-                               Style="{StaticResource TitleTextStyle}"/>
+                               Style="{StaticResource TitleTextStyle}"
+                               FontSize="18"/>
 
                     <TextBlock Grid.Row="2"
-                               Text="Заполните данные учетной записи и права доступа"
-                               Style="{StaticResource BodyTextStyle}"/>
+                               Text="Данные учетной записи и права доступа"
+                               Style="{StaticResource BodyTextStyle}"
+                               FontSize="12"/>
 
-                    <!-- Логин -->
                     <StackPanel Grid.Row="4">
                         <Label Content="Логин"/>
-                        <TextBox x:Name="LoginTextBox"/>
+                        <TextBox x:Name="LoginTextBox"
+                                 Height="36"
+                                 FontSize="13"
+                                 Margin="0"/>
                     </StackPanel>
 
-                    <!-- Пароль -->
                     <StackPanel Grid.Row="6">
                         <Label Content="Пароль"/>
-                        <TextBox x:Name="PasswordTextBox"/>
+                        <TextBox x:Name="PasswordTextBox"
+                                 Height="36"
+                                 FontSize="13"
+                                 Margin="0"/>
                     </StackPanel>
 
-                    <!-- ФИО -->
                     <StackPanel Grid.Row="8">
                         <Label Content="ФИО"/>
-                        <TextBox x:Name="FullNameTextBox"/>
+                        <TextBox x:Name="FullNameTextBox"
+                                 Height="36"
+                                 FontSize="13"
+                                 Margin="0"/>
                     </StackPanel>
 
-                    <!-- Роль -->
                     <StackPanel Grid.Row="10">
                         <Label Content="Роль"/>
                         <ComboBox x:Name="RoleComboBox"
+                                  Height="36"
+                                  FontSize="13"
                                   DisplayMemberPath="Name"
                                   SelectedValuePath="Id"
                                   Style="{StaticResource ModernComboBoxStyle}"
+                                  Margin="0"
                                   SelectionChanged="RoleComboBox_SelectionChanged"/>
                     </StackPanel>
 
-                    <!-- Филиал -->
                     <StackPanel Grid.Row="12">
                         <Label Content="Филиал"/>
                         <ComboBox x:Name="BranchComboBox"
+                                  Height="36"
+                                  FontSize="13"
                                   DisplayMemberPath="Name"
                                   SelectedValuePath="Id"
-                                  Style="{StaticResource ModernComboBoxStyle}"/>
+                                  Style="{StaticResource ModernComboBoxStyle}"
+                                  Margin="0"/>
                     </StackPanel>
 
-                    <!-- Активность -->
                     <Border Grid.Row="14"
                             Background="{StaticResource MutedBackgroundBrush}"
                             BorderBrush="{StaticResource BorderBrushCustom}"
                             BorderThickness="1"
-                            CornerRadius="12"
-                            Padding="14">
+                            CornerRadius="10"
+                            Padding="12">
                         <CheckBox x:Name="IsActiveCheckBox"
                                   Content="Активен"
                                   VerticalAlignment="Center"
-                                  FontSize="14"
+                                  FontSize="13"
                                   FontWeight="SemiBold"/>
                     </Border>
 
-                    <!-- Ошибка -->
                     <TextBlock x:Name="ErrorTextBlock"
                                Grid.Row="16"
                                Visibility="Collapsed"
                                Foreground="{StaticResource DangerBrush}"
-                               FontSize="13"
+                               FontSize="12"
                                TextWrapping="Wrap"/>
 
-                    <!-- Кнопки -->
                     <Grid Grid.Row="18">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="10"/>
-                            <ColumnDefinition Width="120"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="100"/>
                         </Grid.ColumnDefinitions>
 
                         <Button Grid.Column="1"
                                 Content="Сохранить"
-                                Width="120"
-                                Height="42"
+                                Width="100"
+                                Height="34"
                                 Margin="0"
+                                FontSize="12"
                                 Click="SaveButton_Click"/>
 
                         <Button Grid.Column="3"
                                 Content="Отмена"
-                                Width="120"
-                                Height="42"
+                                Width="100"
+                                Height="34"
                                 Margin="0"
+                                FontSize="12"
                                 Style="{StaticResource SecondaryButtonStyle}"
                                 Click="CancelButton_Click"/>
                     </Grid>

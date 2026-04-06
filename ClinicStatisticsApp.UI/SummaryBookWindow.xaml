@@ -2,436 +2,346 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Сводная книга"
-        Height="920"
+        Height="860"
         Width="1180"
-        MinHeight="880"
+        MinHeight="820"
         MinWidth="1080"
         WindowStartupLocation="CenterOwner">
 
-    <Grid Margin="24">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="18"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled">
+        <Grid Margin="16">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="8"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
 
-        <!-- Шапка -->
-        <Border Grid.Row="0"
-                Style="{StaticResource CardBorderStyle}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <StackPanel>
-                    <TextBlock Text="Сводная книга"
-                               Style="{StaticResource TitleTextStyle}"/>
-
-                    <TextBlock Text="Выберите нужный сводный лист или выполните экспорт книги за выбранный период."
-                               Style="{StaticResource BodyTextStyle}"
-                               Margin="0,8,0,0"/>
-                </StackPanel>
-
-                <Border Grid.Column="1"
-                        Background="{StaticResource PrimaryLightBrush}"
-                        BorderBrush="#BFDBFE"
-                        BorderThickness="1"
-                        CornerRadius="14"
-                        Padding="14,8"
-                        VerticalAlignment="Top">
-                    <TextBlock Text="Сводные отчеты"
-                               Foreground="{StaticResource PrimaryDarkBrush}"
-                               FontSize="13"
-                               FontWeight="SemiBold"/>
-                </Border>
-            </Grid>
-        </Border>
-
-        <!-- Параметры экспорта -->
-        <Border Grid.Row="2"
-                Style="{StaticResource CardBorderStyle}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="18"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-
-                <TextBlock Text="Параметры экспорта"
-                           Style="{StaticResource SectionTextStyle}"/>
-
-                <Grid Grid.Row="2">
+            <!-- Шапка -->
+            <Border Grid.Row="0"
+                    Style="{StaticResource CardBorderStyle}"
+                    Padding="12">
+                <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="160"/>
-                        <ColumnDefinition Width="12"/>
-                        <ColumnDefinition Width="160"/>
-                        <ColumnDefinition Width="12"/>
-                        <ColumnDefinition Width="180"/>
-                        <ColumnDefinition Width="12"/>
-                        <ColumnDefinition Width="180"/>
                         <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel Grid.Column="0">
-                        <Label Content="Год"/>
-                        <ComboBox x:Name="ExportYearComboBox"
-                                  Width="160"
-                                  Height="40"
-                                  Style="{StaticResource ModernComboBoxStyle}"/>
+                    <StackPanel>
+                        <TextBlock Text="Сводная книга"
+                                   Style="{StaticResource TitleTextStyle}"
+                                   FontSize="20"/>
+
+                        <TextBlock Text="Откройте нужный сводный лист или выполните экспорт книги за выбранный период."
+                                   Style="{StaticResource BodyTextStyle}"
+                                   Margin="0,4,0,0"
+                                   FontSize="12"/>
                     </StackPanel>
 
-                    <StackPanel Grid.Column="2">
-                        <Label Content="Месяц"/>
-                        <ComboBox x:Name="ExportMonthComboBox"
-                                  Width="160"
-                                  Height="40"
-                                  Style="{StaticResource ModernComboBoxStyle}"/>
-                    </StackPanel>
-
-                    <Button Grid.Column="4"
-                            Content="Экспорт книги в Excel"
-                            Width="180"
-                            Height="42"
-                            Margin="0,30,0,0"
-                            Click="ExportExcelButton_Click"/>
-
-                    <Button Grid.Column="6"
-                            Content="Экспорт книги в PDF"
-                            Width="180"
-                            Height="42"
-                            Margin="0,30,0,0"
-                            Style="{StaticResource SecondaryButtonStyle}"
-                            Click="ExportPdfButton_Click"/>
+                    <Border Grid.Column="1"
+                            Background="{StaticResource PrimaryLightBrush}"
+                            BorderBrush="#BFDBFE"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="10,5"
+                            VerticalAlignment="Top">
+                        <TextBlock Text="Сводные отчеты"
+                                   Foreground="{StaticResource PrimaryDarkBrush}"
+                                   FontSize="10"
+                                   FontWeight="SemiBold"/>
+                    </Border>
                 </Grid>
-            </Grid>
-        </Border>
+            </Border>
 
-        <!-- Плитки -->
-        <Border Grid.Row="4"
-                Style="{StaticResource CardBorderStyle}"
-                Padding="18">
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled">
+            <!-- Сначала: Сводные листы -->
+            <Border Grid.Row="2"
+                    Style="{StaticResource CardBorderStyle}"
+                    Padding="12">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="14"/>
+                        <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
                     <TextBlock Text="Сводные листы"
-                               Style="{StaticResource SectionTextStyle}"/>
+                               Style="{StaticResource SectionTextStyle}"
+                               FontSize="17"/>
 
                     <UniformGrid Grid.Row="2"
-             Rows="6"
-             Columns="2"
-             Margin="0,2,0,0">
+                                 Rows="4"
+                                 Columns="2"
+                                 Margin="0,0,0,0">
 
                         <Button Click="SummaryGeneralButton_Click"
-            Style="{StaticResource FeatureCardButtonStyle}"
-            Height="82"
-            Margin="6">
+                                Style="{StaticResource FeatureCardButtonStyle}"
+                                Height="74"
+                                Margin="5">
                             <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    Margin="14,0">
-                                <Border Width="34"
-                    Height="34"
-                    CornerRadius="9"
-                    Background="#EEF2FF">
-                                    <Viewbox Margin="8">
+                                        VerticalAlignment="Center"
+                                        Margin="12,0">
+                                <Border Width="30"
+                                        Height="30"
+                                        CornerRadius="8"
+                                        Background="#EEF2FF">
+                                    <Viewbox Margin="7">
                                         <TextBlock Text="📘"/>
                                     </Viewbox>
                                 </Border>
 
                                 <TextBlock Text="Статистика общая"
-                       Margin="12,0,0,0"
-                       VerticalAlignment="Center"
-                       FontSize="15"
-                       FontWeight="SemiBold"
-                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                           Margin="10,0,0,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"/>
                             </StackPanel>
                         </Button>
 
                         <Button Click="SummaryProfoButton_Click"
-            Style="{StaticResource FeatureCardButtonStyle}"
-            Height="82"
-            Margin="6">
+                                Style="{StaticResource FeatureCardButtonStyle}"
+                                Height="74"
+                                Margin="5">
                             <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    Margin="14,0">
-                                <Border Width="34"
-                    Height="34"
-                    CornerRadius="9"
-                    Background="#ECFDF5">
-                                    <Viewbox Margin="8">
+                                        VerticalAlignment="Center"
+                                        Margin="12,0">
+                                <Border Width="30"
+                                        Height="30"
+                                        CornerRadius="8"
+                                        Background="#ECFDF5">
+                                    <Viewbox Margin="7">
                                         <TextBlock Text="🩺"/>
                                     </Viewbox>
                                 </Border>
 
-                                <TextBlock Text="Статистика проф. осмотров"
-                       Margin="12,0,0,0"
-                       VerticalAlignment="Center"
-                       FontSize="15"
-                       FontWeight="SemiBold"
-                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <TextBlock Text="Проф. осмотры"
+                                           Margin="10,0,0,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"/>
                             </StackPanel>
                         </Button>
 
                         <Button Click="SummaryAdminButton_Click"
-            Style="{StaticResource FeatureCardButtonStyle}"
-            Height="82"
-            Margin="6">
+                                Style="{StaticResource FeatureCardButtonStyle}"
+                                Height="74"
+                                Margin="5">
                             <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    Margin="14,0">
-                                <Border Width="34"
-                    Height="34"
-                    CornerRadius="9"
-                    Background="#FFF7ED">
-                                    <Viewbox Margin="8">
+                                        VerticalAlignment="Center"
+                                        Margin="12,0">
+                                <Border Width="30"
+                                        Height="30"
+                                        CornerRadius="8"
+                                        Background="#FFF7ED">
+                                    <Viewbox Margin="7">
                                         <TextBlock Text="👤"/>
                                     </Viewbox>
                                 </Border>
 
-                                <TextBlock Text="Статистика по администраторам"
-                       Margin="12,0,0,0"
-                       VerticalAlignment="Center"
-                       FontSize="15"
-                       FontWeight="SemiBold"
-                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <TextBlock Text="Администраторы"
+                                           Margin="10,0,0,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"/>
                             </StackPanel>
                         </Button>
 
                         <Button Click="SummaryProDoctorButton_Click"
-            Style="{StaticResource FeatureCardButtonStyle}"
-            Height="82"
-            Margin="6">
+                                Style="{StaticResource FeatureCardButtonStyle}"
+                                Height="74"
+                                Margin="5">
                             <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    Margin="14,0">
-                                <Border Width="34"
-                    Height="34"
-                    CornerRadius="9"
-                    Background="#FEF2F2">
-                                    <Viewbox Margin="8">
+                                        VerticalAlignment="Center"
+                                        Margin="12,0">
+                                <Border Width="30"
+                                        Height="30"
+                                        CornerRadius="8"
+                                        Background="#FEF2F2">
+                                    <Viewbox Margin="7">
                                         <TextBlock Text="★"/>
                                     </Viewbox>
                                 </Border>
 
                                 <TextBlock Text="Отзывы ПроДокторов"
-                       Margin="12,0,0,0"
-                       VerticalAlignment="Center"
-                       FontSize="15"
-                       FontWeight="SemiBold"
-                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                           Margin="10,0,0,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"/>
                             </StackPanel>
                         </Button>
 
                         <Button Click="DynamicsButton_Click"
-            Style="{StaticResource FeatureCardButtonStyle}"
-            Height="82"
-            Margin="6">
+                                Style="{StaticResource FeatureCardButtonStyle}"
+                                Height="74"
+                                Margin="5">
                             <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    Margin="14,0">
-                                <Border Width="34"
-                    Height="34"
-                    CornerRadius="9"
-                    Background="#F5F3FF">
-                                    <Viewbox Margin="8">
+                                        VerticalAlignment="Center"
+                                        Margin="12,0">
+                                <Border Width="30"
+                                        Height="30"
+                                        CornerRadius="8"
+                                        Background="#F5F3FF">
+                                    <Viewbox Margin="7">
                                         <TextBlock Text="📈"/>
                                     </Viewbox>
                                 </Border>
 
                                 <TextBlock Text="Динамика"
-                       Margin="12,0,0,0"
-                       VerticalAlignment="Center"
-                       FontSize="15"
-                       FontWeight="SemiBold"
-                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                           Margin="10,0,0,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"/>
                             </StackPanel>
                         </Button>
 
                         <Button Click="ComparativePerkButton_Click"
-            Style="{StaticResource FeatureCardButtonStyle}"
-            Height="82"
-            Margin="6">
+                                Style="{StaticResource FeatureCardButtonStyle}"
+                                Height="74"
+                                Margin="5">
                             <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    Margin="14,0">
-                                <Border Width="34"
-                    Height="34"
-                    CornerRadius="9"
-                    Background="#EEF2FF">
-                                    <Viewbox Margin="8">
+                                        VerticalAlignment="Center"
+                                        Margin="12,0">
+                                <Border Width="30"
+                                        Height="30"
+                                        CornerRadius="8"
+                                        Background="#EEF2FF">
+                                    <Viewbox Margin="7">
                                         <TextBlock Text="📊"/>
                                     </Viewbox>
                                 </Border>
 
-                                <TextBlock Text="Сравнительная статистика ПЕРК"
-                       Margin="12,0,0,0"
-                       VerticalAlignment="Center"
-                       FontSize="15"
-                       FontWeight="SemiBold"
-                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <TextBlock Text="Сравнительная ПЕРК"
+                                           Margin="10,0,0,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"/>
                             </StackPanel>
                         </Button>
 
                         <Button Click="ComparativeProfiButton_Click"
-            Style="{StaticResource FeatureCardButtonStyle}"
-            Height="82"
-            Margin="6">
+                                Style="{StaticResource FeatureCardButtonStyle}"
+                                Height="74"
+                                Margin="5">
                             <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    Margin="14,0">
-                                <Border Width="34"
-                    Height="34"
-                    CornerRadius="9"
-                    Background="#ECFDF5">
-                                    <Viewbox Margin="8">
+                                        VerticalAlignment="Center"
+                                        Margin="12,0">
+                                <Border Width="30"
+                                        Height="30"
+                                        CornerRadius="8"
+                                        Background="#ECFDF5">
+                                    <Viewbox Margin="7">
                                         <TextBlock Text="👥"/>
                                     </Viewbox>
                                 </Border>
 
-                                <TextBlock Text="Сравнительная статистика ПРОФЫ"
-                       Margin="12,0,0,0"
-                       VerticalAlignment="Center"
-                       FontSize="15"
-                       FontWeight="SemiBold"
-                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <TextBlock Text="Сравнительная ПРОФЫ"
+                                           Margin="10,0,0,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"/>
                             </StackPanel>
                         </Button>
 
                         <Button Click="AbsolutePrimaryButton_Click"
-            Style="{StaticResource FeatureCardButtonStyle}"
-            Height="82"
-            Margin="6">
+                                Style="{StaticResource FeatureCardButtonStyle}"
+                                Height="74"
+                                Margin="5">
                             <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    Margin="14,0">
-                                <Border Width="34"
-                    Height="34"
-                    CornerRadius="9"
-                    Background="#FFF7ED">
-                                    <Viewbox Margin="8">
+                                        VerticalAlignment="Center"
+                                        Margin="12,0">
+                                <Border Width="30"
+                                        Height="30"
+                                        CornerRadius="8"
+                                        Background="#FFF7ED">
+                                    <Viewbox Margin="7">
                                         <TextBlock Text="🧮"/>
                                     </Viewbox>
                                 </Border>
 
-                                <TextBlock Text="Статистика абсолютных первичных"
-                       Margin="12,0,0,0"
-                       VerticalAlignment="Center"
-                       FontSize="15"
-                       FontWeight="SemiBold"
-                       Foreground="{StaticResource TextPrimaryBrush}"/>
-                            </StackPanel>
-                        </Button>
-
-                        <Button Click="StubButton_Click"
-            Style="{StaticResource FeatureCardButtonStyle}"
-            Height="82"
-            Margin="6">
-                            <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    Margin="14,0">
-                                <Border Width="34"
-                    Height="34"
-                    CornerRadius="9"
-                    Background="#F3F4F6">
-                                    <Viewbox Margin="8">
-                                        <TextBlock Text="⏳"/>
-                                    </Viewbox>
-                                </Border>
-
-                                <TextBlock Text="Скоро..."
-                       Margin="12,0,0,0"
-                       VerticalAlignment="Center"
-                       FontSize="15"
-                       FontWeight="SemiBold"
-                       Foreground="{StaticResource TextPrimaryBrush}"/>
-                            </StackPanel>
-                        </Button>
-
-                        <Button Click="StubButton_Click"
-            Style="{StaticResource FeatureCardButtonStyle}"
-            Height="82"
-            Margin="6">
-                            <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    Margin="14,0">
-                                <Border Width="34"
-                    Height="34"
-                    CornerRadius="9"
-                    Background="#F3F4F6">
-                                    <Viewbox Margin="8">
-                                        <TextBlock Text="⏳"/>
-                                    </Viewbox>
-                                </Border>
-
-                                <TextBlock Text="Скоро..."
-                       Margin="12,0,0,0"
-                       VerticalAlignment="Center"
-                       FontSize="15"
-                       FontWeight="SemiBold"
-                       Foreground="{StaticResource TextPrimaryBrush}"/>
-                            </StackPanel>
-                        </Button>
-
-                        <Button Click="StubButton_Click"
-            Style="{StaticResource FeatureCardButtonStyle}"
-            Height="82"
-            Margin="6">
-                            <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    Margin="14,0">
-                                <Border Width="34"
-                    Height="34"
-                    CornerRadius="9"
-                    Background="#F3F4F6">
-                                    <Viewbox Margin="8">
-                                        <TextBlock Text="⏳"/>
-                                    </Viewbox>
-                                </Border>
-
-                                <TextBlock Text="Скоро..."
-                       Margin="12,0,0,0"
-                       VerticalAlignment="Center"
-                       FontSize="15"
-                       FontWeight="SemiBold"
-                       Foreground="{StaticResource TextPrimaryBrush}"/>
-                            </StackPanel>
-                        </Button>
-
-                        <Button Click="StubButton_Click"
-            Style="{StaticResource FeatureCardButtonStyle}"
-            Height="82"
-            Margin="6">
-                            <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    Margin="14,0">
-                                <Border Width="34"
-                    Height="34"
-                    CornerRadius="9"
-                    Background="#F3F4F6">
-                                    <Viewbox Margin="8">
-                                        <TextBlock Text="⏳"/>
-                                    </Viewbox>
-                                </Border>
-
-                                <TextBlock Text="Скоро..."
-                       Margin="12,0,0,0"
-                       VerticalAlignment="Center"
-                       FontSize="15"
-                       FontWeight="SemiBold"
-                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <TextBlock Text="Абсолютные первичные"
+                                           Margin="10,0,0,0"
+                                           VerticalAlignment="Center"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="{StaticResource TextPrimaryBrush}"/>
                             </StackPanel>
                         </Button>
                     </UniformGrid>
                 </Grid>
-            </ScrollViewer>
-        </Border>
-    </Grid>
+            </Border>
+
+            <!-- Потом: Параметры экспорта -->
+            <Border Grid.Row="4"
+                    Style="{StaticResource CardBorderStyle}"
+                    Padding="12">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Text="Параметры экспорта"
+                               Style="{StaticResource SectionTextStyle}"
+                               FontSize="17"/>
+
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="145"/>
+                            <ColumnDefinition Width="8"/>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <Label Content="Год"/>
+                            <ComboBox x:Name="ExportYearComboBox"
+                                      Width="140"
+                                      Height="30"
+                                      FontSize="12"
+                                      Style="{StaticResource ModernComboBoxStyle}"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <Label Content="Месяц"/>
+                            <ComboBox x:Name="ExportMonthComboBox"
+                                      Width="140"
+                                      Height="30"
+                                      FontSize="12"
+                                      Style="{StaticResource ModernComboBoxStyle}"/>
+                        </StackPanel>
+
+                        <Button Grid.Column="4"
+                                Content="Экспорт в Excel"
+                                Width="145"
+                                Height="34"
+                                Margin="0,24,0,0"
+                                FontSize="12"
+                                Click="ExportExcelButton_Click"/>
+
+                        <Button Grid.Column="6"
+                                Content="Экспорт в PDF"
+                                Width="140"
+                                Height="34"
+                                Margin="0,24,0,0"
+                                FontSize="12"
+                                Style="{StaticResource SecondaryButtonStyle}"
+                                Click="ExportPdfButton_Click"/>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </ScrollViewer>
 </Window>

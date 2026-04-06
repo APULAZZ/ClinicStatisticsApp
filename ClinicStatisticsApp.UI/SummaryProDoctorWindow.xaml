@@ -2,111 +2,97 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Отзывы ПроДокторов"
-        Height="980"
+        Height="940"
         Width="1580"
-        MinHeight="920"
+        MinHeight="900"
         MinWidth="1380"
         WindowStartupLocation="CenterOwner">
 
-	<Grid Margin="24">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="18"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="18"/>
-			<RowDefinition Height="*"/>
-		</Grid.RowDefinitions>
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="6"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="6"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-		<!-- Шапка -->
-		<Border Grid.Row="0"
-                Style="{StaticResource CardBorderStyle}">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
+        <Border Grid.Row="0" Style="{StaticResource CardBorderStyle}" Padding="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-				<StackPanel>
-					<TextBlock Text="Отзывы ПроДокторов"
-                               Style="{StaticResource TitleTextStyle}"/>
-
-					<TextBlock Text="Просмотр помесячной статистики по администраторам и редактирование значений QR-кодов."
+                <StackPanel>
+                    <TextBlock Text="Отзывы ПроДокторов"
+                               Style="{StaticResource TitleTextStyle}"
+                               FontSize="18"/>
+                    <TextBlock Text="Статистика по администраторам и редактирование QR-кодов."
                                Style="{StaticResource BodyTextStyle}"
-                               Margin="0,8,0,0"/>
-				</StackPanel>
+                               Margin="0,2,0,0"
+                               FontSize="11"/>
+                </StackPanel>
 
-				<Border Grid.Column="1"
+                <Border Grid.Column="1"
                         Background="{StaticResource PrimaryLightBrush}"
                         BorderBrush="#BFDBFE"
                         BorderThickness="1"
-                        CornerRadius="14"
-                        Padding="14,8"
+                        CornerRadius="8"
+                        Padding="8,4"
                         VerticalAlignment="Top">
-					<TextBlock Text="Отчеты и QR"
+                    <TextBlock Text="Отчеты и QR"
                                Foreground="{StaticResource PrimaryDarkBrush}"
-                               FontSize="13"
+                               FontSize="10"
                                FontWeight="SemiBold"/>
-				</Border>
-			</Grid>
-		</Border>
+                </Border>
+            </Grid>
+        </Border>
 
-		<!-- Параметры -->
-		<Border Grid.Row="2"
-                Style="{StaticResource CardBorderStyle}">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="18"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
+        <Border Grid.Row="2" Style="{StaticResource CardBorderStyle}" Padding="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
 
-				<TextBlock Text="Параметры"
-                           Style="{StaticResource SectionTextStyle}"/>
+                <StackPanel Grid.Column="0">
+                    <Label Content="Год"/>
+                    <ComboBox x:Name="YearComboBox"
+                              Width="130"
+                              Height="30"
+                              FontSize="12"
+                              Style="{StaticResource ModernComboBoxStyle}"/>
+                </StackPanel>
 
-				<Grid Grid.Row="2">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="160"/>
-						<ColumnDefinition Width="12"/>
-						<ColumnDefinition Width="140"/>
-						<ColumnDefinition Width="12"/>
-						<ColumnDefinition Width="140"/>
-						<ColumnDefinition Width="*"/>
-					</Grid.ColumnDefinitions>
+                <Button Grid.Column="2"
+                        Content="Загрузить"
+                        Width="110"
+                        Height="32"
+                        Margin="0,24,0,0"
+                        FontSize="12"
+                        Click="LoadButton_Click"/>
 
-					<StackPanel Grid.Column="0">
-						<Label Content="Год"/>
-						<ComboBox x:Name="YearComboBox"
-                                  Width="160"
-                                  Height="40"
-                                  Style="{StaticResource ModernComboBoxStyle}"/>
-					</StackPanel>
+                <Button Grid.Column="4"
+                        Content="Сохранить QR"
+                        Width="110"
+                        Height="32"
+                        Margin="0,24,0,0"
+                        FontSize="12"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Click="SaveButton_Click"/>
+            </Grid>
+        </Border>
 
-					<Button Grid.Column="2"
-                            Content="Загрузить"
-                            Width="140"
-                            Height="42"
-                            Margin="0,30,0,0"
-                            Click="LoadButton_Click"/>
-
-					<Button Grid.Column="4"
-                            Content="Сохранить QR"
-                            Width="140"
-                            Height="42"
-                            Margin="0,30,0,0"
-                            Style="{StaticResource SecondaryButtonStyle}"
-                            Click="SaveButton_Click"/>
-				</Grid>
-			</Grid>
-		</Border>
-
-		<!-- Контент -->
-		<Border Grid.Row="4"
-                Style="{StaticResource CardBorderStyle}"
-                Padding="18">
-			<ScrollViewer VerticalScrollBarVisibility="Auto"
+        <Border Grid.Row="4" Style="{StaticResource CardBorderStyle}" Padding="8">
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled">
-				<StackPanel x:Name="BlocksPanel"/>
-			</ScrollViewer>
-		</Border>
-	</Grid>
+                <StackPanel x:Name="BlocksPanel"/>
+            </ScrollViewer>
+        </Border>
+    </Grid>
 </Window>
