@@ -10,10 +10,12 @@ namespace ClinicStatisticsApp.UI
     {
         private readonly SummaryBookExcelExportService _excelExportService = new SummaryBookExcelExportService();
         private readonly SummaryBookPdfExportService _pdfExportService = new SummaryBookPdfExportService();
+        private readonly Window? _previousWindow;
 
-        public SummaryBookWindow()
+        public SummaryBookWindow(Window? previousWindow = null)
         {
             InitializeComponent();
+            _previousWindow = previousWindow;
             LoadExportPeriods();
         }
 
@@ -201,6 +203,22 @@ namespace ClinicStatisticsApp.UI
                 "Информация",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            _previousWindow?.Show();
+            Close();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            if (_previousWindow != null && !_previousWindow.IsVisible)
+            {
+                _previousWindow.Show();
+            }
         }
     }
 }

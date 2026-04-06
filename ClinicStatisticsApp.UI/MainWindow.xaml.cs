@@ -82,12 +82,9 @@ namespace ClinicStatisticsApp.UI
         {
             if (_currentUser.RoleCode == "BranchUser")
             {
-                var window = new BranchReportWindow(_currentUser)
-                {
-                    Owner = this
-                };
-
-                window.ShowDialog();
+                var window = new BranchReportWindow(_currentUser, this);
+                Hide();
+                window.Show();
                 return;
             }
 
@@ -107,19 +104,19 @@ namespace ClinicStatisticsApp.UI
                         BranchName = selectBranchWindow.SelectedBranch.Name
                     };
 
-                    var window = new BranchReportWindow(context)
-                    {
-                        Owner = this
-                    };
-
-                    window.ShowDialog();
+                    var window = new BranchReportWindow(context, this);
+                    Hide();
+                    window.Show();
                 }
 
                 return;
             }
 
-            MessageBox.Show("Для вашей роли работа с филиальными отчетами недоступна.",
-                "Доступ запрещен", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(
+                "Для вашей роли работа с филиальными отчетами недоступна.",
+                "Доступ запрещен",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
         }
 
         private void NaradButton_Click(object sender, RoutedEventArgs e)
@@ -166,25 +163,28 @@ namespace ClinicStatisticsApp.UI
                 return;
             }
 
-            MessageBox.Show("Для вашей роли работа с нарядами недоступна.",
-                "Доступ запрещен", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(
+                "Для вашей роли работа с нарядами недоступна.",
+                "Доступ запрещен",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
         }
 
         private void SummaryButton_Click(object sender, RoutedEventArgs e)
         {
             if (_currentUser.RoleCode == "BranchUser")
             {
-                MessageBox.Show("У вас нет доступа к сводной книге.",
-                    "Доступ запрещен", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    "У вас нет доступа к сводной книге.",
+                    "Доступ запрещен",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
                 return;
             }
 
-            var window = new SummaryBookWindow
-            {
-                Owner = this
-            };
-
-            window.ShowDialog();
+            var window = new SummaryBookWindow(this);
+            Hide();
+            window.Show();
         }
 
         private void EmployeesButton_Click(object sender, RoutedEventArgs e)

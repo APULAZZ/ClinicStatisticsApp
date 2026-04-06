@@ -11,6 +11,7 @@ namespace ClinicStatisticsApp.UI
     public partial class BranchReportWindow : Window
     {
         private readonly CurrentUserInfo _currentUser;
+        private readonly Window? _previousWindow;
         private readonly BranchReportStatusService _statusService = new BranchReportStatusService();
         private readonly BranchReportExcelExportService _excelExportService = new BranchReportExcelExportService();
         private readonly BranchReportPdfExportService _pdfExportService = new BranchReportPdfExportService();
@@ -18,11 +19,12 @@ namespace ClinicStatisticsApp.UI
         private readonly int _branchId;
         private readonly string _branchName;
 
-        public BranchReportWindow(CurrentUserInfo currentUser)
+        public BranchReportWindow(CurrentUserInfo currentUser, Window? previousWindow = null)
         {
             InitializeComponent();
 
             _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
+            _previousWindow = previousWindow;
             _branchId = currentUser.BranchId ?? 0;
             _branchName = currentUser.BranchName ?? "не задан";
 
@@ -34,7 +36,7 @@ namespace ClinicStatisticsApp.UI
             ConfigureButtons();
         }
 
-        public BranchReportWindow(SelectedBranchContext context)
+        public BranchReportWindow(SelectedBranchContext context, Window? previousWindow = null)
         {
             InitializeComponent();
 
@@ -42,6 +44,7 @@ namespace ClinicStatisticsApp.UI
                 throw new ArgumentNullException(nameof(context));
 
             _currentUser = context.CurrentUser ?? throw new ArgumentNullException(nameof(context.CurrentUser));
+            _previousWindow = previousWindow;
             _branchId = context.BranchId;
             _branchName = context.BranchName ?? "не задан";
 
@@ -322,6 +325,22 @@ namespace ClinicStatisticsApp.UI
             var window = new ReviewReportWindow(userContext, this);
             Hide();
             window.Show();
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            _previousWindow?.Show();
+            Close();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            if (_previousWindow != null && !_previousWindow.IsVisible)
+            {
+                _previousWindow.Show();
+            }
         }
 
         private CurrentUserInfo CloneUserWithSelectedBranch()

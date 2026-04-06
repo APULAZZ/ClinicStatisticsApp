@@ -28,11 +28,23 @@
                     BorderBrush="{StaticResource SoftBorderBrush}">
                 <Grid>
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="10"/>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
-                    <StackPanel>
+                    <Button Grid.Column="0"
+                            Content="← Назад"
+                            Width="82"
+                            Height="30"
+                            Margin="0"
+                            FontSize="11"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="BackButton_Click"/>
+                    
+
+                    <StackPanel Grid.Column="2">
                         <TextBlock x:Name="HeaderTextBlock"
                                    Style="{StaticResource TitleTextStyle}"
                                    FontSize="20"/>
@@ -43,14 +55,14 @@
                                    FontSize="12"/>
                     </StackPanel>
 
-                    <Border Grid.Column="1"
+                    <Border Grid.Column="3"
                             Background="{StaticResource SubtleAccentBrush}"
                             BorderBrush="#BFDBFE"
                             BorderThickness="1"
                             CornerRadius="10"
                             Padding="10,5"
                             VerticalAlignment="Top">
-                        <TextBlock Text="Управление"
+                        <TextBlock Text=""
                                    Foreground="{StaticResource PrimaryDarkBrush}"
                                    FontSize="10"
                                    FontWeight="SemiBold"/>
@@ -77,8 +89,7 @@
 
                     <UniformGrid Grid.Row="2"
                                  Rows="2"
-                                 Columns="2"
-                                 Margin="0,0,0,0">
+                                 Columns="2">
 
                         <Button Click="PerkButton_Click"
                                 Style="{StaticResource FeatureCardButtonStyle}"
