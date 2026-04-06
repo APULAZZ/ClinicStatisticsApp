@@ -27,12 +27,7 @@ namespace ClinicStatisticsApp.UI
 
             if (_currentUser.BranchId == null)
             {
-                MessageBox.Show(
-                    "Для текущего пользователя не задан филиал.",
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
-
+                MessageBox.Show("Для текущего пользователя не задан филиал.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 Close();
                 return;
             }
@@ -43,9 +38,7 @@ namespace ClinicStatisticsApp.UI
             SetItemsSource(new ObservableCollection<HoursEntryViewModel>());
         }
 
-        private int SelectedYear => YearComboBox.SelectedItem is int year
-            ? year
-            : DateTime.Now.Year;
+        private int SelectedYear => YearComboBox.SelectedItem is int year ? year : DateTime.Now.Year;
 
         private int SelectedMonth
         {
@@ -198,10 +191,21 @@ namespace ClinicStatisticsApp.UI
 
         private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
+            if (sender is HoursEntryViewModel item && e.PropertyName == nameof(HoursEntryViewModel.EmployeeId))
+            {
+                UpdateEmployeeName(item);
+            }
+
             if (e.PropertyName == nameof(HoursEntryViewModel.WorkedHours))
             {
                 RecalculateTotals();
             }
+        }
+
+        private void UpdateEmployeeName(HoursEntryViewModel item)
+        {
+            var employee = Employees.FirstOrDefault(x => x.Id == item.EmployeeId);
+            item.EmployeeFullName = employee?.FullName ?? string.Empty;
         }
 
         private void AddRowButton_Click(object sender, RoutedEventArgs e)
@@ -243,19 +247,11 @@ namespace ClinicStatisticsApp.UI
 
                 LoadData();
 
-                MessageBox.Show(
-                    "Сотрудники скопированы.",
-                    "Успех",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                MessageBox.Show("Сотрудники скопированы.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    ex.Message,
-                    "Ошибка копирования",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, "Ошибка копирования", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -269,14 +265,15 @@ namespace ClinicStatisticsApp.UI
                 HoursDataGrid.CommitEdit(DataGridEditingUnit.Cell, true);
                 HoursDataGrid.CommitEdit(DataGridEditingUnit.Row, true);
 
+                foreach (var item in _items)
+                {
+                    UpdateEmployeeName(item);
+                }
+
                 var invalidRows = _items.Where(i => i.EmployeeId <= 0).ToList();
                 if (invalidRows.Any())
                 {
-                    MessageBox.Show(
-                        "Во всех строках должен быть выбран сотрудник.",
-                        "Ошибка",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
+                    MessageBox.Show("Во всех строках должен быть выбран сотрудник.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -287,11 +284,7 @@ namespace ClinicStatisticsApp.UI
 
                 if (duplicateEmployees.Any())
                 {
-                    MessageBox.Show(
-                        "Один и тот же сотрудник не может повторяться в блоке ЧАСЫ.",
-                        "Ошибка",
-                        MessageBoxButton.OK,
-                        MessageBoxImage.Warning);
+                    MessageBox.Show("Один и тот же сотрудник не может повторяться в блоке ЧАСЫ.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -302,31 +295,36 @@ namespace ClinicStatisticsApp.UI
                     _currentUser.UserId,
                     _items.ToList());
 
-                MessageBox.Show(
-                    "Данные сохранены.",
-                    "Успех",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                MessageBox.Show("Данные сохранены.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 LoadData();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    ex.Message,
-                    "Ошибка сохранения",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, "Ошибка сохранения", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void HoursDataGrid_CellEditEnding(object sender, DataGridCellEditEndingEventArgs e)
         {
-            Dispatcher.BeginInvoke(new Action(RecalculateTotals));
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (e.Row.Item is HoursEntryViewModel item)
+                {
+                    UpdateEmployeeName(item);
+                }
+
+                RecalculateTotals();
+            }));
         }
 
         private void HoursDataGrid_CurrentCellChanged(object? sender, EventArgs e)
         {
+            if (HoursDataGrid.SelectedItem is HoursEntryViewModel item)
+            {
+                UpdateEmployeeName(item);
+            }
+
             RecalculateTotals();
         }
 

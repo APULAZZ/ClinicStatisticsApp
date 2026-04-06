@@ -28,11 +28,7 @@ namespace ClinicStatisticsApp.UI
 
             if (_currentUser.BranchId == null)
             {
-                MessageBox.Show(
-                    "Для текущего пользователя не задан филиал.",
-                    "Ошибка",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Warning);
+                MessageBox.Show("Для текущего пользователя не задан филиал.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 Close();
                 return;
             }
@@ -221,21 +217,13 @@ namespace ClinicStatisticsApp.UI
                     SelectedMonth,
                     _items.ToList());
 
-                MessageBox.Show(
-                    "Наряд сохранен.",
-                    "Успех",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                MessageBox.Show("Наряд сохранен.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
 
                 LoadData();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    ex.Message,
-                    "Ошибка сохранения",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show(ex.Message, "Ошибка сохранения", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -259,19 +247,11 @@ namespace ClinicStatisticsApp.UI
                     SelectedMonth,
                     _items.ToList());
 
-                MessageBox.Show(
-                    "Файл Excel успешно сохранен.",
-                    "Экспорт",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                MessageBox.Show("Файл Excel успешно сохранен.", "Экспорт", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    ex.ToString(),
-                    "Ошибка экспорта",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show(ex.ToString(), "Ошибка экспорта", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -295,19 +275,11 @@ namespace ClinicStatisticsApp.UI
                     SelectedMonth,
                     _items.ToList());
 
-                MessageBox.Show(
-                    "PDF-файл успешно сохранен.",
-                    "Экспорт",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                MessageBox.Show("PDF-файл успешно сохранен.", "Экспорт", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    ex.ToString(),
-                    "Ошибка PDF-экспорта",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show(ex.ToString(), "Ошибка PDF-экспорта", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
