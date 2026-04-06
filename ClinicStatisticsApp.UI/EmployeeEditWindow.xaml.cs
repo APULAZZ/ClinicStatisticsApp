@@ -12,35 +12,55 @@ namespace ClinicStatisticsApp.UI
         {
             InitializeComponent();
 
-            Employee = employee;
+            Employee = employee ?? throw new System.ArgumentNullException(nameof(employee));
 
             FullNameTextBox.Text = Employee.FullName;
             IsActiveCheckBox.IsChecked = Employee.IsActive;
             IsCallCenterCheckBox.IsChecked = Employee.IsCallCenter;
-            RateTextBox.Text = Employee.DefaultReviewPaymentRate?.ToString(CultureInfo.InvariantCulture) ?? "";
-            CommentTextBox.Text = Employee.Comment ?? "";
+            RateTextBox.Text = Employee.DefaultReviewPaymentRate?.ToString(CultureInfo.InvariantCulture) ?? string.Empty;
+            CommentTextBox.Text = Employee.Comment ?? string.Empty;
+        }
+
+        private void ShowError(string message)
+        {
+            ErrorTextBlock.Text = message;
+            ErrorTextBlock.Visibility = Visibility.Visible;
+        }
+
+        private void HideError()
+        {
+            ErrorTextBlock.Text = string.Empty;
+            ErrorTextBlock.Visibility = Visibility.Collapsed;
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            HideError();
+
             var fullName = FullNameTextBox.Text.Trim();
 
             if (string.IsNullOrWhiteSpace(fullName))
             {
-                MessageBox.Show("Введите ФИО сотрудника.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowError("Введите ФИО сотрудника.");
+                FullNameTextBox.Focus();
                 return;
             }
 
             decimal? rate = null;
             if (!string.IsNullOrWhiteSpace(RateTextBox.Text))
             {
-                if (decimal.TryParse(RateTextBox.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out var parsedRate))
+                if (decimal.TryParse(
+                    RateTextBox.Text.Replace(",", "."),
+                    NumberStyles.Any,
+                    CultureInfo.InvariantCulture,
+                    out var parsedRate))
                 {
                     rate = parsedRate;
                 }
                 else
                 {
-                    MessageBox.Show("Неверный формат ставки.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    ShowError("Неверный формат ставки.");
+                    RateTextBox.Focus();
                     return;
                 }
             }
@@ -49,7 +69,9 @@ namespace ClinicStatisticsApp.UI
             Employee.IsActive = IsActiveCheckBox.IsChecked == true;
             Employee.IsCallCenter = IsCallCenterCheckBox.IsChecked == true;
             Employee.DefaultReviewPaymentRate = rate;
-            Employee.Comment = string.IsNullOrWhiteSpace(CommentTextBox.Text) ? null : CommentTextBox.Text.Trim();
+            Employee.Comment = string.IsNullOrWhiteSpace(CommentTextBox.Text)
+                ? null
+                : CommentTextBox.Text.Trim();
 
             DialogResult = true;
             Close();

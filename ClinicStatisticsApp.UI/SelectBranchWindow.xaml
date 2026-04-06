@@ -2,37 +2,83 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Выбор филиала"
-        Height="360"
-        Width="420"
+        Height="420"
+        Width="520"
+        MinHeight="420"
+        MinWidth="520"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
-    <Grid Margin="20">
-        <Border VerticalAlignment="Center">
-            <StackPanel>
-                <TextBlock Text="Выберите филиал"
-                           FontSize="22"
-                           FontWeight="SemiBold"
-                           Margin="0,0,0,20"
+
+	<Grid Margin="24">
+		<Border Style="{StaticResource CardBorderStyle}"
+                VerticalAlignment="Center"
+                Padding="28">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="10"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="24"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="20"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="14"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+
+				<!-- Заголовок -->
+				<TextBlock Text="Выбор филиала"
+                           Style="{StaticResource TitleTextStyle}"
                            HorizontalAlignment="Center"/>
 
-                <ComboBox x:Name="BranchComboBox"
-                          Height="32"
-                          DisplayMemberPath="Name"
-                          SelectedValuePath="Id"
-                          Margin="0,0,0,20"/>
+				<TextBlock Grid.Row="2"
+                           Text="Выберите филиал для продолжения работы"
+                           Style="{StaticResource BodyTextStyle}"
+                           HorizontalAlignment="Center"/>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="Открыть"
-                            Width="110"
-                            Height="34"
-                            Margin="0,0,10,0"
+				<!-- Поле выбора -->
+				<StackPanel Grid.Row="4">
+					<Label Content="Филиал"/>
+					<ComboBox x:Name="BranchComboBox"
+                              Height="40"
+                              DisplayMemberPath="Name"
+                              SelectedValuePath="Id"
+                              Style="{StaticResource ModernComboBoxStyle}"/>
+				</StackPanel>
+
+				<!-- Ошибка -->
+				<TextBlock x:Name="ErrorTextBlock"
+                           Grid.Row="6"
+                           Visibility="Collapsed"
+                           Foreground="{StaticResource DangerBrush}"
+                           FontSize="13"
+                           TextWrapping="Wrap"/>
+
+				<!-- Кнопки -->
+				<Grid Grid.Row="8">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*"/>
+						<ColumnDefinition Width="120"/>
+						<ColumnDefinition Width="10"/>
+						<ColumnDefinition Width="120"/>
+					</Grid.ColumnDefinitions>
+
+					<Button Grid.Column="1"
+                            Content="Открыть"
+                            Width="120"
+                            Height="42"
+                            Margin="0"
                             Click="OpenButton_Click"/>
-                    <Button Content="Отмена"
-                            Width="110"
-                            Height="34"
+
+					<Button Grid.Column="3"
+                            Content="Отмена"
+                            Width="120"
+                            Height="42"
+                            Margin="0"
+                            Style="{StaticResource SecondaryButtonStyle}"
                             Click="CancelButton_Click"/>
-                </StackPanel>
-            </StackPanel>
-        </Border>
-    </Grid>
+				</Grid>
+			</Grid>
+		</Border>
+	</Grid>
 </Window>

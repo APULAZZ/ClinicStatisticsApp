@@ -1,6 +1,5 @@
 ﻿using ClinicStatisticsApp.Models;
 using ClinicStatisticsApp.Services;
-using System.Linq;
 using System.Windows;
 
 namespace ClinicStatisticsApp.UI
@@ -22,11 +21,25 @@ namespace ClinicStatisticsApp.UI
             BranchComboBox.ItemsSource = _userService.GetBranches();
         }
 
+        private void ShowError(string message)
+        {
+            ErrorTextBlock.Text = message;
+            ErrorTextBlock.Visibility = Visibility.Visible;
+        }
+
+        private void HideError()
+        {
+            ErrorTextBlock.Text = string.Empty;
+            ErrorTextBlock.Visibility = Visibility.Collapsed;
+        }
+
         private void OpenButton_Click(object sender, RoutedEventArgs e)
         {
+            HideError();
+
             if (BranchComboBox.SelectedItem is not Branch branch)
             {
-                MessageBox.Show("Выберите филиал.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowError("Выберите филиал.");
                 return;
             }
 

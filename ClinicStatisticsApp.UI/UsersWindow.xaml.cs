@@ -23,7 +23,11 @@ namespace ClinicStatisticsApp.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Ошибка загрузки пользователей", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    ex.ToString(),
+                    "Ошибка загрузки пользователей",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -50,7 +54,11 @@ namespace ClinicStatisticsApp.UI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Ошибка добавления пользователя", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(
+                        ex.Message,
+                        "Ошибка добавления пользователя",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                 }
             }
         }
@@ -59,14 +67,22 @@ namespace ClinicStatisticsApp.UI
         {
             if (UsersDataGrid.SelectedItem is not User selectedUser)
             {
-                MessageBox.Show("Выберите пользователя.", "Редактирование", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    "Выберите пользователя.",
+                    "Редактирование",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
                 return;
             }
 
             var userFromDb = _userService.GetById(selectedUser.Id);
             if (userFromDb == null)
             {
-                MessageBox.Show("Пользователь не найден.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    "Пользователь не найден.",
+                    "Ошибка",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
                 return;
             }
 
@@ -84,7 +100,11 @@ namespace ClinicStatisticsApp.UI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Ошибка редактирования пользователя", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(
+                        ex.Message,
+                        "Ошибка редактирования пользователя",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                 }
             }
         }
@@ -103,7 +123,11 @@ namespace ClinicStatisticsApp.UI
         {
             if (UsersDataGrid.SelectedItem is not User selectedUser)
             {
-                MessageBox.Show("Выберите пользователя.", "Изменение статуса", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    "Выберите пользователя.",
+                    "Изменение статуса",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
                 return;
             }
 
@@ -114,7 +138,11 @@ namespace ClinicStatisticsApp.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка изменения статуса", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    ex.Message,
+                    "Ошибка изменения статуса",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -122,7 +150,11 @@ namespace ClinicStatisticsApp.UI
         {
             if (UsersDataGrid.SelectedItem is not User selectedUser)
             {
-                MessageBox.Show("Выберите пользователя.", "Удаление", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    "Выберите пользователя.",
+                    "Удаление",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
                 return;
             }
 

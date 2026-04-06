@@ -19,6 +19,19 @@ namespace ClinicStatisticsApp.UI
             LoadYears();
         }
 
+        private int SelectedYear => YearComboBox.SelectedItem is int year
+            ? year
+            : DateTime.Now.Year;
+
+        private List<int> SelectedComparisonYears =>
+            ComparisonYearsPanel.Children
+                .OfType<CheckBox>()
+                .Where(x => x.IsChecked == true && int.TryParse(x.Content?.ToString(), out _))
+                .Select(x => int.Parse(x.Content!.ToString()!))
+                .Distinct()
+                .OrderByDescending(x => x)
+                .ToList();
+
         private void LoadYears()
         {
             var currentYear = DateTime.Now.Year;
@@ -30,8 +43,11 @@ namespace ClinicStatisticsApp.UI
                 var checkBox = new CheckBox
                 {
                     Content = year.ToString(),
-                    Margin = new Thickness(0, 0, 10, 5),
-                    IsChecked = year == currentYear || year == currentYear - 1
+                    Margin = new Thickness(0, 0, 14, 8),
+                    IsChecked = year == currentYear || year == currentYear - 1,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontSize = 14,
+                    FontWeight = FontWeights.SemiBold
                 };
 
                 ComparisonYearsPanel.Children.Add(checkBox);
@@ -39,17 +55,6 @@ namespace ClinicStatisticsApp.UI
 
             YearComboBox.SelectedItem = currentYear;
         }
-
-        private int SelectedYear => (int)(YearComboBox.SelectedItem ?? DateTime.Now.Year);
-
-        private List<int> SelectedComparisonYears =>
-            ComparisonYearsPanel.Children
-                .OfType<CheckBox>()
-                .Where(x => x.IsChecked == true && int.TryParse(x.Content?.ToString(), out _))
-                .Select(x => int.Parse(x.Content!.ToString()!))
-                .Distinct()
-                .OrderByDescending(x => x)
-                .ToList();
 
         private void BuildButton_Click(object sender, RoutedEventArgs e)
         {
@@ -60,7 +65,11 @@ namespace ClinicStatisticsApp.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Ошибка построения динамики", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    ex.ToString(),
+                    "Ошибка построения динамики",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -72,8 +81,9 @@ namespace ClinicStatisticsApp.UI
             {
                 Text = $"Динамика за {SelectedYear} год",
                 FontSize = 24,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 15)
+                FontWeight = FontWeights.SemiBold,
+                Foreground = CreateBrush("#1F2937"),
+                Margin = new Thickness(0, 0, 0, 18)
             });
 
             foreach (var block in result.BranchBlocks)
@@ -96,9 +106,11 @@ namespace ClinicStatisticsApp.UI
             var border = new Border
             {
                 Background = Brushes.White,
-                CornerRadius = new CornerRadius(10),
-                Padding = new Thickness(15),
-                Margin = new Thickness(0, 0, 0, 15)
+                CornerRadius = new CornerRadius(16),
+                BorderBrush = CreateBrush("#E5E7EB"),
+                BorderThickness = new Thickness(1),
+                Padding = new Thickness(18),
+                Margin = new Thickness(0, 0, 0, 16)
             };
 
             var stack = new StackPanel();
@@ -108,46 +120,58 @@ namespace ClinicStatisticsApp.UI
                 Text = block.BranchName,
                 FontSize = 22,
                 FontWeight = FontWeights.SemiBold,
-                Margin = new Thickness(0, 0, 0, 10)
+                Foreground = CreateBrush("#1F2937"),
+                Margin = new Thickness(0, 0, 0, 12)
             });
 
             var grid = new DataGrid
             {
                 AutoGenerateColumns = false,
                 IsReadOnly = true,
-                Height = 250,
+                Height = 260,
                 ItemsSource = block.Employees,
-                Margin = new Thickness(0, 0, 0, 10),
+                Margin = new Thickness(0, 0, 0, 12),
                 VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
-                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                FrozenColumnCount = 1
             };
 
             grid.SetValue(ScrollViewer.CanContentScrollProperty, false);
             grid.PreviewMouseWheel += InnerDataGrid_PreviewMouseWheel;
 
-            grid.Columns.Add(new DataGridTextColumn { Header = "Сотрудник", Binding = new System.Windows.Data.Binding("EmployeeFullName"), Width = 220 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Янв", Binding = new System.Windows.Data.Binding("January"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Фев", Binding = new System.Windows.Data.Binding("February"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Мар", Binding = new System.Windows.Data.Binding("March"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Апр", Binding = new System.Windows.Data.Binding("April"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Май", Binding = new System.Windows.Data.Binding("May"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Июн", Binding = new System.Windows.Data.Binding("June"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Июл", Binding = new System.Windows.Data.Binding("July"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Авг", Binding = new System.Windows.Data.Binding("August"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Сен", Binding = new System.Windows.Data.Binding("September"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Окт", Binding = new System.Windows.Data.Binding("October"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Ноя", Binding = new System.Windows.Data.Binding("November"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Дек", Binding = new System.Windows.Data.Binding("December"), Width = 60 });
+            grid.Columns.Add(CreateBranchColumn("Сотрудник", "EmployeeFullName", 220));
+            grid.Columns.Add(CreateCenteredColumn("Янв", "January", 60));
+            grid.Columns.Add(CreateCenteredColumn("Фев", "February", 60));
+            grid.Columns.Add(CreateCenteredColumn("Мар", "March", 60));
+            grid.Columns.Add(CreateCenteredColumn("Апр", "April", 60));
+            grid.Columns.Add(CreateCenteredColumn("Май", "May", 60));
+            grid.Columns.Add(CreateCenteredColumn("Июн", "June", 60));
+            grid.Columns.Add(CreateCenteredColumn("Июл", "July", 60));
+            grid.Columns.Add(CreateCenteredColumn("Авг", "August", 60));
+            grid.Columns.Add(CreateCenteredColumn("Сен", "September", 60));
+            grid.Columns.Add(CreateCenteredColumn("Окт", "October", 60));
+            grid.Columns.Add(CreateCenteredColumn("Ноя", "November", 60));
+            grid.Columns.Add(CreateCenteredColumn("Дек", "December", 60));
 
             stack.Children.Add(grid);
 
-            stack.Children.Add(new TextBlock
+            stack.Children.Add(new Border
             {
-                Text =
-                    $"Итого: Янв={block.TotalJanuary}, Фев={block.TotalFebruary}, Мар={block.TotalMarch}, Апр={block.TotalApril}, " +
-                    $"Май={block.TotalMay}, Июн={block.TotalJune}, Июл={block.TotalJuly}, Авг={block.TotalAugust}, " +
-                    $"Сен={block.TotalSeptember}, Окт={block.TotalOctober}, Ноя={block.TotalNovember}, Дек={block.TotalDecember}",
-                FontWeight = FontWeights.SemiBold
+                Background = CreateBrush("#F8FAFC"),
+                BorderBrush = CreateBrush("#E5E7EB"),
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(12),
+                Padding = new Thickness(14),
+                Child = new TextBlock
+                {
+                    Text =
+                        $"Итого: Янв={block.TotalJanuary}, Фев={block.TotalFebruary}, Мар={block.TotalMarch}, Апр={block.TotalApril}, " +
+                        $"Май={block.TotalMay}, Июн={block.TotalJune}, Июл={block.TotalJuly}, Авг={block.TotalAugust}, " +
+                        $"Сен={block.TotalSeptember}, Окт={block.TotalOctober}, Ноя={block.TotalNovember}, Дек={block.TotalDecember}",
+                    FontWeight = FontWeights.SemiBold,
+                    Foreground = CreateBrush("#1D4ED8"),
+                    TextWrapping = TextWrapping.Wrap
+                }
             });
 
             border.Child = stack;
@@ -158,10 +182,12 @@ namespace ClinicStatisticsApp.UI
         {
             var border = new Border
             {
-                Background = Brushes.WhiteSmoke,
-                CornerRadius = new CornerRadius(10),
-                Padding = new Thickness(15),
-                Margin = new Thickness(0, 0, 0, 15)
+                Background = Brushes.White,
+                CornerRadius = new CornerRadius(16),
+                BorderBrush = CreateBrush("#E5E7EB"),
+                BorderThickness = new Thickness(1),
+                Padding = new Thickness(18),
+                Margin = new Thickness(0, 0, 0, 16)
             };
 
             var stack = new StackPanel();
@@ -170,15 +196,16 @@ namespace ClinicStatisticsApp.UI
             {
                 Text = title,
                 FontSize = 20,
-                FontWeight = FontWeights.Bold,
-                Margin = new Thickness(0, 0, 0, 10)
+                FontWeight = FontWeights.SemiBold,
+                Foreground = CreateBrush("#1F2937"),
+                Margin = new Thickness(0, 0, 0, 12)
             });
 
             var grid = new DataGrid
             {
                 AutoGenerateColumns = false,
                 IsReadOnly = true,
-                Height = 220,
+                Height = 230,
                 ItemsSource = rows,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Auto
@@ -187,24 +214,64 @@ namespace ClinicStatisticsApp.UI
             grid.SetValue(ScrollViewer.CanContentScrollProperty, false);
             grid.PreviewMouseWheel += InnerDataGrid_PreviewMouseWheel;
 
-            grid.Columns.Add(new DataGridTextColumn { Header = "Год", Binding = new System.Windows.Data.Binding("Year"), Width = 80 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Янв", Binding = new System.Windows.Data.Binding("January"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Фев", Binding = new System.Windows.Data.Binding("February"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Мар", Binding = new System.Windows.Data.Binding("March"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Апр", Binding = new System.Windows.Data.Binding("April"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Май", Binding = new System.Windows.Data.Binding("May"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Июн", Binding = new System.Windows.Data.Binding("June"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Июл", Binding = new System.Windows.Data.Binding("July"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Авг", Binding = new System.Windows.Data.Binding("August"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Сен", Binding = new System.Windows.Data.Binding("September"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Окт", Binding = new System.Windows.Data.Binding("October"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Ноя", Binding = new System.Windows.Data.Binding("November"), Width = 60 });
-            grid.Columns.Add(new DataGridTextColumn { Header = "Дек", Binding = new System.Windows.Data.Binding("December"), Width = 60 });
+            grid.Columns.Add(CreateBranchColumn("Год", "Year", 90));
+            grid.Columns.Add(CreateCenteredColumn("Янв", "January", 60));
+            grid.Columns.Add(CreateCenteredColumn("Фев", "February", 60));
+            grid.Columns.Add(CreateCenteredColumn("Мар", "March", 60));
+            grid.Columns.Add(CreateCenteredColumn("Апр", "April", 60));
+            grid.Columns.Add(CreateCenteredColumn("Май", "May", 60));
+            grid.Columns.Add(CreateCenteredColumn("Июн", "June", 60));
+            grid.Columns.Add(CreateCenteredColumn("Июл", "July", 60));
+            grid.Columns.Add(CreateCenteredColumn("Авг", "August", 60));
+            grid.Columns.Add(CreateCenteredColumn("Сен", "September", 60));
+            grid.Columns.Add(CreateCenteredColumn("Окт", "October", 60));
+            grid.Columns.Add(CreateCenteredColumn("Ноя", "November", 60));
+            grid.Columns.Add(CreateCenteredColumn("Дек", "December", 60));
 
             stack.Children.Add(grid);
 
             border.Child = stack;
             return border;
+        }
+
+        private DataGridTextColumn CreateCenteredColumn(string header, string bindingPath, double width)
+        {
+            return new DataGridTextColumn
+            {
+                Header = header,
+                Binding = new System.Windows.Data.Binding(bindingPath),
+                Width = width,
+                ElementStyle = CreateCenteredCellStyle()
+            };
+        }
+
+        private DataGridTextColumn CreateBranchColumn(string header, string bindingPath, double width)
+        {
+            return new DataGridTextColumn
+            {
+                Header = header,
+                Binding = new System.Windows.Data.Binding(bindingPath),
+                Width = width,
+                ElementStyle = CreateBranchCellStyle()
+            };
+        }
+
+        private Style CreateCenteredCellStyle()
+        {
+            var style = new Style(typeof(TextBlock));
+            style.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center));
+            style.Setters.Add(new Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center));
+            style.Setters.Add(new Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center));
+            return style;
+        }
+
+        private Style CreateBranchCellStyle()
+        {
+            var style = new Style(typeof(TextBlock));
+            style.Setters.Add(new Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center));
+            style.Setters.Add(new Setter(TextBlock.FontWeightProperty, FontWeights.SemiBold));
+            style.Setters.Add(new Setter(TextBlock.ForegroundProperty, CreateBrush("#1F2937")));
+            return style;
         }
 
         private void InnerDataGrid_PreviewMouseWheel(object sender, System.Windows.Input.MouseWheelEventArgs e)
@@ -220,9 +287,6 @@ namespace ClinicStatisticsApp.UI
 
         private ScrollViewer? FindChildScrollViewer(DependencyObject parent)
         {
-            if (parent == null)
-                return null;
-
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
             {
                 var child = VisualTreeHelper.GetChild(parent, i);
@@ -236,6 +300,11 @@ namespace ClinicStatisticsApp.UI
             }
 
             return null;
+        }
+
+        private SolidColorBrush CreateBrush(string hex)
+        {
+            return (SolidColorBrush)new BrushConverter().ConvertFromString(hex)!;
         }
     }
 }

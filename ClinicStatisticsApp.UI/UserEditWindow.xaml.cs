@@ -1,6 +1,5 @@
 ﻿using ClinicStatisticsApp.Models;
 using ClinicStatisticsApp.Services;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -16,7 +15,7 @@ namespace ClinicStatisticsApp.UI
         {
             InitializeComponent();
 
-            User = user;
+            User = user ?? throw new System.ArgumentNullException(nameof(user));
 
             LoadReferences();
             FillForm();
@@ -60,42 +59,62 @@ namespace ClinicStatisticsApp.UI
             }
         }
 
+        private void ShowError(string message)
+        {
+            ErrorTextBlock.Text = message;
+            ErrorTextBlock.Visibility = Visibility.Visible;
+        }
+
+        private void HideError()
+        {
+            ErrorTextBlock.Text = string.Empty;
+            ErrorTextBlock.Visibility = Visibility.Collapsed;
+        }
+
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
+            HideError();
+
             var login = LoginTextBox.Text.Trim();
             var password = PasswordTextBox.Text.Trim();
             var fullName = FullNameTextBox.Text.Trim();
 
             if (string.IsNullOrWhiteSpace(login))
             {
-                MessageBox.Show("Введите логин.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowError("Введите логин.");
+                LoginTextBox.Focus();
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Введите пароль.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowError("Введите пароль.");
+                PasswordTextBox.Focus();
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(fullName))
             {
-                MessageBox.Show("Введите ФИО.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowError("Введите ФИО.");
+                FullNameTextBox.Focus();
                 return;
             }
 
             if (RoleComboBox.SelectedItem is not Role selectedRole)
             {
-                MessageBox.Show("Выберите роль.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowError("Выберите роль.");
+                RoleComboBox.Focus();
                 return;
             }
 
             int? branchId = null;
+
             if (selectedRole.Code == "BranchUser")
             {
                 if (BranchComboBox.SelectedItem is not Branch selectedBranch)
                 {
-                    MessageBox.Show("Для пользователя филиала нужно выбрать филиал.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    ShowError("Для пользователя филиала нужно выбрать филиал.");
+                    BranchComboBox.Focus();
                     return;
                 }
 

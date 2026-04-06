@@ -2,39 +2,146 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Пользователи"
-        Height="650"
-        Width="1050"
+        Height="760"
+        Width="1180"
+        MinHeight="760"
+        MinWidth="1180"
         WindowStartupLocation="CenterOwner">
-    <Grid Margin="15">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="15"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
 
-        <StackPanel Orientation="Horizontal">
-            <Button Content="Добавить" Width="120" Height="36" Margin="0,0,10,0" Click="AddButton_Click"/>
-            <Button Content="Редактировать" Width="140" Height="36" Margin="0,0,10,0" Click="EditButton_Click"/>
-            <Button Content="Включить" Width="120" Height="36" Margin="0,0,10,0" Click="EnableButton_Click"/>
-            <Button Content="Отключить" Width="120" Height="36" Margin="0,0,10,0" Click="DisableButton_Click"/>
-            <Button Content="Удалить" Width="120" Height="36" Margin="0,0,10,0" Click="DeleteButton_Click"/>
-            <Button Content="Обновить" Width="120" Height="36" Click="RefreshButton_Click"/>
-        </StackPanel>
+	<Grid Margin="24">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="18"/>
+			<RowDefinition Height="Auto"/>
+			<RowDefinition Height="18"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
 
-        <DataGrid Grid.Row="2"
-                  x:Name="UsersDataGrid"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  SelectionMode="Single"
-                  SelectionUnit="FullRow">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
-                <DataGridTextColumn Header="Логин" Binding="{Binding Login}" Width="120"/>
-                <DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="220"/>
-                <DataGridTextColumn Header="Роль" Binding="{Binding Role.Name}" Width="150"/>
-                <DataGridTextColumn Header="Филиал" Binding="{Binding Branch.Name}" Width="150"/>
-                <DataGridCheckBoxColumn Header="Активен" Binding="{Binding IsActive}" Width="90"/>
-            </DataGrid.Columns>
-        </DataGrid>
-    </Grid>
+		<!-- Шапка -->
+		<Border Grid.Row="0"
+                Style="{StaticResource CardBorderStyle}">
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="Auto"/>
+				</Grid.ColumnDefinitions>
+
+				<StackPanel>
+					<TextBlock Text="Управление пользователями"
+                               Style="{StaticResource TitleTextStyle}"/>
+
+					<TextBlock Text="Просмотр, добавление, редактирование и управление активностью учетных записей."
+                               Style="{StaticResource BodyTextStyle}"
+                               Margin="0,8,0,0"/>
+				</StackPanel>
+
+				<Border Grid.Column="1"
+                        Background="{StaticResource PrimaryLightBrush}"
+                        BorderBrush="#BFDBFE"
+                        BorderThickness="1"
+                        CornerRadius="14"
+                        Padding="14,8"
+                        VerticalAlignment="Top">
+					<TextBlock Text="Администрирование"
+                               Foreground="{StaticResource PrimaryDarkBrush}"
+                               FontSize="13"
+                               FontWeight="SemiBold"/>
+				</Border>
+			</Grid>
+		</Border>
+
+		<!-- Действия -->
+		<Border Grid.Row="2"
+                Style="{StaticResource CardBorderStyle}">
+			<Grid>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="18"/>
+					<RowDefinition Height="Auto"/>
+				</Grid.RowDefinitions>
+
+				<TextBlock Text="Действия"
+                           Style="{StaticResource SectionTextStyle}"/>
+
+				<WrapPanel Grid.Row="2">
+					<Button Content="Добавить"
+                            Width="130"
+                            Height="42"
+                            Margin="0,0,10,0"
+                            Click="AddButton_Click"/>
+
+					<Button Content="Редактировать"
+                            Width="150"
+                            Height="42"
+                            Margin="0,0,10,0"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="EditButton_Click"/>
+
+					<Button Content="Включить"
+                            Width="130"
+                            Height="42"
+                            Margin="0,0,10,0"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="EnableButton_Click"/>
+
+					<Button Content="Отключить"
+                            Width="130"
+                            Height="42"
+                            Margin="0,0,10,0"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="DisableButton_Click"/>
+
+					<Button Content="Удалить"
+                            Width="130"
+                            Height="42"
+                            Margin="0,0,10,0"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="DeleteButton_Click"/>
+
+					<Button Content="Обновить"
+                            Width="130"
+                            Height="42"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="RefreshButton_Click"/>
+				</WrapPanel>
+			</Grid>
+		</Border>
+
+		<!-- Таблица -->
+		<Border Grid.Row="4"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="18">
+			<DataGrid x:Name="UsersDataGrid"
+                      AutoGenerateColumns="False"
+                      IsReadOnly="True"
+                      SelectionMode="Single"
+                      SelectionUnit="FullRow">
+				<DataGrid.Columns>
+					<DataGridTextColumn Header="ID"
+                                        Binding="{Binding Id}"
+                                        Width="70"/>
+
+					<DataGridTextColumn Header="Логин"
+                                        Binding="{Binding Login}"
+                                        Width="150"/>
+
+					<DataGridTextColumn Header="ФИО"
+                                        Binding="{Binding FullName}"
+                                        Width="260"/>
+
+					<DataGridTextColumn Header="Роль"
+                                        Binding="{Binding Role.Name}"
+                                        Width="180"/>
+
+					<DataGridTextColumn Header="Филиал"
+                                        Binding="{Binding Branch.Name}"
+                                        Width="180"/>
+
+					<DataGridCheckBoxColumn Header="Активен"
+                                            Binding="{Binding IsActive}"
+                                            Width="100"/>
+				</DataGrid.Columns>
+			</DataGrid>
+		</Border>
+	</Grid>
 </Window>

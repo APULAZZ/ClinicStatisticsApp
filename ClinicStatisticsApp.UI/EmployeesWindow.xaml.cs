@@ -23,7 +23,11 @@ namespace ClinicStatisticsApp.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Ошибка загрузки сотрудников", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    ex.ToString(),
+                    "Ошибка загрузки сотрудников",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -51,7 +55,11 @@ namespace ClinicStatisticsApp.UI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.ToString(), "Ошибка добавления сотрудника", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(
+                        ex.ToString(),
+                        "Ошибка добавления сотрудника",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                 }
             }
         }
@@ -60,14 +68,22 @@ namespace ClinicStatisticsApp.UI
         {
             if (EmployeesDataGrid.SelectedItem is not Employee selectedEmployee)
             {
-                MessageBox.Show("Выберите сотрудника.", "Редактирование", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    "Выберите сотрудника.",
+                    "Редактирование",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
                 return;
             }
 
             var employeeFromDb = _employeeService.GetById(selectedEmployee.Id);
             if (employeeFromDb == null)
             {
-                MessageBox.Show("Сотрудник не найден.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    "Сотрудник не найден.",
+                    "Ошибка",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
                 return;
             }
 
@@ -85,7 +101,11 @@ namespace ClinicStatisticsApp.UI
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.ToString(), "Ошибка редактирования сотрудника", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show(
+                        ex.ToString(),
+                        "Ошибка редактирования сотрудника",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Error);
                 }
             }
         }

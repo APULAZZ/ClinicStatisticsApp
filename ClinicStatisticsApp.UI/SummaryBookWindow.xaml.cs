@@ -9,6 +9,7 @@ namespace ClinicStatisticsApp.UI
     public partial class SummaryBookWindow : Window
     {
         private readonly SummaryBookExcelExportService _excelExportService = new SummaryBookExcelExportService();
+        private readonly SummaryBookPdfExportService _pdfExportService = new SummaryBookPdfExportService();
 
         public SummaryBookWindow()
         {
@@ -27,23 +28,42 @@ namespace ClinicStatisticsApp.UI
 
             ExportYearComboBox.SelectedItem = currentYear;
 
-            ExportMonthComboBox.Items.Add(new ComboBoxItem { Content = "Январь", Tag = 1 });
-            ExportMonthComboBox.Items.Add(new ComboBoxItem { Content = "Февраль", Tag = 2 });
-            ExportMonthComboBox.Items.Add(new ComboBoxItem { Content = "Март", Tag = 3 });
-            ExportMonthComboBox.Items.Add(new ComboBoxItem { Content = "Апрель", Tag = 4 });
-            ExportMonthComboBox.Items.Add(new ComboBoxItem { Content = "Май", Tag = 5 });
-            ExportMonthComboBox.Items.Add(new ComboBoxItem { Content = "Июнь", Tag = 6 });
-            ExportMonthComboBox.Items.Add(new ComboBoxItem { Content = "Июль", Tag = 7 });
-            ExportMonthComboBox.Items.Add(new ComboBoxItem { Content = "Август", Tag = 8 });
-            ExportMonthComboBox.Items.Add(new ComboBoxItem { Content = "Сентябрь", Tag = 9 });
-            ExportMonthComboBox.Items.Add(new ComboBoxItem { Content = "Октябрь", Tag = 10 });
-            ExportMonthComboBox.Items.Add(new ComboBoxItem { Content = "Ноябрь", Tag = 11 });
-            ExportMonthComboBox.Items.Add(new ComboBoxItem { Content = "Декабрь", Tag = 12 });
+            ExportMonthComboBox.Items.Add(CreateMonthItem("Январь", 1));
+            ExportMonthComboBox.Items.Add(CreateMonthItem("Февраль", 2));
+            ExportMonthComboBox.Items.Add(CreateMonthItem("Март", 3));
+            ExportMonthComboBox.Items.Add(CreateMonthItem("Апрель", 4));
+            ExportMonthComboBox.Items.Add(CreateMonthItem("Май", 5));
+            ExportMonthComboBox.Items.Add(CreateMonthItem("Июнь", 6));
+            ExportMonthComboBox.Items.Add(CreateMonthItem("Июль", 7));
+            ExportMonthComboBox.Items.Add(CreateMonthItem("Август", 8));
+            ExportMonthComboBox.Items.Add(CreateMonthItem("Сентябрь", 9));
+            ExportMonthComboBox.Items.Add(CreateMonthItem("Октябрь", 10));
+            ExportMonthComboBox.Items.Add(CreateMonthItem("Ноябрь", 11));
+            ExportMonthComboBox.Items.Add(CreateMonthItem("Декабрь", 12));
 
             ExportMonthComboBox.SelectedIndex = DateTime.Now.Month - 1;
         }
 
-        private int ExportYear => (int)(ExportYearComboBox.SelectedItem ?? DateTime.Now.Year);
+        private ComboBoxItem CreateMonthItem(string text, int month)
+        {
+            return new ComboBoxItem
+            {
+                Content = new TextBlock
+                {
+                    Text = text,
+                    TextAlignment = TextAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                },
+                Tag = month,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Center
+            };
+        }
+
+        private int ExportYear => ExportYearComboBox.SelectedItem is int year
+            ? year
+            : DateTime.Now.Year;
 
         private int ExportMonth
         {
@@ -71,11 +91,50 @@ namespace ClinicStatisticsApp.UI
 
                 _excelExportService.ExportMonthlySummaryBook(saveFileDialog.FileName, ExportYear, ExportMonth);
 
-                MessageBox.Show("Сводная книга Excel успешно сохранена.", "Экспорт", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(
+                    "Сводная книга Excel успешно сохранена.",
+                    "Экспорт",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Ошибка экспорта", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    ex.ToString(),
+                    "Ошибка экспорта",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private void ExportPdfButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "PDF files (*.pdf)|*.pdf",
+                    FileName = $"Сводная_книга_{ExportYear}_{ExportMonth:00}.pdf"
+                };
+
+                if (saveFileDialog.ShowDialog() != true)
+                    return;
+
+                _pdfExportService.ExportMonthlySummaryBook(saveFileDialog.FileName, ExportYear, ExportMonth);
+
+                MessageBox.Show(
+                    "Сводная книга PDF успешно сохранена.",
+                    "Экспорт",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.ToString(),
+                    "Ошибка PDF-экспорта",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -161,8 +220,11 @@ namespace ClinicStatisticsApp.UI
 
         private void StubButton_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Этот сводный лист будет подключен следующим этапом.",
-                "Информация", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show(
+                "Этот сводный лист будет подключен следующим этапом.",
+                "Информация",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
     }
 }

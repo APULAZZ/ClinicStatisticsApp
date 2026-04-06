@@ -2,101 +2,224 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Наряд"
-        Height="650"
-        Width="1100"
+        Height="780"
+        Width="1220"
+        MinHeight="780"
+        MinWidth="1220"
         WindowStartupLocation="CenterOwner">
-    <Grid Margin="15">
+
+    <Grid Margin="24">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="15"/>
+            <RowDefinition Height="18"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="15"/>
+            <RowDefinition Height="18"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="15"/>
+            <RowDefinition Height="18"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <StackPanel>
-            <TextBlock Text="Наряд по мотивационной оплате"
-                       FontSize="24"
-                       FontWeight="SemiBold"/>
-            <TextBlock x:Name="HeaderTextBlock"
-                       FontSize="15"
-                       Margin="0,5,0,0"/>
-        </StackPanel>
+        <!-- Шапка -->
+        <Border Grid.Row="0"
+                Style="{StaticResource CardBorderStyle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal">
-            <TextBlock Text="Год:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-            <ComboBox x:Name="YearComboBox" Width="100" Margin="0,0,20,0"/>
+                <StackPanel>
+                    <TextBlock Text="Наряд по мотивационной оплате"
+                               Style="{StaticResource TitleTextStyle}"/>
 
-            <TextBlock Text="Месяц:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-            <ComboBox x:Name="MonthComboBox" Width="140" Margin="0,0,20,0"/>
+                    <TextBlock x:Name="HeaderTextBlock"
+                               Style="{StaticResource BodyTextStyle}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
 
-			<Button Content="Открыть" Width="120" Height="34" Margin="0,0,10,0" Click="OpenButton_Click"/>
-			<Button Content="Сохранить" Width="120" Height="34" Margin="0,0,10,0" Click="SaveButton_Click"/>
-			<Button Content="Экспорт в Excel" Width="150" Height="34" Click="ExportExcelButton_Click"/>
-        </StackPanel>
+                <Border Grid.Column="1"
+                        Background="{StaticResource PrimaryLightBrush}"
+                        BorderBrush="#BFDBFE"
+                        BorderThickness="1"
+                        CornerRadius="14"
+                        Padding="14,8"
+                        VerticalAlignment="Top">
+                    <TextBlock Text="Расчет и экспорт"
+                               Foreground="{StaticResource PrimaryDarkBrush}"
+                               FontSize="13"
+                               FontWeight="SemiBold"/>
+                </Border>
+            </Grid>
+        </Border>
 
-        <DataGrid Grid.Row="4"
-                  x:Name="NaradDataGrid"
-                  AutoGenerateColumns="False"
-                  CanUserAddRows="False"
-                  SelectionMode="Single"
-                  SelectionUnit="FullRow">
-            <DataGrid.Columns>
-                <DataGridCheckBoxColumn Header="Включен"
-                                        Width="90"
-                                        Binding="{Binding IsIncluded, UpdateSourceTrigger=PropertyChanged}"/>
+        <!-- Параметры и действия -->
+        <Border Grid.Row="2"
+                Style="{StaticResource CardBorderStyle}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="20"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-                <DataGridTextColumn Header="Сотрудник"
-                                    Width="250"
-                                    IsReadOnly="True"
-                                    Binding="{Binding EmployeeFullName}"/>
+                <TextBlock Text="Период и действия"
+                           Style="{StaticResource SectionTextStyle}"/>
 
-                <DataGridTextColumn Header="Отправлено СМС"
-                                    Width="130"
-                                    IsReadOnly="True"
-                                    Binding="{Binding SmsSentCount}"/>
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="160"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-                <DataGridTextColumn Header="Оставлено отзывов"
-                                    Width="150"
-                                    IsReadOnly="True"
-                                    Binding="{Binding ReviewsLeftCount}"/>
+                    <StackPanel Grid.Column="0">
+                        <Label Content="Год"/>
+                        <ComboBox x:Name="YearComboBox"
+                                  Width="160"
+                                  Height="40"
+                                  Style="{StaticResource ModernComboBoxStyle}"/>
+                    </StackPanel>
 
-                <DataGridTextColumn Header="Оплата за 1 отзыв"
-                                    Width="160"
-                                    Binding="{Binding PaymentPerReview, UpdateSourceTrigger=PropertyChanged}"/>
+                    <StackPanel Grid.Column="2">
+                        <Label Content="Месяц"/>
+                        <ComboBox x:Name="MonthComboBox"
+                                  Width="160"
+                                  Height="40"
+                                  Style="{StaticResource ModernComboBoxStyle}"/>
+                    </StackPanel>
 
-                <DataGridTextColumn Header="Сумма к оплате"
-                                    Width="150"
-                                    IsReadOnly="True"
-                                    Binding="{Binding TotalPayment}"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                    <Button Grid.Column="4"
+                            Content="Открыть"
+                            Width="140"
+                            Height="42"
+                            Margin="0,30,0,0"
+                            Click="OpenButton_Click"/>
 
-        <StackPanel Grid.Row="6" Orientation="Horizontal" HorizontalAlignment="Right">
-            <TextBlock Text="Итого:"
-                       FontSize="16"
-                       FontWeight="SemiBold"
-                       VerticalAlignment="Center"
-                       Margin="0,0,15,0"/>
+                    <Button Grid.Column="6"
+                            Content="Сохранить"
+                            Width="140"
+                            Height="42"
+                            Margin="0,30,0,0"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="SaveButton_Click"/>
 
-            <TextBlock x:Name="SmsTotalTextBlock"
-                       FontSize="16"
-                       Width="130"
-                       TextAlignment="Center"/>
+                    <Button Grid.Column="8"
+                            Content="Экспорт в Excel"
+                            Width="160"
+                            Height="42"
+                            Margin="0,30,0,0"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="ExportExcelButton_Click"/>
 
-            <TextBlock x:Name="ReviewsTotalTextBlock"
-                       FontSize="16"
-                       Width="150"
-                       TextAlignment="Center"/>
+                    <Button Grid.Column="10"
+                            Content="Экспорт в PDF"
+                            Width="150"
+                            Height="42"
+                            Margin="0,30,0,0"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="ExportPdfButton_Click"/>
+                </Grid>
+            </Grid>
+        </Border>
 
-            <TextBlock Width="160"/>
+        <!-- Таблица -->
+        <Border Grid.Row="4"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="18">
+            <DataGrid x:Name="NaradDataGrid"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      SelectionMode="Single"
+                      SelectionUnit="FullRow"
+                      CellEditEnding="NaradDataGrid_CellEditEnding"
+                      CurrentCellChanged="NaradDataGrid_CurrentCellChanged">
+                <DataGrid.Columns>
+                    <DataGridCheckBoxColumn Header="Включен"
+                                            Width="100"
+                                            Binding="{Binding IsIncluded, UpdateSourceTrigger=PropertyChanged}"/>
 
-            <TextBlock x:Name="PaymentTotalTextBlock"
-                       FontSize="16"
-                       Width="150"
-                       TextAlignment="Center"/>
-        </StackPanel>
+                    <DataGridTextColumn Header="Сотрудник"
+                                        Width="260"
+                                        IsReadOnly="True"
+                                        Binding="{Binding EmployeeFullName}"/>
+
+                    <DataGridTextColumn Header="Отправлено СМС"
+                                        Width="150"
+                                        IsReadOnly="True"
+                                        Binding="{Binding SmsSentCount}"/>
+
+                    <DataGridTextColumn Header="Оставлено отзывов"
+                                        Width="170"
+                                        IsReadOnly="True"
+                                        Binding="{Binding ReviewsLeftCount}"/>
+
+                    <DataGridTextColumn Header="Оплата за 1 отзыв"
+                                        Width="170"
+                                        Binding="{Binding PaymentPerReview, UpdateSourceTrigger=PropertyChanged}"/>
+
+                    <DataGridTextColumn Header="Сумма к оплате"
+                                        Width="170"
+                                        IsReadOnly="True"
+                                        Binding="{Binding TotalPayment}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <!-- Итоги -->
+        <Border Grid.Row="6"
+                Style="{StaticResource CardBorderStyle}">
+            <Grid VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="170"/>
+                    <ColumnDefinition Width="170"/>
+                    <ColumnDefinition Width="170"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="1"
+                           Text="Итого:"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource TextPrimaryBrush}"/>
+
+                <TextBlock x:Name="SmsTotalTextBlock"
+                           Grid.Column="2"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource TextPrimaryBrush}"/>
+
+                <TextBlock x:Name="ReviewsTotalTextBlock"
+                           Grid.Column="3"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource TextPrimaryBrush}"/>
+
+                <TextBlock Grid.Column="4"/>
+
+                <TextBlock x:Name="PaymentTotalTextBlock"
+                           Grid.Column="5"
+                           FontSize="16"
+                           FontWeight="SemiBold"
+                           TextAlignment="Center"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource PrimaryDarkBrush}"/>
+            </Grid>
+        </Border>
     </Grid>
 </Window>

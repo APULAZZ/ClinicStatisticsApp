@@ -18,28 +18,9 @@ namespace ClinicStatisticsApp.UI
             LoadYears();
         }
 
-        private void LoadYears()
-        {
-            var currentYear = DateTime.Now.Year;
-
-            for (int year = currentYear - 7; year <= currentYear + 2; year++)
-            {
-                MainYearComboBox.Items.Add(year);
-
-                var cb = new CheckBox
-                {
-                    Content = year.ToString(),
-                    Margin = new Thickness(0, 0, 10, 5),
-                    IsChecked = year == currentYear - 1 || year == currentYear - 2
-                };
-
-                YearsPanel.Children.Add(cb);
-            }
-
-            MainYearComboBox.SelectedItem = currentYear;
-        }
-
-        private int MainYear => (int)(MainYearComboBox.SelectedItem ?? DateTime.Now.Year);
+        private int MainYear => MainYearComboBox.SelectedItem is int year
+            ? year
+            : DateTime.Now.Year;
 
         private List<int> SelectedOtherYears =>
             YearsPanel.Children
@@ -51,6 +32,30 @@ namespace ClinicStatisticsApp.UI
                 .OrderByDescending(x => x)
                 .ToList();
 
+        private void LoadYears()
+        {
+            var currentYear = DateTime.Now.Year;
+
+            for (int year = currentYear - 7; year <= currentYear + 2; year++)
+            {
+                MainYearComboBox.Items.Add(year);
+
+                var cb = new CheckBox
+                {
+                    Content = year.ToString(),
+                    Margin = new Thickness(0, 0, 14, 8),
+                    IsChecked = year == currentYear - 1 || year == currentYear - 2,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    FontSize = 14,
+                    FontWeight = FontWeights.SemiBold
+                };
+
+                YearsPanel.Children.Add(cb);
+            }
+
+            MainYearComboBox.SelectedItem = currentYear;
+        }
+
         private void BuildButton_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -61,7 +66,11 @@ namespace ClinicStatisticsApp.UI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Ошибка построения", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    ex.ToString(),
+                    "Ошибка построения",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -73,7 +82,8 @@ namespace ClinicStatisticsApp.UI
             {
                 Header = "Филиал",
                 Binding = new Binding("Name"),
-                Width = 220
+                Width = 220,
+                ElementStyle = CreateBranchCellStyle()
             });
 
             ComparativeDataGrid.Columns.Add(CreateMonthColumn("Январь", "January"));
@@ -93,7 +103,8 @@ namespace ClinicStatisticsApp.UI
             {
                 Header = $"Итог {mainYear}",
                 Binding = new Binding("MainYearTotal"),
-                Width = 100
+                Width = 110,
+                ElementStyle = CreateTotalCellStyle()
             });
 
             foreach (var year in otherYears)
@@ -102,7 +113,8 @@ namespace ClinicStatisticsApp.UI
                 {
                     Header = $"Итог {year}",
                     Binding = new Binding($"OtherYearTotals[{year}]"),
-                    Width = 100
+                    Width = 110,
+                    ElementStyle = CreateTotalCellStyle()
                 });
             }
         }
@@ -113,8 +125,36 @@ namespace ClinicStatisticsApp.UI
             {
                 Header = header,
                 Binding = new Binding(bindingPath),
-                Width = 80
+                Width = 90,
+                ElementStyle = CreateCenteredCellStyle()
             };
+        }
+
+        private Style CreateCenteredCellStyle()
+        {
+            var style = new Style(typeof(TextBlock));
+            style.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center));
+            style.Setters.Add(new Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center));
+            style.Setters.Add(new Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center));
+            return style;
+        }
+
+        private Style CreateBranchCellStyle()
+        {
+            var style = new Style(typeof(TextBlock));
+            style.Setters.Add(new Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center));
+            style.Setters.Add(new Setter(TextBlock.FontWeightProperty, FontWeights.SemiBold));
+            return style;
+        }
+
+        private Style CreateTotalCellStyle()
+        {
+            var style = new Style(typeof(TextBlock));
+            style.Setters.Add(new Setter(TextBlock.TextAlignmentProperty, TextAlignment.Center));
+            style.Setters.Add(new Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center));
+            style.Setters.Add(new Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center));
+            style.Setters.Add(new Setter(TextBlock.FontWeightProperty, FontWeights.SemiBold));
+            return style;
         }
     }
 }

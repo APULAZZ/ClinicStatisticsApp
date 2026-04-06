@@ -13,7 +13,7 @@ namespace ClinicStatisticsApp.UI
             InitializeComponent();
 
             KeyDown += LoginWindow_KeyDown;
-            LoginTextBox.Focus();
+            Loaded += (_, _) => LoginTextBox.Focus();
         }
 
         private void LoginWindow_KeyDown(object sender, KeyEventArgs e)
@@ -29,20 +29,36 @@ namespace ClinicStatisticsApp.UI
             PerformLogin();
         }
 
+        private void ShowError(string message)
+        {
+            ErrorTextBlock.Text = message;
+            ErrorTextBlock.Visibility = Visibility.Visible;
+        }
+
+        private void HideError()
+        {
+            ErrorTextBlock.Text = string.Empty;
+            ErrorTextBlock.Visibility = Visibility.Collapsed;
+        }
+
         private void PerformLogin()
         {
+            HideError();
+
             var login = LoginTextBox.Text.Trim();
             var password = UserPasswordBox.Password;
 
             if (string.IsNullOrWhiteSpace(login))
             {
-                MessageBox.Show("Введите логин.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowError("Введите логин.");
+                LoginTextBox.Focus();
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Введите пароль.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ShowError("Введите пароль.");
+                UserPasswordBox.Focus();
                 return;
             }
 
@@ -50,7 +66,8 @@ namespace ClinicStatisticsApp.UI
 
             if (currentUser == null)
             {
-                MessageBox.Show("Неверный логин или пароль.", "Ошибка входа", MessageBoxButton.OK, MessageBoxImage.Error);
+                ShowError("Неверный логин или пароль.");
+                UserPasswordBox.Focus();
                 return;
             }
 

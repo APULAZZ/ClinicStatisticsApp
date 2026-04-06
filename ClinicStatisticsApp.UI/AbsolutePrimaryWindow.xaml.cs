@@ -26,7 +26,9 @@ namespace ClinicStatisticsApp.UI
             YearComboBox.SelectedItem = currentYear;
         }
 
-        private int SelectedYear => (int)(YearComboBox.SelectedItem ?? DateTime.Now.Year);
+        private int SelectedYear => YearComboBox.SelectedItem is int year
+            ? year
+            : DateTime.Now.Year;
 
         private void BuildButton_Click(object sender, RoutedEventArgs e)
         {
@@ -36,14 +38,26 @@ namespace ClinicStatisticsApp.UI
                 AbsolutePrimaryDataGrid.ItemsSource = result.Rows;
 
                 TotalsTextBlock.Text =
-                    $"Итого: Янв={result.Totals.JanuaryTotal}, Фев={result.Totals.FebruaryTotal}, Мар={result.Totals.MarchTotal}, " +
-                    $"Апр={result.Totals.AprilTotal}, Май={result.Totals.MayTotal}, Июн={result.Totals.JuneTotal}, " +
-                    $"Июл={result.Totals.JulyTotal}, Авг={result.Totals.AugustTotal}, Сен={result.Totals.SeptemberTotal}, " +
-                    $"Окт={result.Totals.OctoberTotal}, Ноя={result.Totals.NovemberTotal}, Дек={result.Totals.DecemberTotal}";
+                    $"Янв: {result.Totals.JanuaryTotal}   •   " +
+                    $"Фев: {result.Totals.FebruaryTotal}   •   " +
+                    $"Мар: {result.Totals.MarchTotal}   •   " +
+                    $"Апр: {result.Totals.AprilTotal}   •   " +
+                    $"Май: {result.Totals.MayTotal}   •   " +
+                    $"Июн: {result.Totals.JuneTotal}   •   " +
+                    $"Июл: {result.Totals.JulyTotal}   •   " +
+                    $"Авг: {result.Totals.AugustTotal}   •   " +
+                    $"Сен: {result.Totals.SeptemberTotal}   •   " +
+                    $"Окт: {result.Totals.OctoberTotal}   •   " +
+                    $"Ноя: {result.Totals.NovemberTotal}   •   " +
+                    $"Дек: {result.Totals.DecemberTotal}";
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Ошибка построения", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    ex.ToString(),
+                    "Ошибка построения",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
     }

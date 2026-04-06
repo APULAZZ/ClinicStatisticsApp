@@ -36,20 +36,37 @@ namespace ClinicStatisticsApp.UI
 
             YearComboBox.SelectedItem = currentYear;
 
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Январь", Tag = 1 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Февраль", Tag = 2 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Март", Tag = 3 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Апрель", Tag = 4 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Май", Tag = 5 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Июнь", Tag = 6 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Июль", Tag = 7 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Август", Tag = 8 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Сентябрь", Tag = 9 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Октябрь", Tag = 10 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Ноябрь", Tag = 11 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Декабрь", Tag = 12 });
+            MonthComboBox.Items.Add(CreateMonthItem("Январь", 1));
+            MonthComboBox.Items.Add(CreateMonthItem("Февраль", 2));
+            MonthComboBox.Items.Add(CreateMonthItem("Март", 3));
+            MonthComboBox.Items.Add(CreateMonthItem("Апрель", 4));
+            MonthComboBox.Items.Add(CreateMonthItem("Май", 5));
+            MonthComboBox.Items.Add(CreateMonthItem("Июнь", 6));
+            MonthComboBox.Items.Add(CreateMonthItem("Июль", 7));
+            MonthComboBox.Items.Add(CreateMonthItem("Август", 8));
+            MonthComboBox.Items.Add(CreateMonthItem("Сентябрь", 9));
+            MonthComboBox.Items.Add(CreateMonthItem("Октябрь", 10));
+            MonthComboBox.Items.Add(CreateMonthItem("Ноябрь", 11));
+            MonthComboBox.Items.Add(CreateMonthItem("Декабрь", 12));
 
             MonthComboBox.SelectedIndex = DateTime.Now.Month - 1;
+        }
+
+        private ComboBoxItem CreateMonthItem(string text, int month)
+        {
+            return new ComboBoxItem
+            {
+                Content = new TextBlock
+                {
+                    Text = text,
+                    TextAlignment = TextAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                },
+                Tag = month,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Center
+            };
         }
 
         private void LoadReferenceData()
@@ -60,7 +77,9 @@ namespace ClinicStatisticsApp.UI
             RateColumn.ItemsSource = new object[] { 0.5m, 1.0m };
         }
 
-        private int SelectedYear => (int)(YearComboBox.SelectedItem ?? DateTime.Now.Year);
+        private int SelectedYear => YearComboBox.SelectedItem is int year
+            ? year
+            : DateTime.Now.Year;
 
         private int SelectedMonth
         {
@@ -88,16 +107,20 @@ namespace ClinicStatisticsApp.UI
                 ProfoDataGrid.ItemsSource = _rows;
 
                 TotalsTextBlock.Text =
-                    $"Итого: Пригласили={result.InvitedTotal}, Записались={result.BookedTotal}, Пришли={result.ArrivedTotal}, Премия={result.PremiumTotal:0.##}";
+                    $"Итого: Пригласили = {result.InvitedTotal}, Записались = {result.BookedTotal}, Пришли = {result.ArrivedTotal}, Премия = {result.PremiumTotal:0.##}";
 
                 ConversionTextBlock.Text =
-                    $"Конверсия: Пригласили→Записались = {result.ConversionInvitedToBooked:0.#}% | " +
-                    $"Записались→Пришли = {result.ConversionBookedToArrived:0.#}% | " +
-                    $"Пригласили→Пришли = {result.ConversionInvitedToArrived:0.#}%";
+                    $"Конверсия: Пригласили → Записались = {result.ConversionInvitedToBooked:0.#}%   |   " +
+                    $"Записались → Пришли = {result.ConversionBookedToArrived:0.#}%   |   " +
+                    $"Пригласили → Пришли = {result.ConversionInvitedToArrived:0.#}%";
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Ошибка загрузки", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    ex.ToString(),
+                    "Ошибка загрузки",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -109,11 +132,19 @@ namespace ClinicStatisticsApp.UI
 
                 LoadData();
 
-                MessageBox.Show("Сохранено.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(
+                    "Сохранено.",
+                    "Успех",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Ошибка сохранения", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    ex.ToString(),
+                    "Ошибка сохранения",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
     }

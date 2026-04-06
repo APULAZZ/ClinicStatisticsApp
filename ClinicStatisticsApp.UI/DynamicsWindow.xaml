@@ -2,31 +2,120 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Динамика"
-        Height="1000"
-        Width="1500"
+        Height="1040"
+        Width="1580"
+        MinHeight="980"
+        MinWidth="1380"
         WindowStartupLocation="CenterOwner">
-	<Grid Margin="15">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="15"/>
-			<RowDefinition Height="*"/>
-		</Grid.RowDefinitions>
 
-		<StackPanel>
-			<StackPanel Orientation="Horizontal">
-				<TextBlock Text="Основной год:" VerticalAlignment="Center" Margin="0,0,8,0"/>
-				<ComboBox x:Name="YearComboBox" Width="100" Margin="0,0,20,0"/>
-				<Button Content="Построить" Width="140" Height="34" Click="BuildButton_Click"/>
-			</StackPanel>
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="18"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-			<StackPanel Margin="0,15,0,0">
-				<TextBlock Text="Годы для сравнения:" FontWeight="SemiBold" Margin="0,0,0,8"/>
-				<WrapPanel x:Name="ComparisonYearsPanel"/>
-			</StackPanel>
-		</StackPanel>
+        <!-- Шапка -->
+        <Border Grid.Row="0"
+                Style="{StaticResource CardBorderStyle}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-		<ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
-			<StackPanel x:Name="BlocksPanel"/>
-		</ScrollViewer>
-	</Grid>
+                <StackPanel>
+                    <TextBlock Text="Динамика"
+                               Style="{StaticResource TitleTextStyle}"/>
+
+                    <TextBlock Text="Анализ динамики по филиалам, сотрудникам и сводным сравнительным блокам."
+                               Style="{StaticResource BodyTextStyle}"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+
+                <Border Grid.Column="1"
+                        Background="{StaticResource PrimaryLightBrush}"
+                        BorderBrush="#BFDBFE"
+                        BorderThickness="1"
+                        CornerRadius="14"
+                        Padding="14,8"
+                        VerticalAlignment="Top">
+                    <TextBlock Text="Аналитический отчет"
+                               Foreground="{StaticResource PrimaryDarkBrush}"
+                               FontSize="13"
+                               FontWeight="SemiBold"/>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Параметры -->
+        <Border Grid.Row="2"
+                Style="{StaticResource CardBorderStyle}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="Параметры построения"
+                           Style="{StaticResource SectionTextStyle}"/>
+
+                <!-- Верхняя строка -->
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="180"/>
+                        <ColumnDefinition Width="12"/>
+                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <Label Content="Основной год"/>
+                        <ComboBox x:Name="YearComboBox"
+                                  Width="180"
+                                  Height="40"
+                                  Style="{StaticResource ModernComboBoxStyle}"/>
+                    </StackPanel>
+
+                    <Button Grid.Column="2"
+                            Content="Построить"
+                            Width="140"
+                            Height="42"
+                            Margin="0,30,0,0"
+                            Click="BuildButton_Click"/>
+                </Grid>
+
+                <!-- Годы сравнения -->
+                <StackPanel Grid.Row="4">
+                    <TextBlock Text="Годы для сравнения"
+                               Style="{StaticResource SectionTextStyle}"
+                               FontSize="16"/>
+
+                    <Border Margin="0,10,0,0"
+                            Background="{StaticResource MutedBackgroundBrush}"
+                            BorderBrush="{StaticResource BorderBrushCustom}"
+                            BorderThickness="1"
+                            CornerRadius="14"
+                            Padding="14">
+                        <WrapPanel x:Name="ComparisonYearsPanel"/>
+                    </Border>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Контент -->
+        <Border Grid.Row="4"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="18">
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel x:Name="BlocksPanel"/>
+            </ScrollViewer>
+        </Border>
+    </Grid>
 </Window>

@@ -26,23 +26,42 @@ namespace ClinicStatisticsApp.UI
 
             YearComboBox.SelectedItem = currentYear;
 
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Январь", Tag = 1 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Февраль", Tag = 2 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Март", Tag = 3 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Апрель", Tag = 4 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Май", Tag = 5 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Июнь", Tag = 6 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Июль", Tag = 7 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Август", Tag = 8 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Сентябрь", Tag = 9 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Октябрь", Tag = 10 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Ноябрь", Tag = 11 });
-            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Декабрь", Tag = 12 });
+            MonthComboBox.Items.Add(CreateMonthItem("Январь", 1));
+            MonthComboBox.Items.Add(CreateMonthItem("Февраль", 2));
+            MonthComboBox.Items.Add(CreateMonthItem("Март", 3));
+            MonthComboBox.Items.Add(CreateMonthItem("Апрель", 4));
+            MonthComboBox.Items.Add(CreateMonthItem("Май", 5));
+            MonthComboBox.Items.Add(CreateMonthItem("Июнь", 6));
+            MonthComboBox.Items.Add(CreateMonthItem("Июль", 7));
+            MonthComboBox.Items.Add(CreateMonthItem("Август", 8));
+            MonthComboBox.Items.Add(CreateMonthItem("Сентябрь", 9));
+            MonthComboBox.Items.Add(CreateMonthItem("Октябрь", 10));
+            MonthComboBox.Items.Add(CreateMonthItem("Ноябрь", 11));
+            MonthComboBox.Items.Add(CreateMonthItem("Декабрь", 12));
 
             MonthComboBox.SelectedIndex = DateTime.Now.Month - 1;
         }
 
-        private int SelectedYear => (int)(YearComboBox.SelectedItem ?? DateTime.Now.Year);
+        private ComboBoxItem CreateMonthItem(string text, int month)
+        {
+            return new ComboBoxItem
+            {
+                Content = new TextBlock
+                {
+                    Text = text,
+                    TextAlignment = TextAlignment.Center,
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center
+                },
+                Tag = month,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Center
+            };
+        }
+
+        private int SelectedYear => YearComboBox.SelectedItem is int year
+            ? year
+            : DateTime.Now.Year;
 
         private int SelectedMonth
         {
@@ -65,17 +84,21 @@ namespace ClinicStatisticsApp.UI
                 CallCenterDataGrid.ItemsSource = result.CallCenterRows;
 
                 BranchTotalsTextBlock.Text =
-                    $"Итого по филиалам: Явка={result.BranchAttendanceTotal}, Неявка={result.BranchAbsenceTotal}, Премия={result.BranchPremiumTotal:0.##}";
+                    $"Итого по филиалам: Явка = {result.BranchAttendanceTotal}, Неявка = {result.BranchAbsenceTotal}, Премия = {result.BranchPremiumTotal:0.##}";
 
                 CallCenterTotalsTextBlock.Text =
-                    $"Итого по колл-центру: Явка={result.CallCenterAttendanceTotal}, Неявка={result.CallCenterAbsenceTotal}";
+                    $"Итого по колл-центру: Явка = {result.CallCenterAttendanceTotal}, Неявка = {result.CallCenterAbsenceTotal}";
 
                 SystemTotalsTextBlock.Text =
-                    $"Всего по системе клиник: Явка={result.SystemAttendanceTotal}, Неявка={result.SystemAbsenceTotal}, Премия={result.SystemPremiumTotal:0.##}";
+                    $"Всего по системе клиник: Явка = {result.SystemAttendanceTotal}, Неявка = {result.SystemAbsenceTotal}, Премия = {result.SystemPremiumTotal:0.##}";
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Ошибка построения отчета", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    ex.ToString(),
+                    "Ошибка построения отчета",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
     }
