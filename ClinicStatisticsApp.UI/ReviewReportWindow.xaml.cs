@@ -13,21 +13,29 @@ namespace ClinicStatisticsApp.UI
     public partial class ReviewReportWindow : Window
     {
         private readonly CurrentUserInfo _currentUser;
+        private readonly Window? _previousWindow;
         private readonly ReviewReportService _reviewReportService = new ReviewReportService();
         private readonly CopyEmployeesFromPreviousMonthService _copyService = new CopyEmployeesFromPreviousMonthService();
 
         private ObservableCollection<ReviewEntryViewModel> _items = new();
         public ObservableCollection<Employee> Employees { get; set; } = new();
 
-        public ReviewReportWindow(CurrentUserInfo currentUser)
+        public ReviewReportWindow(CurrentUserInfo currentUser, Window? previousWindow = null)
         {
             InitializeComponent();
 
             _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
+            _previousWindow = previousWindow;
 
             if (_currentUser.BranchId == null)
             {
-                MessageBox.Show("Для текущего пользователя не задан филиал.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    "Для текущего пользователя не задан филиал.",
+                    "Ошибка",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                _previousWindow?.Show();
                 Close();
                 return;
             }
@@ -38,7 +46,9 @@ namespace ClinicStatisticsApp.UI
             SetItemsSource(new ObservableCollection<ReviewEntryViewModel>());
         }
 
-        private int SelectedYear => YearComboBox.SelectedItem is int year ? year : DateTime.Now.Year;
+        private int SelectedYear => YearComboBox.SelectedItem is int year
+            ? year
+            : DateTime.Now.Year;
 
         private int SelectedMonth
         {
@@ -248,11 +258,19 @@ namespace ClinicStatisticsApp.UI
 
                 LoadData();
 
-                MessageBox.Show("Сотрудники скопированы.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(
+                    "Сотрудники скопированы.",
+                    "Успех",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка копирования", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    ex.Message,
+                    "Ошибка копирования",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -274,7 +292,11 @@ namespace ClinicStatisticsApp.UI
                 var invalidRows = _items.Where(i => i.EmployeeId <= 0).ToList();
                 if (invalidRows.Any())
                 {
-                    MessageBox.Show("Во всех строках должен быть выбран сотрудник.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(
+                        "Во всех строках должен быть выбран сотрудник.",
+                        "Ошибка",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
                     return;
                 }
 
@@ -285,7 +307,11 @@ namespace ClinicStatisticsApp.UI
 
                 if (duplicateEmployees.Any())
                 {
-                    MessageBox.Show("Один и тот же сотрудник не может повторяться в блоке ОТЗЫВЫ.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(
+                        "Один и тот же сотрудник не может повторяться в блоке ОТЗЫВЫ.",
+                        "Ошибка",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
                     return;
                 }
 
@@ -296,13 +322,21 @@ namespace ClinicStatisticsApp.UI
                     _currentUser.UserId,
                     _items.ToList());
 
-                MessageBox.Show("Данные сохранены.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(
+                    "Данные сохранены.",
+                    "Успех",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
 
                 LoadData();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка сохранения", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    ex.Message,
+                    "Ошибка сохранения",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -327,6 +361,16 @@ namespace ClinicStatisticsApp.UI
             }
 
             RecalculateTotals();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            if (_previousWindow != null && !_previousWindow.IsVisible)
+            {
+                _previousWindow.Show();
+            }
         }
 
         private void RecalculateTotals()
