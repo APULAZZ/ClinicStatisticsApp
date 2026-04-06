@@ -13,17 +13,19 @@ namespace ClinicStatisticsApp.UI
     public partial class PerkReportWindow : Window
     {
         private readonly CurrentUserInfo _currentUser;
+        private readonly Window? _previousWindow;
         private readonly PerkReportService _perkReportService = new PerkReportService();
         private readonly CopyEmployeesFromPreviousMonthService _copyService = new CopyEmployeesFromPreviousMonthService();
 
         private ObservableCollection<PerkEntryViewModel> _items = new();
         public ObservableCollection<Employee> Employees { get; set; } = new();
 
-        public PerkReportWindow(CurrentUserInfo currentUser)
+        public PerkReportWindow(CurrentUserInfo currentUser, Window? previousWindow = null)
         {
             InitializeComponent();
 
             _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
+            _previousWindow = previousWindow;
 
             if (_currentUser.BranchId == null)
             {
@@ -33,6 +35,7 @@ namespace ClinicStatisticsApp.UI
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
 
+                _previousWindow?.Show();
                 Close();
                 return;
             }
@@ -359,6 +362,22 @@ namespace ClinicStatisticsApp.UI
             }
 
             RecalculateTotals();
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            _previousWindow?.Show();
+            Close();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            if (_previousWindow != null && !_previousWindow.IsVisible)
+            {
+                _previousWindow.Show();
+            }
         }
 
         private void RecalculateTotals()

@@ -79,37 +79,20 @@ namespace ClinicStatisticsApp.UI
 
             YearComboBox.SelectedItem = currentYear;
 
-            MonthComboBox.Items.Add(CreateMonthItem("Январь", 1));
-            MonthComboBox.Items.Add(CreateMonthItem("Февраль", 2));
-            MonthComboBox.Items.Add(CreateMonthItem("Март", 3));
-            MonthComboBox.Items.Add(CreateMonthItem("Апрель", 4));
-            MonthComboBox.Items.Add(CreateMonthItem("Май", 5));
-            MonthComboBox.Items.Add(CreateMonthItem("Июнь", 6));
-            MonthComboBox.Items.Add(CreateMonthItem("Июль", 7));
-            MonthComboBox.Items.Add(CreateMonthItem("Август", 8));
-            MonthComboBox.Items.Add(CreateMonthItem("Сентябрь", 9));
-            MonthComboBox.Items.Add(CreateMonthItem("Октябрь", 10));
-            MonthComboBox.Items.Add(CreateMonthItem("Ноябрь", 11));
-            MonthComboBox.Items.Add(CreateMonthItem("Декабрь", 12));
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Январь", Tag = 1 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Февраль", Tag = 2 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Март", Tag = 3 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Апрель", Tag = 4 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Май", Tag = 5 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Июнь", Tag = 6 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Июль", Tag = 7 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Август", Tag = 8 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Сентябрь", Tag = 9 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Октябрь", Tag = 10 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Ноябрь", Tag = 11 });
+            MonthComboBox.Items.Add(new ComboBoxItem { Content = "Декабрь", Tag = 12 });
 
             MonthComboBox.SelectedIndex = DateTime.Now.Month - 1;
-        }
-
-        private ComboBoxItem CreateMonthItem(string text, int month)
-        {
-            return new ComboBoxItem
-            {
-                Content = new TextBlock
-                {
-                    Text = text,
-                    TextAlignment = TextAlignment.Center,
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center
-                },
-                Tag = month,
-                HorizontalContentAlignment = HorizontalAlignment.Center,
-                VerticalContentAlignment = VerticalAlignment.Center
-            };
         }
 
         private void PeriodChanged(object sender, SelectionChangedEventArgs e)
@@ -312,33 +295,33 @@ namespace ClinicStatisticsApp.UI
         private void PerkButton_Click(object sender, RoutedEventArgs e)
         {
             var userContext = CloneUserWithSelectedBranch();
-            var window = new PerkReportWindow(userContext) { Owner = this };
-            window.ShowDialog();
-            UpdateStatus();
+            var window = new PerkReportWindow(userContext, this);
+            Hide();
+            window.Show();
         }
 
         private void ProfiButton_Click(object sender, RoutedEventArgs e)
         {
             var userContext = CloneUserWithSelectedBranch();
-            var window = new ProfiReportWindow(userContext) { Owner = this };
-            window.ShowDialog();
-            UpdateStatus();
+            var window = new ProfiReportWindow(userContext, this);
+            Hide();
+            window.Show();
         }
 
         private void HoursButton_Click(object sender, RoutedEventArgs e)
         {
             var userContext = CloneUserWithSelectedBranch();
-            var window = new HoursReportWindow(userContext) { Owner = this };
-            window.ShowDialog();
-            UpdateStatus();
+            var window = new HoursReportWindow(userContext, this);
+            Hide();
+            window.Show();
         }
 
         private void ReviewsButton_Click(object sender, RoutedEventArgs e)
         {
             var userContext = CloneUserWithSelectedBranch();
-            var window = new ReviewReportWindow(userContext) { Owner = this };
-            window.ShowDialog();
-            UpdateStatus();
+            var window = new ReviewReportWindow(userContext, this);
+            Hide();
+            window.Show();
         }
 
         private CurrentUserInfo CloneUserWithSelectedBranch()
