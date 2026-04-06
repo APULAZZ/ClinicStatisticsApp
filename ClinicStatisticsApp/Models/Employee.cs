@@ -9,7 +9,13 @@ namespace ClinicStatisticsApp.Models
         public string FullName { get; set; } = string.Empty;
         public bool IsActive { get; set; }
         public bool IsCallCenter { get; set; }
+
         public decimal? DefaultReviewPaymentRate { get; set; }
+
+        public decimal? DefaultProfoRate { get; set; }
+        public int? DefaultProfoCategoryId { get; set; }
+        public ProfoCategory? DefaultProfoCategory { get; set; }
+
         public string? Comment { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }

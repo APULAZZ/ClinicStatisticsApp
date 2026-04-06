@@ -27,8 +27,9 @@ namespace ClinicStatisticsApp.Services
             var profiEntries = db.ProfiEntries
                 .AsNoTracking()
                 .Include(x => x.BranchReport)
-                .ThenInclude(x => x.Branch)
+                    .ThenInclude(x => x.Branch)
                 .Include(x => x.Employee)
+                    .ThenInclude(x => x.DefaultProfoCategory)
                 .Where(x => x.BranchReport!.Year == year && x.BranchReport.Month == month)
                 .ToList();
 
@@ -52,10 +53,14 @@ namespace ClinicStatisticsApp.Services
                         m.BranchId == x.BranchReport!.BranchId &&
                         m.EmployeeId == x.EmployeeId);
 
+                    var effectiveRate = manual?.Rate ?? x.Employee?.DefaultProfoRate;
+                    var effectiveCategoryId = manual?.ProfoCategoryId ?? x.Employee?.DefaultProfoCategoryId;
+                    var effectiveCategory = categories.FirstOrDefault(c => c.Id == effectiveCategoryId);
+
                     var premium = CalculatePremium(
                         x.ArrivedCount,
-                        manual?.Rate,
-                        categories.FirstOrDefault(c => c.Id == manual?.ProfoCategoryId));
+                        effectiveRate,
+                        effectiveCategory);
 
                     return new SummaryProfoRowViewModel
                     {
@@ -63,12 +68,12 @@ namespace ClinicStatisticsApp.Services
                         BranchName = x.BranchReport.Branch!.Name,
                         EmployeeId = x.EmployeeId,
                         EmployeeFullName = x.Employee!.FullName,
-                        Rate = manual?.Rate,
+                        Rate = effectiveRate,
                         InvitedCount = x.InvitedCount,
                         BookedCount = x.BookedCount,
                         ArrivedCount = x.ArrivedCount,
-                        ProfoCategoryId = manual?.ProfoCategoryId,
-                        ProfoCategoryName = manual?.ProfoCategory?.Name,
+                        ProfoCategoryId = effectiveCategoryId,
+                        ProfoCategoryName = effectiveCategory?.Name,
                         Premium = premium
                     };
                 })

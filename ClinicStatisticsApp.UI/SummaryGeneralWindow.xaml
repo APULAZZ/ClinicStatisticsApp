@@ -8,6 +8,19 @@
         MinWidth="1380"
         WindowStartupLocation="CenterOwner">
 
+    <Window.Resources>
+        <Style x:Key="CenteredCellStyle" TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="LeftCellStyle" TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -105,27 +118,47 @@
                               FrozenColumnCount="2"
                               ScrollViewer.HorizontalScrollBarVisibility="Auto"
                               RowHeight="26"
-                              ColumnHeaderHeight="37"
+                              ColumnHeaderHeight="34"
                               FontSize="12"
                               GridLinesVisibility="All"
                               HorizontalGridLinesBrush="#E5E7EB"
                               VerticalGridLinesBrush="#E5E7EB">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Padding" Value="6,2"/>
+                                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            </Style>
+
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Padding" Value="8,5"/>
+                                <Setter Property="FontSize" Value="11"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Height" Value="34"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="BorderBrush" Value="#D1D5DB"/>
+                                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                            </Style>
+                        </DataGrid.Resources>
+
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="№" Binding="{Binding Number}" Width="50"/>
-                            <DataGridTextColumn Header="Сотрудник" Binding="{Binding EmployeeFullName}" Width="220"/>
-                            <DataGridTextColumn Header="Явка" Binding="{Binding AttendanceTotal}" Width="75"/>
-                            <DataGridTextColumn Header="Неявка" Binding="{Binding AbsenceTotal}" Width="75"/>
-                            <DataGridTextColumn Header="Всего" Binding="{Binding GrandTotal}" Width="75"/>
-                            <DataGridTextColumn Header="ЦК" Binding="{Binding Ck}" Width="65"/>
-                            <DataGridTextColumn Header="Комфорт" Binding="{Binding Comfort}" Width="75"/>
-                            <DataGridTextColumn Header="Баграмяна" Binding="{Binding Bagramyana}" Width="90"/>
-                            <DataGridTextColumn Header="Детство" Binding="{Binding Detstvo}" Width="75"/>
-                            <DataGridTextColumn Header="Генделя" Binding="{Binding Gendelya}" Width="75"/>
-                            <DataGridTextColumn Header="Виктория" Binding="{Binding Viktoriya}" Width="75"/>
-                            <DataGridTextColumn Header="Альфа" Binding="{Binding Alfa}" Width="65"/>
-                            <DataGridTextColumn Header="Регион" Binding="{Binding Region}" Width="75"/>
-                            <DataGridTextColumn Header="Артиллерийская" Binding="{Binding Artilleriyskaya}" Width="105"/>
-                            <DataGridTextColumn Header="Сельма" Binding="{Binding Selma}" Width="65"/>
+                            <DataGridTextColumn Header="№" Binding="{Binding Number}" Width="50" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Сотрудник" Binding="{Binding EmployeeFullName}" Width="220" ElementStyle="{StaticResource LeftCellStyle}"/>
+                            <DataGridTextColumn Header="Явка" Binding="{Binding AttendanceTotal}" Width="75" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Неявка" Binding="{Binding AbsenceTotal}" Width="75" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Всего" Binding="{Binding GrandTotal}" Width="75" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="ЦК" Binding="{Binding Ck}" Width="65" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Комфорт" Binding="{Binding Comfort}" Width="75" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Баграмяна" Binding="{Binding Bagramyana}" Width="90" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Детство" Binding="{Binding Detstvo}" Width="75" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Генделя" Binding="{Binding Gendelya}" Width="75" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Виктория" Binding="{Binding Viktoriya}" Width="75" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Альфа" Binding="{Binding Alfa}" Width="65" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Регион" Binding="{Binding Region}" Width="75" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Артиллерийская" Binding="{Binding Artilleriyskaya}" Width="105" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Сельма" Binding="{Binding Selma}" Width="65" ElementStyle="{StaticResource CenteredCellStyle}"/>
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -154,27 +187,47 @@
                               FrozenColumnCount="2"
                               ScrollViewer.HorizontalScrollBarVisibility="Auto"
                               RowHeight="26"
-                              ColumnHeaderHeight="37"
+                              ColumnHeaderHeight="34"
                               FontSize="12"
                               GridLinesVisibility="All"
                               HorizontalGridLinesBrush="#E5E7EB"
                               VerticalGridLinesBrush="#E5E7EB">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Padding" Value="6,2"/>
+                                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            </Style>
+
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Padding" Value="8,5"/>
+                                <Setter Property="FontSize" Value="11"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Height" Value="34"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="BorderBrush" Value="#D1D5DB"/>
+                                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                            </Style>
+                        </DataGrid.Resources>
+
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="№" Binding="{Binding Number}" Width="50"/>
-                            <DataGridTextColumn Header="Сотрудник" Binding="{Binding EmployeeFullName}" Width="220"/>
-                            <DataGridTextColumn Header="Явка" Binding="{Binding AttendanceTotal}" Width="75"/>
-                            <DataGridTextColumn Header="Неявка" Binding="{Binding AbsenceTotal}" Width="75"/>
-                            <DataGridTextColumn Header="Всего" Binding="{Binding GrandTotal}" Width="75"/>
-                            <DataGridTextColumn Header="ЦК" Binding="{Binding Ck}" Width="65"/>
-                            <DataGridTextColumn Header="Комфорт" Binding="{Binding Comfort}" Width="75"/>
-                            <DataGridTextColumn Header="Баграмяна" Binding="{Binding Bagramyana}" Width="90"/>
-                            <DataGridTextColumn Header="Детство" Binding="{Binding Detstvo}" Width="75"/>
-                            <DataGridTextColumn Header="Генделя" Binding="{Binding Gendelya}" Width="75"/>
-                            <DataGridTextColumn Header="Виктория" Binding="{Binding Viktoriya}" Width="75"/>
-                            <DataGridTextColumn Header="Альфа" Binding="{Binding Alfa}" Width="65"/>
-                            <DataGridTextColumn Header="Регион" Binding="{Binding Region}" Width="75"/>
-                            <DataGridTextColumn Header="Артиллерийская" Binding="{Binding Artilleriyskaya}" Width="105"/>
-                            <DataGridTextColumn Header="Сельма" Binding="{Binding Selma}" Width="65"/>
+                            <DataGridTextColumn Header="№" Binding="{Binding Number}" Width="50" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Сотрудник" Binding="{Binding EmployeeFullName}" Width="220" ElementStyle="{StaticResource LeftCellStyle}"/>
+                            <DataGridTextColumn Header="Явка" Binding="{Binding AttendanceTotal}" Width="75" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Неявка" Binding="{Binding AbsenceTotal}" Width="75" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Всего" Binding="{Binding GrandTotal}" Width="75" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="ЦК" Binding="{Binding Ck}" Width="65" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Комфорт" Binding="{Binding Comfort}" Width="75" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Баграмяна" Binding="{Binding Bagramyana}" Width="90" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Детство" Binding="{Binding Detstvo}" Width="75" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Генделя" Binding="{Binding Gendelya}" Width="75" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Виктория" Binding="{Binding Viktoriya}" Width="75" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Альфа" Binding="{Binding Alfa}" Width="65" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Регион" Binding="{Binding Region}" Width="75" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Артиллерийская" Binding="{Binding Artilleriyskaya}" Width="105" ElementStyle="{StaticResource CenteredCellStyle}"/>
+                            <DataGridTextColumn Header="Сельма" Binding="{Binding Selma}" Width="65" ElementStyle="{StaticResource CenteredCellStyle}"/>
                         </DataGrid.Columns>
                     </DataGrid>
 

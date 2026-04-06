@@ -8,6 +8,19 @@
         MinWidth="1200"
         WindowStartupLocation="CenterOwner">
 
+    <Window.Resources>
+        <Style x:Key="CenteredCellStyle" TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="LeftCellStyle" TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -110,18 +123,56 @@
                               IsReadOnly="True"
                               Margin="0,0,0,8"
                               RowHeight="26"
-                              ColumnHeaderHeight="37"
-                              
+                              ColumnHeaderHeight="34"
                               FontSize="12"
                               GridLinesVisibility="All"
                               HorizontalGridLinesBrush="#E5E7EB"
                               VerticalGridLinesBrush="#E5E7EB">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Padding" Value="6,2"/>
+                                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            </Style>
+
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Padding" Value="8,5"/>
+                                <Setter Property="FontSize" Value="11"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Height" Value="34"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="BorderBrush" Value="#D1D5DB"/>
+                                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                            </Style>
+                        </DataGrid.Resources>
+
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Филиал" Binding="{Binding BranchName}" Width="160"/>
-                            <DataGridTextColumn Header="Администратор" Binding="{Binding EmployeeFullName}" Width="240"/>
-                            <DataGridTextColumn Header="Явка" Binding="{Binding AttendanceCount}" Width="90"/>
-                            <DataGridTextColumn Header="Неявка" Binding="{Binding AbsenceCount}" Width="90"/>
-                            <DataGridTextColumn Header="Премия" Binding="{Binding Premium}" Width="110"/>
+                            <DataGridTextColumn Header="Филиал"
+                                                Binding="{Binding BranchName}"
+                                                Width="160"
+                                                ElementStyle="{StaticResource LeftCellStyle}"/>
+
+                            <DataGridTextColumn Header="Администратор"
+                                                Binding="{Binding EmployeeFullName}"
+                                                Width="240"
+                                                ElementStyle="{StaticResource LeftCellStyle}"/>
+
+                            <DataGridTextColumn Header="Явка"
+                                                Binding="{Binding AttendanceCount}"
+                                                Width="90"
+                                                ElementStyle="{StaticResource CenteredCellStyle}"/>
+
+                            <DataGridTextColumn Header="Неявка"
+                                                Binding="{Binding AbsenceCount}"
+                                                Width="90"
+                                                ElementStyle="{StaticResource CenteredCellStyle}"/>
+
+                            <DataGridTextColumn Header="Премия"
+                                                Binding="{Binding Premium}"
+                                                Width="110"
+                                                ElementStyle="{StaticResource CenteredCellStyle}"/>
                         </DataGrid.Columns>
                     </DataGrid>
 
@@ -148,17 +199,56 @@
                               IsReadOnly="True"
                               Margin="0,0,0,8"
                               RowHeight="26"
-                              ColumnHeaderHeight="37"
+                              ColumnHeaderHeight="34"
                               FontSize="12"
                               GridLinesVisibility="All"
                               HorizontalGridLinesBrush="#E5E7EB"
                               VerticalGridLinesBrush="#E5E7EB">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Padding" Value="6,2"/>
+                                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                                <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                            </Style>
+
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Padding" Value="8,5"/>
+                                <Setter Property="FontSize" Value="11"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                <Setter Property="Height" Value="34"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                                <Setter Property="BorderBrush" Value="#D1D5DB"/>
+                                <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                            </Style>
+                        </DataGrid.Resources>
+
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Филиал" Binding="{Binding BranchName}" Width="160"/>
-                            <DataGridTextColumn Header="Оператор" Binding="{Binding EmployeeFullName}" Width="240"/>
-                            <DataGridTextColumn Header="Явка" Binding="{Binding AttendanceCount}" Width="90"/>
-                            <DataGridTextColumn Header="Неявка" Binding="{Binding AbsenceCount}" Width="90"/>
-                            <DataGridTextColumn Header="Премия" Binding="{Binding Premium}" Width="110"/>
+                            <DataGridTextColumn Header="Филиал"
+                                                Binding="{Binding BranchName}"
+                                                Width="160"
+                                                ElementStyle="{StaticResource LeftCellStyle}"/>
+
+                            <DataGridTextColumn Header="Оператор"
+                                                Binding="{Binding EmployeeFullName}"
+                                                Width="240"
+                                                ElementStyle="{StaticResource LeftCellStyle}"/>
+
+                            <DataGridTextColumn Header="Явка"
+                                                Binding="{Binding AttendanceCount}"
+                                                Width="90"
+                                                ElementStyle="{StaticResource CenteredCellStyle}"/>
+
+                            <DataGridTextColumn Header="Неявка"
+                                                Binding="{Binding AbsenceCount}"
+                                                Width="90"
+                                                ElementStyle="{StaticResource CenteredCellStyle}"/>
+
+                            <DataGridTextColumn Header="Премия"
+                                                Binding="{Binding Premium}"
+                                                Width="110"
+                                                ElementStyle="{StaticResource CenteredCellStyle}"/>
                         </DataGrid.Columns>
                     </DataGrid>
 

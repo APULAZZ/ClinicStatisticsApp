@@ -2,10 +2,10 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Сотрудник"
-        Height="600"
-        Width="540"
-        MinHeight="600"
-        MinWidth="540"
+        Height="700"
+        Width="560"
+        MinHeight="700"
+        MinWidth="560"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize">
 
@@ -28,6 +28,10 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="10"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="12"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="14"/>
@@ -39,7 +43,7 @@
                                FontSize="18"/>
 
                     <TextBlock Grid.Row="2"
-                               Text="Данные сотрудника и параметры мотивации"
+                               Text="Данные сотрудника, параметры мотивации и профосмотров"
                                Style="{StaticResource BodyTextStyle}"
                                FontSize="12"/>
 
@@ -93,7 +97,35 @@
                                  Margin="0"/>
                     </StackPanel>
 
-                    <StackPanel Grid.Row="10">
+                    <Grid Grid.Row="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <Label Content="Ставка профосмотров"/>
+                            <ComboBox x:Name="DefaultProfoRateComboBox"
+                                      Height="36"
+                                      FontSize="13"
+                                      Style="{StaticResource ModernComboBoxStyle}"
+                                      Margin="0"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <Label Content="Категория профосмотров"/>
+                            <ComboBox x:Name="DefaultProfoCategoryComboBox"
+                                      Height="36"
+                                      FontSize="13"
+                                      DisplayMemberPath="Name"
+                                      SelectedValuePath="Id"
+                                      Style="{StaticResource ModernComboBoxStyle}"
+                                      Margin="0"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <StackPanel Grid.Row="12">
                         <Label Content="Комментарий"/>
                         <TextBox x:Name="CommentTextBox"
                                  Height="100"
@@ -105,13 +137,13 @@
                     </StackPanel>
 
                     <TextBlock x:Name="ErrorTextBlock"
-                               Grid.Row="12"
+                               Grid.Row="14"
                                Visibility="Collapsed"
                                Foreground="{StaticResource DangerBrush}"
                                FontSize="12"
                                TextWrapping="Wrap"/>
 
-                    <Grid Grid.Row="14">
+                    <Grid Grid.Row="18">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="100"/>

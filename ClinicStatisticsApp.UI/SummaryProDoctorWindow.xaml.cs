@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
 namespace ClinicStatisticsApp.UI
@@ -65,10 +66,10 @@ namespace ClinicStatisticsApp.UI
             BlocksPanel.Children.Add(new TextBlock
             {
                 Text = $"Отзывы ПроДокторов за {SelectedYear} год",
-                FontSize = 24,
+                FontSize = 20,
                 FontWeight = FontWeights.SemiBold,
                 Foreground = CreateBrush("#1F2937"),
-                Margin = new Thickness(0, 0, 0, 18)
+                Margin = new Thickness(0, 0, 0, 10)
             });
 
             foreach (var block in _currentResult.BranchBlocks)
@@ -76,11 +77,11 @@ namespace ClinicStatisticsApp.UI
                 var border = new Border
                 {
                     Background = Brushes.White,
-                    CornerRadius = new CornerRadius(16),
+                    CornerRadius = new CornerRadius(12),
                     BorderBrush = CreateBrush("#E5E7EB"),
                     BorderThickness = new Thickness(1),
-                    Padding = new Thickness(18),
-                    Margin = new Thickness(0, 0, 0, 16)
+                    Padding = new Thickness(12),
+                    Margin = new Thickness(0, 0, 0, 10)
                 };
 
                 var stack = new StackPanel();
@@ -88,55 +89,74 @@ namespace ClinicStatisticsApp.UI
                 stack.Children.Add(new TextBlock
                 {
                     Text = block.BranchName,
-                    FontSize = 22,
+                    FontSize = 18,
                     FontWeight = FontWeights.SemiBold,
                     Foreground = CreateBrush("#1F2937"),
-                    Margin = new Thickness(0, 0, 0, 12)
+                    Margin = new Thickness(0, 0, 0, 8)
                 });
 
                 var grid = new DataGrid
                 {
                     AutoGenerateColumns = false,
                     IsReadOnly = true,
-                    Height = 230,
+                    Height = 210,
                     ItemsSource = block.Employees,
-                    Margin = new Thickness(0, 0, 0, 12),
+                    Margin = new Thickness(0, 0, 0, 8),
                     VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
                     HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
-                    FrozenColumnCount = 1
+                    FrozenColumnCount = 1,
+                    RowHeight = 24,
+                    ColumnHeaderHeight = 28,
+                    FontSize = 11,
+                    GridLinesVisibility = DataGridGridLinesVisibility.All,
+                    HorizontalGridLinesBrush = CreateBrush("#E5E7EB"),
+                    VerticalGridLinesBrush = CreateBrush("#E5E7EB")
                 };
 
                 grid.SetValue(ScrollViewer.CanContentScrollProperty, false);
                 grid.PreviewMouseWheel += InnerDataGrid_PreviewMouseWheel;
 
-                grid.Columns.Add(CreateBranchColumn("Администратор", "EmployeeFullName", 220));
-                grid.Columns.Add(CreateCenteredColumn("Янв", "January", 60));
-                grid.Columns.Add(CreateCenteredColumn("Фев", "February", 60));
-                grid.Columns.Add(CreateCenteredColumn("Мар", "March", 60));
-                grid.Columns.Add(CreateCenteredColumn("Апр", "April", 60));
-                grid.Columns.Add(CreateCenteredColumn("Май", "May", 60));
-                grid.Columns.Add(CreateCenteredColumn("Июн", "June", 60));
-                grid.Columns.Add(CreateCenteredColumn("Июл", "July", 60));
-                grid.Columns.Add(CreateCenteredColumn("Авг", "August", 60));
-                grid.Columns.Add(CreateCenteredColumn("Сен", "September", 60));
-                grid.Columns.Add(CreateCenteredColumn("Окт", "October", 60));
-                grid.Columns.Add(CreateCenteredColumn("Ноя", "November", 60));
-                grid.Columns.Add(CreateCenteredColumn("Дек", "December", 60));
+                grid.Resources.Add(typeof(DataGridCell), CreateCompactCellStyle());
+                grid.Resources.Add(typeof(DataGridColumnHeader), CreateCompactHeaderStyle());
+
+                grid.Columns.Add(CreateBranchColumn("Администратор", "EmployeeFullName", 210));
+                grid.Columns.Add(CreateCenteredColumn("Янв", "January", 54));
+                grid.Columns.Add(CreateCenteredColumn("Фев", "February", 54));
+                grid.Columns.Add(CreateCenteredColumn("Мар", "March", 54));
+                grid.Columns.Add(CreateCenteredColumn("Апр", "April", 54));
+                grid.Columns.Add(CreateCenteredColumn("Май", "May", 54));
+                grid.Columns.Add(CreateCenteredColumn("Июн", "June", 54));
+                grid.Columns.Add(CreateCenteredColumn("Июл", "July", 54));
+                grid.Columns.Add(CreateCenteredColumn("Авг", "August", 54));
+                grid.Columns.Add(CreateCenteredColumn("Сен", "September", 54));
+                grid.Columns.Add(CreateCenteredColumn("Окт", "October", 54));
+                grid.Columns.Add(CreateCenteredColumn("Ноя", "November", 54));
+                grid.Columns.Add(CreateCenteredColumn("Дек", "December", 54));
 
                 stack.Children.Add(grid);
 
+                var qrPanelBorder = new Border
+                {
+                    Background = CreateBrush("#F8FAFC"),
+                    BorderBrush = CreateBrush("#E5E7EB"),
+                    BorderThickness = new Thickness(1),
+                    CornerRadius = new CornerRadius(10),
+                    Padding = new Thickness(10),
+                    Margin = new Thickness(0, 0, 0, 8)
+                };
+
                 var qrPanel = new StackPanel
                 {
-                    Orientation = Orientation.Horizontal,
-                    Margin = new Thickness(0, 0, 0, 12)
+                    Orientation = Orientation.Horizontal
                 };
 
                 qrPanel.Children.Add(new TextBlock
                 {
-                    Text = "QR-код:",
-                    Width = 100,
+                    Text = "QR:",
+                    Width = 55,
                     VerticalAlignment = VerticalAlignment.Center,
                     FontWeight = FontWeights.SemiBold,
+                    FontSize = 12,
                     Foreground = CreateBrush("#1F2937")
                 });
 
@@ -161,21 +181,23 @@ namespace ClinicStatisticsApp.UI
                     qrPanel.Children.Add(box);
                 }
 
-                stack.Children.Add(qrPanel);
+                qrPanelBorder.Child = qrPanel;
+                stack.Children.Add(qrPanelBorder);
 
                 stack.Children.Add(new Border
                 {
                     Background = CreateBrush("#F8FAFC"),
                     BorderBrush = CreateBrush("#E5E7EB"),
                     BorderThickness = new Thickness(1),
-                    CornerRadius = new CornerRadius(12),
-                    Padding = new Thickness(14),
+                    CornerRadius = new CornerRadius(10),
+                    Padding = new Thickness(10),
                     Child = new TextBlock
                     {
                         Text =
                             $"Итого: Янв={block.TotalJanuary}, Фев={block.TotalFebruary}, Мар={block.TotalMarch}, Апр={block.TotalApril}, Май={block.TotalMay}, Июн={block.TotalJune}, " +
                             $"Июл={block.TotalJuly}, Авг={block.TotalAugust}, Сен={block.TotalSeptember}, Окт={block.TotalOctober}, Ноя={block.TotalNovember}, Дек={block.TotalDecember}",
                         FontWeight = FontWeights.SemiBold,
+                        FontSize = 12,
                         Foreground = CreateBrush("#1D4ED8"),
                         TextWrapping = TextWrapping.Wrap
                     }
@@ -192,9 +214,9 @@ namespace ClinicStatisticsApp.UI
                 Background = CreateBrush("#EFF6FF"),
                 BorderBrush = CreateBrush("#BFDBFE"),
                 BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(14),
-                Padding = new Thickness(16),
-                Margin = new Thickness(0, 8, 0, 0),
+                CornerRadius = new CornerRadius(12),
+                Padding = new Thickness(12),
+                Margin = new Thickness(0, 6, 0, 0),
                 Child = new TextBlock
                 {
                     Text =
@@ -202,7 +224,7 @@ namespace ClinicStatisticsApp.UI
                         $"Апр={_currentResult.GrandTotalApril}, Май={_currentResult.GrandTotalMay}, Июн={_currentResult.GrandTotalJune}, " +
                         $"Июл={_currentResult.GrandTotalJuly}, Авг={_currentResult.GrandTotalAugust}, Сен={_currentResult.GrandTotalSeptember}, " +
                         $"Окт={_currentResult.GrandTotalOctober}, Ноя={_currentResult.GrandTotalNovember}, Дек={_currentResult.GrandTotalDecember}",
-                    FontSize = 17,
+                    FontSize = 13,
                     FontWeight = FontWeights.SemiBold,
                     Foreground = CreateBrush("#1D4ED8"),
                     TextWrapping = TextWrapping.Wrap
@@ -214,12 +236,14 @@ namespace ClinicStatisticsApp.UI
         {
             return new TextBox
             {
-                Width = 56,
-                Height = 36,
+                Width = 48,
+                Height = 28,
                 Margin = new Thickness(2, 0, 2, 0),
                 Text = value.ToString(),
+                FontSize = 11,
                 VerticalContentAlignment = VerticalAlignment.Center,
-                HorizontalContentAlignment = HorizontalAlignment.Center
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                Padding = new Thickness(4, 0, 4, 0)
             };
         }
 
@@ -336,6 +360,30 @@ namespace ClinicStatisticsApp.UI
             style.Setters.Add(new Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center));
             style.Setters.Add(new Setter(TextBlock.FontWeightProperty, FontWeights.SemiBold));
             style.Setters.Add(new Setter(TextBlock.ForegroundProperty, CreateBrush("#1F2937")));
+            return style;
+        }
+
+        private Style CreateCompactCellStyle()
+        {
+            var style = new Style(typeof(DataGridCell));
+            style.Setters.Add(new Setter(Control.PaddingProperty, new Thickness(4, 2, 4, 2)));
+            style.Setters.Add(new Setter(Control.BorderThicknessProperty, new Thickness(0, 0, 1, 1)));
+            style.Setters.Add(new Setter(Control.BorderBrushProperty, CreateBrush("#E5E7EB")));
+            style.Setters.Add(new Setter(Control.VerticalContentAlignmentProperty, VerticalAlignment.Center));
+            return style;
+        }
+
+        private Style CreateCompactHeaderStyle()
+        {
+            var style = new Style(typeof(DataGridColumnHeader));
+            style.Setters.Add(new Setter(Control.PaddingProperty, new Thickness(6, 4, 6, 4)));
+            style.Setters.Add(new Setter(Control.FontSizeProperty, 11.0));
+            style.Setters.Add(new Setter(Control.FontWeightProperty, FontWeights.SemiBold));
+            style.Setters.Add(new Setter(FrameworkElement.HeightProperty, 28.0));
+            style.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
+            style.Setters.Add(new Setter(Control.VerticalContentAlignmentProperty, VerticalAlignment.Center));
+            style.Setters.Add(new Setter(Control.BorderBrushProperty, CreateBrush("#D1D5DB")));
+            style.Setters.Add(new Setter(Control.BorderThicknessProperty, new Thickness(0, 0, 1, 1)));
             return style;
         }
 

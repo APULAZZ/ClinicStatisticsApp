@@ -2,305 +2,192 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Статистика абсолютных первичных"
-        Height="920"
+        Height="860"
         Width="1780"
-        MinHeight="920"
+        MinHeight="860"
         MinWidth="1500"
         WindowStartupLocation="CenterOwner">
 
-	<Window.Resources>
-		<Style x:Key="CenteredCellTextStyle" TargetType="TextBlock">
-			<Setter Property="TextAlignment" Value="Center"/>
-			<Setter Property="VerticalAlignment" Value="Center"/>
-			<Setter Property="HorizontalAlignment" Value="Center"/>
-		</Style>
+    <Window.Resources>
+        <Style x:Key="CenteredCellTextStyle" TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
 
-		<Style x:Key="BranchCellTextStyle" TargetType="TextBlock">
-			<Setter Property="VerticalAlignment" Value="Center"/>
-			<Setter Property="FontWeight" Value="SemiBold"/>
-			<Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
-		</Style>
+        <Style x:Key="BranchCellTextStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        </Style>
 
-		<Style x:Key="TotalCellTextStyle" TargetType="TextBlock" BasedOn="{StaticResource CenteredCellTextStyle}">
-			<Setter Property="FontWeight" Value="SemiBold"/>
-			<Setter Property="Foreground" Value="{StaticResource PrimaryDarkBrush}"/>
-		</Style>
-	</Window.Resources>
+        <Style x:Key="TotalCellTextStyle" TargetType="TextBlock" BasedOn="{StaticResource CenteredCellTextStyle}">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryDarkBrush}"/>
+        </Style>
+    </Window.Resources>
 
-	<Grid Margin="24">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="18"/>
-			<RowDefinition Height="Auto"/>
-			<RowDefinition Height="18"/>
-			<RowDefinition Height="*"/>
-			<RowDefinition Height="18"/>
-			<RowDefinition Height="Auto"/>
-		</Grid.RowDefinitions>
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="6"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="6"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="6"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-		<!-- Шапка -->
-		<Border Grid.Row="0"
-                Style="{StaticResource CardBorderStyle}">
-			<Grid>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="Auto"/>
-				</Grid.ColumnDefinitions>
+        <Border Grid.Row="0"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
 
-				<StackPanel>
-					<TextBlock Text="Статистика абсолютных первичных"
-                               Style="{StaticResource TitleTextStyle}"/>
+                <StackPanel>
+                    <TextBlock Text="Статистика абсолютных первичных"
+                               Style="{StaticResource TitleTextStyle}"
+                               FontSize="18"/>
 
-					<TextBlock Text="Сводная статистика по филиалам, помесячно с разделением на филиал, коллцентр и итог."
+                    <TextBlock Text="Помесячная сводка по филиалам: филиал, колл-центр и итог."
                                Style="{StaticResource BodyTextStyle}"
-                               Margin="0,8,0,0"/>
-				</StackPanel>
+                               Margin="0,2,0,0"
+                               FontSize="11"/>
+                </StackPanel>
 
-				<Border Grid.Column="1"
+                <Border Grid.Column="1"
                         Background="{StaticResource PrimaryLightBrush}"
                         BorderBrush="#BFDBFE"
                         BorderThickness="1"
-                        CornerRadius="14"
-                        Padding="14,8"
+                        CornerRadius="8"
+                        Padding="8,4"
                         VerticalAlignment="Top">
-					<TextBlock Text="Аналитический отчет"
+                    <TextBlock Text="Аналитический отчет"
                                Foreground="{StaticResource PrimaryDarkBrush}"
-                               FontSize="13"
+                               FontSize="10"
                                FontWeight="SemiBold"/>
-				</Border>
-			</Grid>
-		</Border>
+                </Border>
+            </Grid>
+        </Border>
 
-		<!-- Параметры -->
-		<Border Grid.Row="2"
-                Style="{StaticResource CardBorderStyle}">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="18"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
-
-				<TextBlock Text="Параметры построения"
-                           Style="{StaticResource SectionTextStyle}"/>
-
-				<Grid Grid.Row="2">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="160"/>
-						<ColumnDefinition Width="12"/>
-						<ColumnDefinition Width="140"/>
-						<ColumnDefinition Width="*"/>
-					</Grid.ColumnDefinitions>
-
-					<StackPanel Grid.Column="0">
-						<Label Content="Год"/>
-						<ComboBox x:Name="YearComboBox"
-                                  Width="160"
-                                  Height="40"
-                                  Style="{StaticResource ModernComboBoxStyle}"/>
-					</StackPanel>
-
-					<Button Grid.Column="2"
-                            Content="Построить"
-                            Width="140"
-                            Height="42"
-                            Margin="0,30,0,0"
-                            Click="BuildButton_Click"/>
-				</Grid>
-			</Grid>
-		</Border>
-
-		<!-- Таблица -->
-		<Border Grid.Row="4"
+        <Border Grid.Row="2"
                 Style="{StaticResource CardBorderStyle}"
-                Padding="18">
-			<DataGrid x:Name="AbsolutePrimaryDataGrid"
+                Padding="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="130"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0">
+                    <Label Content="Год"/>
+                    <ComboBox x:Name="YearComboBox"
+                              Width="130"
+                              Height="30"
+                              FontSize="12"
+                              Style="{StaticResource ModernComboBoxStyle}"/>
+                </StackPanel>
+
+                <Button Grid.Column="2"
+                        Content="Построить"
+                        Width="110"
+                        Height="32"
+                        Margin="0,24,0,0"
+                        FontSize="12"
+                        Click="BuildButton_Click"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="4"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="8">
+            <DataGrid x:Name="AbsolutePrimaryDataGrid"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
                       FrozenColumnCount="1"
+                      RowHeight="26"
+                      ColumnHeaderHeight="32"
+                      FontSize="12"
                       ScrollViewer.CanContentScroll="True"
                       ScrollViewer.HorizontalScrollBarVisibility="Auto"
                       ScrollViewer.VerticalScrollBarVisibility="Auto"
-                      RowHeight="34">
-				<DataGrid.Columns>
-					<DataGridTextColumn Header="Филиал"
-                                        Binding="{Binding BranchName}"
-                                        Width="170"
-                                        ElementStyle="{StaticResource BranchCellTextStyle}"/>
+                      GridLinesVisibility="All"
+                      HorizontalGridLinesBrush="#E5E7EB"
+                      VerticalGridLinesBrush="#E5E7EB">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Филиал" Binding="{Binding BranchName}" Width="160" ElementStyle="{StaticResource BranchCellTextStyle}"/>
 
-					<DataGridTextColumn Header="Янв ФЛ"
-                                        Binding="{Binding JanuaryBranch}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Янв КЦ"
-                                        Binding="{Binding JanuaryCallCenter}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Янв Итого"
-                                        Binding="{Binding JanuaryTotal}"
-                                        Width="95"
-                                        ElementStyle="{StaticResource TotalCellTextStyle}"/>
+                    <DataGridTextColumn Header="Янв ФЛ" Binding="{Binding JanuaryBranch}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Янв КЦ" Binding="{Binding JanuaryCallCenter}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Янв Итого" Binding="{Binding JanuaryTotal}" Width="85" ElementStyle="{StaticResource TotalCellTextStyle}"/>
 
-					<DataGridTextColumn Header="Фев ФЛ"
-                                        Binding="{Binding FebruaryBranch}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Фев КЦ"
-                                        Binding="{Binding FebruaryCallCenter}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Фев Итого"
-                                        Binding="{Binding FebruaryTotal}"
-                                        Width="95"
-                                        ElementStyle="{StaticResource TotalCellTextStyle}"/>
+                    <DataGridTextColumn Header="Фев ФЛ" Binding="{Binding FebruaryBranch}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Фев КЦ" Binding="{Binding FebruaryCallCenter}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Фев Итого" Binding="{Binding FebruaryTotal}" Width="85" ElementStyle="{StaticResource TotalCellTextStyle}"/>
 
-					<DataGridTextColumn Header="Мар ФЛ"
-                                        Binding="{Binding MarchBranch}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Мар КЦ"
-                                        Binding="{Binding MarchCallCenter}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Мар Итого"
-                                        Binding="{Binding MarchTotal}"
-                                        Width="95"
-                                        ElementStyle="{StaticResource TotalCellTextStyle}"/>
+                    <DataGridTextColumn Header="Мар ФЛ" Binding="{Binding MarchBranch}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Мар КЦ" Binding="{Binding MarchCallCenter}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Мар Итого" Binding="{Binding MarchTotal}" Width="85" ElementStyle="{StaticResource TotalCellTextStyle}"/>
 
-					<DataGridTextColumn Header="Апр ФЛ"
-                                        Binding="{Binding AprilBranch}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Апр КЦ"
-                                        Binding="{Binding AprilCallCenter}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Апр Итого"
-                                        Binding="{Binding AprilTotal}"
-                                        Width="95"
-                                        ElementStyle="{StaticResource TotalCellTextStyle}"/>
+                    <DataGridTextColumn Header="Апр ФЛ" Binding="{Binding AprilBranch}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Апр КЦ" Binding="{Binding AprilCallCenter}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Апр Итого" Binding="{Binding AprilTotal}" Width="85" ElementStyle="{StaticResource TotalCellTextStyle}"/>
 
-					<DataGridTextColumn Header="Май ФЛ"
-                                        Binding="{Binding MayBranch}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Май КЦ"
-                                        Binding="{Binding MayCallCenter}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Май Итого"
-                                        Binding="{Binding MayTotal}"
-                                        Width="95"
-                                        ElementStyle="{StaticResource TotalCellTextStyle}"/>
+                    <DataGridTextColumn Header="Май ФЛ" Binding="{Binding MayBranch}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Май КЦ" Binding="{Binding MayCallCenter}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Май Итого" Binding="{Binding MayTotal}" Width="85" ElementStyle="{StaticResource TotalCellTextStyle}"/>
 
-					<DataGridTextColumn Header="Июн ФЛ"
-                                        Binding="{Binding JuneBranch}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Июн КЦ"
-                                        Binding="{Binding JuneCallCenter}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Июн Итого"
-                                        Binding="{Binding JuneTotal}"
-                                        Width="95"
-                                        ElementStyle="{StaticResource TotalCellTextStyle}"/>
+                    <DataGridTextColumn Header="Июн ФЛ" Binding="{Binding JuneBranch}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Июн КЦ" Binding="{Binding JuneCallCenter}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Июн Итого" Binding="{Binding JuneTotal}" Width="85" ElementStyle="{StaticResource TotalCellTextStyle}"/>
 
-					<DataGridTextColumn Header="Июл ФЛ"
-                                        Binding="{Binding JulyBranch}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Июл КЦ"
-                                        Binding="{Binding JulyCallCenter}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Июл Итого"
-                                        Binding="{Binding JulyTotal}"
-                                        Width="95"
-                                        ElementStyle="{StaticResource TotalCellTextStyle}"/>
+                    <DataGridTextColumn Header="Июл ФЛ" Binding="{Binding JulyBranch}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Июл КЦ" Binding="{Binding JulyCallCenter}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Июл Итого" Binding="{Binding JulyTotal}" Width="85" ElementStyle="{StaticResource TotalCellTextStyle}"/>
 
-					<DataGridTextColumn Header="Авг ФЛ"
-                                        Binding="{Binding AugustBranch}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Авг КЦ"
-                                        Binding="{Binding AugustCallCenter}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Авг Итого"
-                                        Binding="{Binding AugustTotal}"
-                                        Width="95"
-                                        ElementStyle="{StaticResource TotalCellTextStyle}"/>
+                    <DataGridTextColumn Header="Авг ФЛ" Binding="{Binding AugustBranch}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Авг КЦ" Binding="{Binding AugustCallCenter}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Авг Итого" Binding="{Binding AugustTotal}" Width="85" ElementStyle="{StaticResource TotalCellTextStyle}"/>
 
-					<DataGridTextColumn Header="Сен ФЛ"
-                                        Binding="{Binding SeptemberBranch}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Сен КЦ"
-                                        Binding="{Binding SeptemberCallCenter}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Сен Итого"
-                                        Binding="{Binding SeptemberTotal}"
-                                        Width="95"
-                                        ElementStyle="{StaticResource TotalCellTextStyle}"/>
+                    <DataGridTextColumn Header="Сен ФЛ" Binding="{Binding SeptemberBranch}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Сен КЦ" Binding="{Binding SeptemberCallCenter}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Сен Итого" Binding="{Binding SeptemberTotal}" Width="85" ElementStyle="{StaticResource TotalCellTextStyle}"/>
 
-					<DataGridTextColumn Header="Окт ФЛ"
-                                        Binding="{Binding OctoberBranch}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Окт КЦ"
-                                        Binding="{Binding OctoberCallCenter}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Окт Итого"
-                                        Binding="{Binding OctoberTotal}"
-                                        Width="95"
-                                        ElementStyle="{StaticResource TotalCellTextStyle}"/>
+                    <DataGridTextColumn Header="Окт ФЛ" Binding="{Binding OctoberBranch}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Окт КЦ" Binding="{Binding OctoberCallCenter}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Окт Итого" Binding="{Binding OctoberTotal}" Width="85" ElementStyle="{StaticResource TotalCellTextStyle}"/>
 
-					<DataGridTextColumn Header="Ноя ФЛ"
-                                        Binding="{Binding NovemberBranch}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Ноя КЦ"
-                                        Binding="{Binding NovemberCallCenter}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Ноя Итого"
-                                        Binding="{Binding NovemberTotal}"
-                                        Width="95"
-                                        ElementStyle="{StaticResource TotalCellTextStyle}"/>
+                    <DataGridTextColumn Header="Ноя ФЛ" Binding="{Binding NovemberBranch}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Ноя КЦ" Binding="{Binding NovemberCallCenter}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Ноя Итого" Binding="{Binding NovemberTotal}" Width="85" ElementStyle="{StaticResource TotalCellTextStyle}"/>
 
-					<DataGridTextColumn Header="Дек ФЛ"
-                                        Binding="{Binding DecemberBranch}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Дек КЦ"
-                                        Binding="{Binding DecemberCallCenter}"
-                                        Width="80"
-                                        ElementStyle="{StaticResource CenteredCellTextStyle}"/>
-					<DataGridTextColumn Header="Дек Итого"
-                                        Binding="{Binding DecemberTotal}"
-                                        Width="95"
-                                        ElementStyle="{StaticResource TotalCellTextStyle}"/>
-				</DataGrid.Columns>
-			</DataGrid>
-		</Border>
+                    <DataGridTextColumn Header="Дек ФЛ" Binding="{Binding DecemberBranch}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Дек КЦ" Binding="{Binding DecemberCallCenter}" Width="75" ElementStyle="{StaticResource CenteredCellTextStyle}"/>
+                    <DataGridTextColumn Header="Дек Итого" Binding="{Binding DecemberTotal}" Width="85" ElementStyle="{StaticResource TotalCellTextStyle}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
 
-		<!-- Итоги -->
-		<Border Grid.Row="6"
-                Style="{StaticResource CardBorderStyle}">
-			<StackPanel>
-				<TextBlock Text="Суммарные итоги по месяцам"
-                           Style="{StaticResource SectionTextStyle}"/>
+        <Border Grid.Row="6"
+                Style="{StaticResource CardBorderStyle}"
+                Padding="10">
+            <StackPanel>
+                <TextBlock Text="Суммарные итоги по месяцам"
+                           Style="{StaticResource SectionTextStyle}"
+                           FontSize="15"/>
 
-				<TextBlock x:Name="TotalsTextBlock"
-                           Margin="0,10,0,0"
-                           FontSize="15"
+                <TextBlock x:Name="TotalsTextBlock"
+                           Margin="0,6,0,0"
+                           FontSize="13"
                            FontWeight="SemiBold"
                            Foreground="{StaticResource PrimaryDarkBrush}"
                            TextWrapping="Wrap"/>
-			</StackPanel>
-		</Border>
-	</Grid>
+            </StackPanel>
+        </Border>
+    </Grid>
 </Window>

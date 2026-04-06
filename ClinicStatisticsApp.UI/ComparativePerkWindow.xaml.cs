@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 
 namespace ClinicStatisticsApp.UI
@@ -43,10 +44,10 @@ namespace ClinicStatisticsApp.UI
                 var cb = new CheckBox
                 {
                     Content = year.ToString(),
-                    Margin = new Thickness(0, 0, 14, 8),
+                    Margin = new Thickness(0, 0, 12, 6),
                     IsChecked = year == currentYear - 1 || year == currentYear - 2,
                     VerticalAlignment = VerticalAlignment.Center,
-                    FontSize = 14,
+                    FontSize = 13,
                     FontWeight = FontWeights.SemiBold
                 };
 
@@ -77,33 +78,44 @@ namespace ClinicStatisticsApp.UI
         private void BuildGridColumns(List<int> otherYears, int mainYear)
         {
             ComparativeDataGrid.Columns.Clear();
+            ComparativeDataGrid.Resources.Clear();
+
+            ComparativeDataGrid.RowHeight = 26;
+            ComparativeDataGrid.ColumnHeaderHeight = 32;
+            ComparativeDataGrid.FontSize = 12;
+            ComparativeDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.All;
+            ComparativeDataGrid.HorizontalGridLinesBrush = CreateBrush("#E5E7EB");
+            ComparativeDataGrid.VerticalGridLinesBrush = CreateBrush("#E5E7EB");
+
+            ComparativeDataGrid.Resources.Add(typeof(DataGridCell), CreateCompactCellStyle());
+            ComparativeDataGrid.Resources.Add(typeof(DataGridColumnHeader), CreateCompactHeaderStyle());
 
             ComparativeDataGrid.Columns.Add(new DataGridTextColumn
             {
                 Header = "Филиал",
                 Binding = new Binding("Name"),
-                Width = 220,
+                Width = 210,
                 ElementStyle = CreateBranchCellStyle()
             });
 
-            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Январь", "January"));
-            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Февраль", "February"));
-            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Март", "March"));
-            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Апрель", "April"));
+            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Янв", "January"));
+            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Фев", "February"));
+            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Мар", "March"));
+            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Апр", "April"));
             ComparativeDataGrid.Columns.Add(CreateMonthColumn("Май", "May"));
-            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Июнь", "June"));
-            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Июль", "July"));
-            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Август", "August"));
-            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Сентябрь", "September"));
-            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Октябрь", "October"));
-            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Ноябрь", "November"));
-            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Декабрь", "December"));
+            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Июн", "June"));
+            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Июл", "July"));
+            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Авг", "August"));
+            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Сен", "September"));
+            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Окт", "October"));
+            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Ноя", "November"));
+            ComparativeDataGrid.Columns.Add(CreateMonthColumn("Дек", "December"));
 
             ComparativeDataGrid.Columns.Add(new DataGridTextColumn
             {
                 Header = $"Итог {mainYear}",
                 Binding = new Binding("MainYearTotal"),
-                Width = 110,
+                Width = 90,
                 ElementStyle = CreateTotalCellStyle()
             });
 
@@ -113,7 +125,7 @@ namespace ClinicStatisticsApp.UI
                 {
                     Header = $"Итог {year}",
                     Binding = new Binding($"OtherYearTotals[{year}]"),
-                    Width = 110,
+                    Width = 90,
                     ElementStyle = CreateTotalCellStyle()
                 });
             }
@@ -125,7 +137,7 @@ namespace ClinicStatisticsApp.UI
             {
                 Header = header,
                 Binding = new Binding(bindingPath),
-                Width = 90,
+                Width = 64,
                 ElementStyle = CreateCenteredCellStyle()
             };
         }
@@ -144,6 +156,7 @@ namespace ClinicStatisticsApp.UI
             var style = new Style(typeof(TextBlock));
             style.Setters.Add(new Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center));
             style.Setters.Add(new Setter(TextBlock.FontWeightProperty, FontWeights.SemiBold));
+            style.Setters.Add(new Setter(TextBlock.ForegroundProperty, CreateBrush("#1F2937")));
             return style;
         }
 
@@ -154,7 +167,37 @@ namespace ClinicStatisticsApp.UI
             style.Setters.Add(new Setter(TextBlock.HorizontalAlignmentProperty, HorizontalAlignment.Center));
             style.Setters.Add(new Setter(TextBlock.VerticalAlignmentProperty, VerticalAlignment.Center));
             style.Setters.Add(new Setter(TextBlock.FontWeightProperty, FontWeights.SemiBold));
+            style.Setters.Add(new Setter(TextBlock.ForegroundProperty, CreateBrush("#1D4ED8")));
             return style;
+        }
+
+        private Style CreateCompactCellStyle()
+        {
+            var style = new Style(typeof(DataGridCell));
+            style.Setters.Add(new Setter(Control.PaddingProperty, new Thickness(4, 2, 4, 2)));
+            style.Setters.Add(new Setter(Control.BorderThicknessProperty, new Thickness(0, 0, 1, 1)));
+            style.Setters.Add(new Setter(Control.BorderBrushProperty, CreateBrush("#E5E7EB")));
+            style.Setters.Add(new Setter(Control.VerticalContentAlignmentProperty, VerticalAlignment.Center));
+            return style;
+        }
+
+        private Style CreateCompactHeaderStyle()
+        {
+            var style = new Style(typeof(DataGridColumnHeader));
+            style.Setters.Add(new Setter(Control.PaddingProperty, new Thickness(6, 4, 6, 4)));
+            style.Setters.Add(new Setter(Control.FontSizeProperty, 11.0));
+            style.Setters.Add(new Setter(Control.FontWeightProperty, FontWeights.SemiBold));
+            style.Setters.Add(new Setter(FrameworkElement.HeightProperty, 32.0));
+            style.Setters.Add(new Setter(Control.HorizontalContentAlignmentProperty, HorizontalAlignment.Center));
+            style.Setters.Add(new Setter(Control.VerticalContentAlignmentProperty, VerticalAlignment.Center));
+            style.Setters.Add(new Setter(Control.BorderBrushProperty, CreateBrush("#D1D5DB")));
+            style.Setters.Add(new Setter(Control.BorderThicknessProperty, new Thickness(0, 0, 1, 1)));
+            return style;
+        }
+
+        private System.Windows.Media.SolidColorBrush CreateBrush(string hex)
+        {
+            return (System.Windows.Media.SolidColorBrush)new System.Windows.Media.BrushConverter().ConvertFromString(hex)!;
         }
     }
 }

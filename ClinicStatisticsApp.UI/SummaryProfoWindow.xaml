@@ -8,6 +8,19 @@
         MinWidth="1320"
         WindowStartupLocation="CenterOwner">
 
+    <Window.Resources>
+        <Style x:Key="CenteredCellStyle" TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style x:Key="LeftCellStyle" TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+
     <Grid Margin="12">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -111,28 +124,79 @@
                       ScrollViewer.HorizontalScrollBarVisibility="Auto"
                       ScrollViewer.VerticalScrollBarVisibility="Auto"
                       RowHeight="26"
-                      ColumnHeaderHeight="37"
+                      ColumnHeaderHeight="34"
                       FontSize="12"
                       GridLinesVisibility="All"
                       HorizontalGridLinesBrush="#E5E7EB"
                       VerticalGridLinesBrush="#E5E7EB">
+                <DataGrid.Resources>
+                    <Style TargetType="DataGridCell">
+                        <Setter Property="Padding" Value="6,2"/>
+                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                        <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    </Style>
+
+                    <Style TargetType="DataGridColumnHeader">
+                        <Setter Property="Padding" Value="8,5"/>
+                        <Setter Property="FontSize" Value="11"/>
+                        <Setter Property="FontWeight" Value="SemiBold"/>
+                        <Setter Property="Height" Value="34"/>
+                        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                        <Setter Property="VerticalContentAlignment" Value="Center"/>
+                        <Setter Property="BorderBrush" Value="#D1D5DB"/>
+                        <Setter Property="BorderThickness" Value="0,0,1,1"/>
+                    </Style>
+                </DataGrid.Resources>
+
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Филиал" Binding="{Binding BranchName}" Width="140" IsReadOnly="True"/>
-                    <DataGridTextColumn Header="Администратор" Binding="{Binding EmployeeFullName}" Width="220" IsReadOnly="True"/>
+                    <DataGridTextColumn Header="Филиал"
+                                        Binding="{Binding BranchName}"
+                                        Width="140"
+                                        IsReadOnly="True"
+                                        ElementStyle="{StaticResource LeftCellStyle}"/>
+
+                    <DataGridTextColumn Header="Администратор"
+                                        Binding="{Binding EmployeeFullName}"
+                                        Width="220"
+                                        IsReadOnly="True"
+                                        ElementStyle="{StaticResource LeftCellStyle}"/>
+
                     <DataGridComboBoxColumn Header="Ставка"
                                             Width="90"
                                             SelectedItemBinding="{Binding Rate, UpdateSourceTrigger=PropertyChanged}"
                                             x:Name="RateColumn"/>
-                    <DataGridTextColumn Header="Пригласили" Binding="{Binding InvitedCount}" Width="100" IsReadOnly="True"/>
-                    <DataGridTextColumn Header="Записались" Binding="{Binding BookedCount}" Width="100" IsReadOnly="True"/>
-                    <DataGridTextColumn Header="Пришли" Binding="{Binding ArrivedCount}" Width="100" IsReadOnly="True"/>
+
+                    <DataGridTextColumn Header="Пригласили"
+                                        Binding="{Binding InvitedCount}"
+                                        Width="100"
+                                        IsReadOnly="True"
+                                        ElementStyle="{StaticResource CenteredCellStyle}"/>
+
+                    <DataGridTextColumn Header="Записались"
+                                        Binding="{Binding BookedCount}"
+                                        Width="100"
+                                        IsReadOnly="True"
+                                        ElementStyle="{StaticResource CenteredCellStyle}"/>
+
+                    <DataGridTextColumn Header="Пришли"
+                                        Binding="{Binding ArrivedCount}"
+                                        Width="100"
+                                        IsReadOnly="True"
+                                        ElementStyle="{StaticResource CenteredCellStyle}"/>
+
                     <DataGridComboBoxColumn Header="Категория"
                                             Width="180"
                                             SelectedValueBinding="{Binding ProfoCategoryId, UpdateSourceTrigger=PropertyChanged}"
                                             SelectedValuePath="Id"
                                             DisplayMemberPath="Name"
                                             x:Name="CategoryColumn"/>
-                    <DataGridTextColumn Header="Премия" Binding="{Binding Premium}" Width="110" IsReadOnly="True"/>
+
+                    <DataGridTextColumn Header="Премия"
+                                        Binding="{Binding Premium}"
+                                        Width="110"
+                                        IsReadOnly="True"
+                                        ElementStyle="{StaticResource CenteredCellStyle}"/>
                 </DataGrid.Columns>
             </DataGrid>
         </Border>
