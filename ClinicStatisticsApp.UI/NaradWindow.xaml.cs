@@ -14,21 +14,29 @@ namespace ClinicStatisticsApp.UI
     public partial class NaradWindow : Window
     {
         private readonly CurrentUserInfo _currentUser;
+        private readonly Window? _previousWindow;
         private readonly NaradService _naradService = new NaradService();
         private readonly NaradExcelExportService _excelExportService = new NaradExcelExportService();
         private readonly NaradPdfExportService _pdfExportService = new NaradPdfExportService();
 
         private ObservableCollection<NaradEntryViewModel> _items = new();
 
-        public NaradWindow(CurrentUserInfo currentUser)
+        public NaradWindow(CurrentUserInfo currentUser, Window? previousWindow = null)
         {
             InitializeComponent();
 
             _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
+            _previousWindow = previousWindow;
 
             if (_currentUser.BranchId == null)
             {
-                MessageBox.Show("Для текущего пользователя не задан филиал.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    "Для текущего пользователя не задан филиал.",
+                    "Ошибка",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Warning);
+
+                _previousWindow?.Show();
                 Close();
                 return;
             }
@@ -217,13 +225,21 @@ namespace ClinicStatisticsApp.UI
                     SelectedMonth,
                     _items.ToList());
 
-                MessageBox.Show("Наряд сохранен.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(
+                    "Наряд сохранен.",
+                    "Успех",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
 
                 LoadData();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Ошибка сохранения", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    ex.Message,
+                    "Ошибка сохранения",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -247,11 +263,19 @@ namespace ClinicStatisticsApp.UI
                     SelectedMonth,
                     _items.ToList());
 
-                MessageBox.Show("Файл Excel успешно сохранен.", "Экспорт", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(
+                    "Файл Excel успешно сохранен.",
+                    "Экспорт",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Ошибка экспорта", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    ex.ToString(),
+                    "Ошибка экспорта",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -275,11 +299,19 @@ namespace ClinicStatisticsApp.UI
                     SelectedMonth,
                     _items.ToList());
 
-                MessageBox.Show("PDF-файл успешно сохранен.", "Экспорт", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(
+                    "PDF-файл успешно сохранен.",
+                    "Экспорт",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Ошибка PDF-экспорта", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    ex.ToString(),
+                    "Ошибка PDF-экспорта",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -300,6 +332,22 @@ namespace ClinicStatisticsApp.UI
             SmsTotalTextBlock.Text = included.Sum(x => x.SmsSentCount).ToString();
             ReviewsTotalTextBlock.Text = included.Sum(x => x.ReviewsLeftCount).ToString();
             PaymentTotalTextBlock.Text = included.Sum(x => x.TotalPayment).ToString("0.##");
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
+            _previousWindow?.Show();
+            Close();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+
+            if (_previousWindow != null && !_previousWindow.IsVisible)
+            {
+                _previousWindow.Show();
+            }
         }
     }
 }

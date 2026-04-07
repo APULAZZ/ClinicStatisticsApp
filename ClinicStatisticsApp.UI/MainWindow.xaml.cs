@@ -123,12 +123,9 @@ namespace ClinicStatisticsApp.UI
         {
             if (_currentUser.RoleCode == "BranchUser")
             {
-                var window = new NaradWindow(_currentUser)
-                {
-                    Owner = this
-                };
-
-                window.ShowDialog();
+                var window = new NaradWindow(_currentUser, this);
+                Hide();
+                window.Show();
                 return;
             }
 
@@ -152,12 +149,9 @@ namespace ClinicStatisticsApp.UI
                         BranchName = selectBranchWindow.SelectedBranch.Name
                     };
 
-                    var window = new NaradWindow(contextUser)
-                    {
-                        Owner = this
-                    };
-
-                    window.ShowDialog();
+                    var window = new NaradWindow(contextUser, this);
+                    Hide();
+                    window.Show();
                 }
 
                 return;

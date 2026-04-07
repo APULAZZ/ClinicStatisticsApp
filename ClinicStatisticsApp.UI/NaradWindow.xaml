@@ -6,7 +6,8 @@
         Width="1220"
         MinHeight="700"
         MinWidth="1220"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource PageBackgroundSoftBrush}">
 
     <Window.Resources>
         <Style x:Key="CenteredCellStyle" TargetType="TextBlock">
@@ -40,14 +41,27 @@
         <!-- Шапка -->
         <Border Grid.Row="0"
                 Style="{StaticResource CardBorderStyle}"
-                Padding="10">
+                Padding="10"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="10"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel>
+                <Button Grid.Column="0"
+                        Content="← Назад"
+                        Width="82"
+                        Height="30"
+                        Margin="0"
+                        FontSize="11"
+                        Style="{StaticResource SecondaryButtonStyle}"
+                        Click="BackButton_Click"/>
+
+                <StackPanel Grid.Column="2">
                     <TextBlock Text="Наряд по мотивационной оплате"
                                Style="{StaticResource TitleTextStyle}"
                                FontSize="18"/>
@@ -58,8 +72,8 @@
                                FontSize="11"/>
                 </StackPanel>
 
-                <Border Grid.Column="1"
-                        Background="{StaticResource PrimaryLightBrush}"
+                <Border Grid.Column="3"
+                        Background="{StaticResource SubtleAccentBrush}"
                         BorderBrush="#BFDBFE"
                         BorderThickness="1"
                         CornerRadius="8"
@@ -76,7 +90,9 @@
         <!-- Параметры и действия -->
         <Border Grid.Row="2"
                 Style="{StaticResource CardBorderStyle}"
-                Padding="10">
+                Padding="10"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="118"/>
@@ -151,7 +167,9 @@
         <!-- Таблица -->
         <Border Grid.Row="4"
                 Style="{StaticResource CardBorderStyle}"
-                Padding="8">
+                Padding="8"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <DataGrid x:Name="NaradDataGrid"
                       AutoGenerateColumns="False"
                       CanUserAddRows="False"
@@ -225,7 +243,9 @@
         <!-- Итоги -->
         <Border Grid.Row="6"
                 Style="{StaticResource CardBorderStyle}"
-                Padding="8">
+                Padding="8"
+                Background="{StaticResource PanelBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
