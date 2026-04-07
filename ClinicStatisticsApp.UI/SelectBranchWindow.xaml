@@ -7,78 +7,83 @@
         MinHeight="420"
         MinWidth="520"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize"
+        Background="{StaticResource PageBackgroundSoftBrush}">
 
-	<Grid Margin="24">
-		<Border Style="{StaticResource CardBorderStyle}"
+    <Grid Margin="16">
+        <Border Style="{StaticResource CardBorderStyle}"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}"
                 VerticalAlignment="Center"
-                Padding="28">
-			<Grid>
-				<Grid.RowDefinitions>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="10"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="24"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="20"/>
-					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="14"/>
-					<RowDefinition Height="Auto"/>
-				</Grid.RowDefinitions>
+                Padding="24">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="8"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="18"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="16"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-				<!-- Заголовок -->
-				<TextBlock Text="Выбор филиала"
+                <TextBlock Text="Выбор филиала"
                            Style="{StaticResource TitleTextStyle}"
+                           FontSize="20"
                            HorizontalAlignment="Center"/>
 
-				<TextBlock Grid.Row="2"
+                <TextBlock Grid.Row="2"
                            Text="Выберите филиал для продолжения работы"
                            Style="{StaticResource BodyTextStyle}"
+                           FontSize="12"
                            HorizontalAlignment="Center"/>
 
-				<!-- Поле выбора -->
-				<StackPanel Grid.Row="4">
-					<Label Content="Филиал"/>
-					<ComboBox x:Name="BranchComboBox"
-                              Height="40"
+                <StackPanel Grid.Row="4">
+                    <Label Content="Филиал"/>
+                    <ComboBox x:Name="BranchComboBox"
+                              Height="36"
+                              FontSize="13"
                               DisplayMemberPath="Name"
                               SelectedValuePath="Id"
-                              Style="{StaticResource ModernComboBoxStyle}"/>
-				</StackPanel>
+                              Style="{StaticResource ModernComboBoxStyle}"
+                              Margin="0"/>
+                </StackPanel>
 
-				<!-- Ошибка -->
-				<TextBlock x:Name="ErrorTextBlock"
+                <TextBlock x:Name="ErrorTextBlock"
                            Grid.Row="6"
                            Visibility="Collapsed"
                            Foreground="{StaticResource DangerBrush}"
-                           FontSize="13"
+                           FontSize="12"
                            TextWrapping="Wrap"/>
 
-				<!-- Кнопки -->
-				<Grid Grid.Row="8">
-					<Grid.ColumnDefinitions>
-						<ColumnDefinition Width="*"/>
-						<ColumnDefinition Width="120"/>
-						<ColumnDefinition Width="10"/>
-						<ColumnDefinition Width="120"/>
-					</Grid.ColumnDefinitions>
+                <Grid Grid.Row="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="8"/>
+                        <ColumnDefinition Width="100"/>
+                    </Grid.ColumnDefinitions>
 
-					<Button Grid.Column="1"
+                    <Button Grid.Column="1"
                             Content="Открыть"
-                            Width="120"
-                            Height="42"
+                            Width="100"
+                            Height="34"
                             Margin="0"
+                            FontSize="12"
                             Click="OpenButton_Click"/>
 
-					<Button Grid.Column="3"
+                    <Button Grid.Column="3"
                             Content="Отмена"
-                            Width="120"
-                            Height="42"
+                            Width="100"
+                            Height="34"
                             Margin="0"
+                            FontSize="12"
                             Style="{StaticResource SecondaryButtonStyle}"
                             Click="CancelButton_Click"/>
-				</Grid>
-			</Grid>
-		</Border>
-	</Grid>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
 </Window>

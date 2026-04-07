@@ -6,7 +6,8 @@
         Width="1180"
         MinHeight="720"
         MinWidth="1180"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner"
+        Background="{StaticResource PageBackgroundSoftBrush}">
 
     <Window.Resources>
         <Style x:Key="CenteredCellStyle" TargetType="TextBlock">
@@ -33,7 +34,9 @@
         <!-- Шапка -->
         <Border Grid.Row="0"
                 Style="{StaticResource CardBorderStyle}"
-                Padding="10">
+                Padding="10"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -52,7 +55,7 @@
                 </StackPanel>
 
                 <Border Grid.Column="1"
-                        Background="{StaticResource PrimaryLightBrush}"
+                        Background="{StaticResource SubtleAccentBrush}"
                         BorderBrush="#BFDBFE"
                         BorderThickness="1"
                         CornerRadius="8"
@@ -69,7 +72,9 @@
         <!-- Действия -->
         <Border Grid.Row="2"
                 Style="{StaticResource CardBorderStyle}"
-                Padding="10">
+                Padding="10"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="90"/>
@@ -144,7 +149,9 @@
         <!-- Таблица -->
         <Border Grid.Row="4"
                 Style="{StaticResource CardBorderStyle}"
-                Padding="8">
+                Padding="8"
+                Background="{StaticResource CardBackgroundBrush}"
+                BorderBrush="{StaticResource SoftBorderBrush}">
             <DataGrid x:Name="UsersDataGrid"
                       AutoGenerateColumns="False"
                       IsReadOnly="True"
