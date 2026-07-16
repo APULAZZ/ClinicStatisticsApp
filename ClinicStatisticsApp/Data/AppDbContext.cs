@@ -1,4 +1,5 @@
 ﻿using ClinicStatisticsApp.Models;
+using ClinicStatisticsApp.CallCenter.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicStatisticsApp.Data
@@ -18,6 +19,14 @@ namespace ClinicStatisticsApp.Data
         public DbSet<User> Users => Set<User>();
         public DbSet<BranchReport> BranchReports => Set<BranchReport>();
         public DbSet<PerkEntry> PerkEntries => Set<PerkEntry>();
+        public DbSet<CallCenterEmployee> CallCenterEmployees => Set<CallCenterEmployee>();
+        public DbSet<CallCenterGroup> CallCenterGroups => Set<CallCenterGroup>();
+        public DbSet<CallCenterTopic> CallCenterTopics => Set<CallCenterTopic>();
+        public DbSet<CallCenterEmployeeGroup> CallCenterEmployeeGroups => Set<CallCenterEmployeeGroup>();
+        public DbSet<CallCenterCallRecord> CallCenterCallRecords => Set<CallCenterCallRecord>();
+        public DbSet<CallCenterSyncLog> CallCenterSyncLogs => Set<CallCenterSyncLog>();
+        public DbSet<CallCenterSetting> CallCenterSettings => Set<CallCenterSetting>();
+        public DbSet<CallCenterStatusRule> CallCenterStatusRules => Set<CallCenterStatusRule>();
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
@@ -243,6 +252,69 @@ namespace ClinicStatisticsApp.Data
                     .WithMany(x => x.ProfiEntries)
                     .HasForeignKey(x => x.EmployeeId)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<CallCenterEmployee>(entity =>
+            {
+                entity.ToTable("CallCenterEmployees");
+                entity.Property(x => x.FullName).HasMaxLength(200).IsRequired();
+                entity.Property(x => x.Extension).HasMaxLength(50);
+                entity.Property(x => x.MangoUserId).HasMaxLength(100);
+                entity.Property(x => x.MangoUserKey).HasMaxLength(100);
+                entity.HasIndex(x => x.MangoUserId);
+            });
+
+            modelBuilder.Entity<CallCenterGroup>(entity =>
+            {
+                entity.ToTable("CallCenterGroups");
+                entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+                entity.Property(x => x.MangoGroupId).HasMaxLength(100);
+                entity.HasIndex(x => x.MangoGroupId);
+            });
+
+            modelBuilder.Entity<CallCenterTopic>(entity =>
+            {
+                entity.ToTable("CallCenterTopics");
+                entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+                entity.Property(x => x.MangoTopicId).HasMaxLength(100);
+                entity.HasIndex(x => x.MangoTopicId);
+            });
+
+            modelBuilder.Entity<CallCenterEmployeeGroup>(entity =>
+            {
+                entity.ToTable("CallCenterEmployeeGroups");
+                entity.HasOne(x => x.Employee).WithMany(x => x.EmployeeGroups).HasForeignKey(x => x.EmployeeId).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(x => x.Group).WithMany(x => x.EmployeeGroups).HasForeignKey(x => x.GroupId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<CallCenterCallRecord>(entity =>
+            {
+                entity.ToTable("CallCenterCalls");
+                entity.Property(x => x.MangoCallId).HasMaxLength(100).IsRequired();
+                entity.Property(x => x.ExternalPhoneNumber).HasMaxLength(50);
+                entity.Property(x => x.Direction).HasMaxLength(50).IsRequired();
+                entity.Property(x => x.StatusCode).HasMaxLength(100);
+                entity.Property(x => x.StatusText).HasMaxLength(200);
+                entity.HasIndex(x => x.MangoCallId).IsUnique();
+                entity.HasIndex(x => x.CallDateTime);
+                entity.HasOne(x => x.Employee).WithMany(x => x.CallRecords).HasForeignKey(x => x.EmployeeId).OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(x => x.Group).WithMany(x => x.CallRecords).HasForeignKey(x => x.GroupId).OnDelete(DeleteBehavior.SetNull);
+                entity.HasOne(x => x.Topic).WithMany(x => x.CallRecords).HasForeignKey(x => x.TopicId).OnDelete(DeleteBehavior.SetNull);
+            });
+
+            modelBuilder.Entity<CallCenterSyncLog>(entity => entity.ToTable("CallCenterSyncLogs"));
+            modelBuilder.Entity<CallCenterSetting>(entity =>
+            {
+                entity.ToTable("CallCenterSettings");
+                entity.Property(x => x.Key).HasMaxLength(100).IsRequired();
+                entity.HasIndex(x => x.Key).IsUnique();
+            });
+            modelBuilder.Entity<CallCenterStatusRule>(entity =>
+            {
+                entity.ToTable("CallCenterStatusRules");
+                entity.Property(x => x.StatusCode).HasMaxLength(100).IsRequired();
+                entity.Property(x => x.StatusText).HasMaxLength(200);
+                entity.HasIndex(x => x.StatusCode);
             });
         }
     }

@@ -1,4 +1,5 @@
 ﻿using ClinicStatisticsApp.Models;
+using ClinicStatisticsApp.Services;
 using System.Windows;
 
 namespace ClinicStatisticsApp.UI
@@ -29,6 +30,20 @@ namespace ClinicStatisticsApp.UI
 
         private void ConfigureByRole()
         {
+            if (ModuleAccessPolicy.CanUseCallCenter(_currentUser.RoleCode))
+            {
+                WelcomeTextBlock.Text =
+                    "Вы вошли в раздел коллцентра.\n\n" +
+                    "Разделы MANGO будут доступны в едином меню после переноса модуля коллцентра.";
+
+                ReportsButton.IsEnabled = false;
+                NaradButton.IsEnabled = false;
+                SummaryButton.IsEnabled = false;
+                EmployeesButton.IsEnabled = false;
+                UsersButton.IsEnabled = false;
+                return;
+            }
+
             if (_currentUser.RoleCode == "Admin")
             {
                 WelcomeTextBlock.Text =
