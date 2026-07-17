@@ -1,15 +1,9 @@
-<Window x:Class="ClinicStatisticsApp.UI.AbsolutePrimaryWindow"
+<UserControl x:Class="ClinicStatisticsApp.UI.AbsolutePrimaryWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Статистика абсолютных первичных"
-        Height="860"
-        Width="1780"
-        MinHeight="860"
-        MinWidth="1500"
-        WindowStartupLocation="CenterOwner"
         Background="{StaticResource PageBackgroundSoftBrush}">
 
-    <Window.Resources>
+    <UserControl.Resources>
         <Style x:Key="CenteredCellTextStyle" TargetType="TextBlock">
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
@@ -26,7 +20,7 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="{StaticResource PrimaryDarkBrush}"/>
         </Style>
-    </Window.Resources>
+    </UserControl.Resources>
 
     <Grid Margin="12">
         <Grid.RowDefinitions>
@@ -210,4 +204,4 @@
             </StackPanel>
         </Border>
     </Grid>
-</Window>
+</UserControl>

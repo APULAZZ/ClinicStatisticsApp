@@ -9,18 +9,16 @@ using System.Windows.Media;
 
 namespace ClinicStatisticsApp.UI
 {
-    public partial class SummaryProDoctorWindow : Window
+    public partial class SummaryProDoctorWindow : System.Windows.Controls.UserControl
     {
         private readonly SummaryProDoctorService _service = new SummaryProDoctorService();
-        private readonly Window? _previousWindow;
         private SummaryProDoctorResult? _currentResult;
 
         private readonly List<(SummaryProDoctorBranchBlockViewModel Block, TextBox[] QrBoxes)> _qrEditors = new();
 
-        public SummaryProDoctorWindow(Window? previousWindow = null)
+        public SummaryProDoctorWindow()
         {
             InitializeComponent();
-            _previousWindow = previousWindow;
             LoadYears();
         }
 
@@ -396,18 +394,7 @@ namespace ClinicStatisticsApp.UI
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            _previousWindow?.Show();
-            Close();
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-
-            if (_previousWindow != null && !_previousWindow.IsVisible)
-            {
-                _previousWindow.Show();
-            }
+            WorkspaceNavigator.Navigate(new SummaryBookWindow());
         }
     }
 }

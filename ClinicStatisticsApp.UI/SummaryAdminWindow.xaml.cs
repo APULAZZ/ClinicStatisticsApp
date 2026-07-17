@@ -5,15 +5,12 @@ using System.Windows.Controls;
 
 namespace ClinicStatisticsApp.UI
 {
-    public partial class SummaryAdminWindow : Window
+    public partial class SummaryAdminWindow : System.Windows.Controls.UserControl
     {
         private readonly SummaryAdminService _summaryAdminService = new SummaryAdminService();
-        private readonly Window? _previousWindow;
-
-        public SummaryAdminWindow(Window? previousWindow = null)
+        public SummaryAdminWindow()
         {
             InitializeComponent();
-            _previousWindow = previousWindow;
             LoadPeriods();
         }
 
@@ -106,18 +103,7 @@ namespace ClinicStatisticsApp.UI
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            _previousWindow?.Show();
-            Close();
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-
-            if (_previousWindow != null && !_previousWindow.IsVisible)
-            {
-                _previousWindow.Show();
-            }
+            WorkspaceNavigator.Navigate(new SummaryBookWindow());
         }
     }
 }

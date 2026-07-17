@@ -1,5 +1,6 @@
 ﻿using ClinicStatisticsApp.Models;
 using ClinicStatisticsApp.Services;
+using ClinicStatisticsApp.UI.Views;
 using System.Windows;
 
 namespace ClinicStatisticsApp.UI
@@ -13,6 +14,8 @@ namespace ClinicStatisticsApp.UI
             InitializeComponent();
 
             _currentUser = currentUser;
+            WorkspaceNavigator.NavigateAction = ShowWorkspaceContent;
+            App.Busy.Changed += Busy_Changed;
 
             LoadUserInfo();
             ConfigureByRole();
@@ -30,17 +33,29 @@ namespace ClinicStatisticsApp.UI
 
         private void ConfigureByRole()
         {
-            if (ModuleAccessPolicy.CanUseCallCenter(_currentUser.RoleCode))
+            if (ModuleAccessPolicy.CanUseCallCenter(_currentUser.RoleCode) && !ModuleAccessPolicy.CanUseGeneralStatistics(_currentUser.RoleCode))
             {
                 WelcomeTextBlock.Text =
-                    "Вы вошли в раздел коллцентра.\n\n" +
-                    "Разделы MANGO будут доступны в едином меню после переноса модуля коллцентра.";
+                    "Вы вошли в раздел коллцентра.";
 
-                ReportsButton.IsEnabled = false;
-                NaradButton.IsEnabled = false;
-                SummaryButton.IsEnabled = false;
-                EmployeesButton.IsEnabled = false;
-                UsersButton.IsEnabled = false;
+                NavigationTitleTextBlock.Text = "Коллцентр";
+                MedicalHeaderPanel.Visibility = Visibility.Collapsed;
+                CallCenterPageTitleTextBlock.Visibility = Visibility.Visible;
+                ReportsButton.Visibility = Visibility.Collapsed;
+                NaradButton.Visibility = Visibility.Collapsed;
+                SummaryButton.Visibility = Visibility.Collapsed;
+                EmployeesButton.Visibility = Visibility.Collapsed;
+                UsersButton.Visibility = Visibility.Collapsed;
+                CallCenterDashboardButton.Visibility = Visibility.Visible;
+                CallCenterJournalButton.Visibility = Visibility.Visible;
+                CallCenterEmployeeStatisticsButton.Visibility = Visibility.Visible;
+                CallCenterGroupStatisticsButton.Visibility = Visibility.Visible;
+                CallCenterImportButton.Visibility = Visibility.Visible;
+                CallCenterGoogleTablesButton.Visibility = Visibility.Visible;
+                CallCenterSettingsButton.Visibility = ModuleAccessPolicy.CanManageCallCenter(_currentUser.RoleCode)
+                    ? Visibility.Visible
+                    : Visibility.Collapsed;
+                OpenCallCenterJournal();
                 return;
             }
 
@@ -56,7 +71,7 @@ namespace ClinicStatisticsApp.UI
                 EmployeesButton.IsEnabled = true;
                 UsersButton.IsEnabled = true;
             }
-            else if (_currentUser.RoleCode == "Manager")
+            else if (_currentUser.RoleCode is "Manager" or ModuleAccessPolicy.StatisticsRole)
             {
                 WelcomeTextBlock.Text =
                     "Вы вошли как руководитель.\n\n" +
@@ -97,13 +112,11 @@ namespace ClinicStatisticsApp.UI
         {
             if (_currentUser.RoleCode == "BranchUser")
             {
-                var window = new BranchReportWindow(_currentUser, this);
-                Hide();
-                window.Show();
+                ShowWorkspaceContent(new BranchReportWindow(_currentUser));
                 return;
             }
 
-            if (_currentUser.RoleCode == "Admin" || _currentUser.RoleCode == "Manager")
+            if (_currentUser.RoleCode is "Admin" or "Manager" or ModuleAccessPolicy.StatisticsRole)
             {
                 var selectBranchWindow = new SelectBranchWindow
                 {
@@ -119,9 +132,7 @@ namespace ClinicStatisticsApp.UI
                         BranchName = selectBranchWindow.SelectedBranch.Name
                     };
 
-                    var window = new BranchReportWindow(context, this);
-                    Hide();
-                    window.Show();
+                    ShowWorkspaceContent(new BranchReportWindow(context));
                 }
 
                 return;
@@ -138,13 +149,11 @@ namespace ClinicStatisticsApp.UI
         {
             if (_currentUser.RoleCode == "BranchUser")
             {
-                var window = new NaradWindow(_currentUser, this);
-                Hide();
-                window.Show();
+                ShowWorkspaceContent(new NaradWindow(_currentUser));
                 return;
             }
 
-            if (_currentUser.RoleCode == "Admin" || _currentUser.RoleCode == "Manager")
+            if (_currentUser.RoleCode is "Admin" or "Manager" or ModuleAccessPolicy.StatisticsRole)
             {
                 var selectBranchWindow = new SelectBranchWindow
                 {
@@ -164,9 +173,7 @@ namespace ClinicStatisticsApp.UI
                         BranchName = selectBranchWindow.SelectedBranch.Name
                     };
 
-                    var window = new NaradWindow(contextUser, this);
-                    Hide();
-                    window.Show();
+                    ShowWorkspaceContent(new NaradWindow(contextUser));
                 }
 
                 return;
@@ -191,29 +198,100 @@ namespace ClinicStatisticsApp.UI
                 return;
             }
 
-            var window = new SummaryBookWindow(this);
-            Hide();
-            window.Show();
+            ShowWorkspaceContent(new SummaryBookWindow());
         }
 
         private void EmployeesButton_Click(object sender, RoutedEventArgs e)
         {
-            var employeesWindow = new EmployeesWindow
-            {
-                Owner = this
-            };
-
-            employeesWindow.ShowDialog();
+            ShowWorkspaceContent(new EmployeesWindow());
         }
 
         private void UsersButton_Click(object sender, RoutedEventArgs e)
         {
-            var usersWindow = new UsersWindow
-            {
-                Owner = this
-            };
+            ShowWorkspaceContent(new UsersWindow());
+        }
 
-            usersWindow.ShowDialog();
+        private void CallCenterJournalButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenCallCenterJournal();
+        }
+
+        private void ChatButton_Click(object sender, RoutedEventArgs e)
+        {
+            CallCenterPageTitleTextBlock.Text = "Чат";
+            ShowWorkspaceContent(new ChatPage(_currentUser));
+        }
+
+        private void CallCenterDashboardButton_Click(object sender, RoutedEventArgs e)
+        {
+            CallCenterPageTitleTextBlock.Text = "Обзор";
+            ShowWorkspaceContent(new CallCenterDashboardPage());
+        }
+
+        private void OpenCallCenterJournal()
+        {
+            CallCenterPageTitleTextBlock.Text = "Журнал звонков";
+            ShowWorkspaceContent(new CallCenterJournalPage());
+        }
+
+        private void CallCenterEmployeeStatisticsButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenCallCenterStatistics(false);
+        }
+
+        private void CallCenterGroupStatisticsButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenCallCenterStatistics(true);
+        }
+
+        private async void CallCenterGoogleTablesButton_Click(object sender, RoutedEventArgs e)
+        {
+            CallCenterPageTitleTextBlock.Text = "Гугл-таблички";
+            var page = new CallCenterGoogleTablesPage();
+            ShowWorkspaceContent(page);
+            await page.LoadAsync();
+        }
+
+        private void CallCenterImportButton_Click(object sender, RoutedEventArgs e)
+        {
+            CallCenterPageTitleTextBlock.Text = "Импорт из Mango";
+            ShowWorkspaceContent(new CallCenterImportPage());
+        }
+
+        private void CallCenterSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            CallCenterPageTitleTextBlock.Text = "Настройки API";
+            ShowWorkspaceContent(new CallCenterSettingsPage());
+        }
+
+        private void OpenCallCenterStatistics(bool isGroupStatistics)
+        {
+            CallCenterPageTitleTextBlock.Text = isGroupStatistics ? "Статистика групп" : "Статистика сотрудников";
+            ShowWorkspaceContent(new CallCenterStatisticsPage(isGroupStatistics));
+        }
+
+        private void ShowWorkspaceContent(object? content)
+        {
+            if (content == null)
+            {
+                CallCenterContentControl.Content = null;
+                CallCenterContentControl.Visibility = Visibility.Collapsed;
+                StartContentGrid.Visibility = Visibility.Visible;
+                return;
+            }
+
+            StartContentGrid.Visibility = Visibility.Collapsed;
+            CallCenterContentControl.Visibility = Visibility.Visible;
+            CallCenterContentControl.Content = content;
+        }
+
+        private void Busy_Changed(object? sender, BusyChangedEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                BusyOverlay.Visibility = e.IsBusy ? Visibility.Visible : Visibility.Collapsed;
+                BusyMessageText.Text = e.Message;
+            });
         }
     }
 }

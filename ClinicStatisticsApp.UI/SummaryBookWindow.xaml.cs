@@ -6,16 +6,13 @@ using System.Windows.Controls;
 
 namespace ClinicStatisticsApp.UI
 {
-    public partial class SummaryBookWindow : Window
+    public partial class SummaryBookWindow : System.Windows.Controls.UserControl
     {
         private readonly SummaryBookExcelExportService _excelExportService = new SummaryBookExcelExportService();
         private readonly SummaryBookPdfExportService _pdfExportService = new SummaryBookPdfExportService();
-        private readonly Window? _previousWindow;
-
-        public SummaryBookWindow(Window? previousWindow = null)
+        public SummaryBookWindow()
         {
             InitializeComponent();
-            _previousWindow = previousWindow;
             LoadExportPeriods();
         }
 
@@ -142,58 +139,42 @@ namespace ClinicStatisticsApp.UI
 
         private void SummaryGeneralButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = new SummaryGeneralWindow(this);
-            Hide();
-            window.Show();
+            WorkspaceNavigator.Navigate(new SummaryGeneralWindow());
         }
 
         private void SummaryProfoButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = new SummaryProfoWindow(this);
-            Hide();
-            window.Show();
+            WorkspaceNavigator.Navigate(new SummaryProfoWindow());
         }
 
         private void SummaryAdminButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = new SummaryAdminWindow(this);
-            Hide();
-            window.Show();
+            WorkspaceNavigator.Navigate(new SummaryAdminWindow());
         }
 
         private void SummaryProDoctorButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = new SummaryProDoctorWindow(this);
-            Hide();
-            window.Show();
+            WorkspaceNavigator.Navigate(new SummaryProDoctorWindow());
         }
 
         private void DynamicsButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = new DynamicsWindow(this);
-            Hide();
-            window.Show();
+            WorkspaceNavigator.Navigate(new DynamicsWindow());
         }
 
         private void ComparativePerkButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = new ComparativePerkWindow(this);
-            Hide();
-            window.Show();
+            WorkspaceNavigator.Navigate(new ComparativePerkWindow());
         }
 
         private void ComparativeProfiButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = new ComparativeProfiWindow(this);
-            Hide();
-            window.Show();
+            WorkspaceNavigator.Navigate(new ComparativeProfiWindow());
         }
 
         private void AbsolutePrimaryButton_Click(object sender, RoutedEventArgs e)
         {
-            var window = new AbsolutePrimaryWindow(this);
-            Hide();
-            window.Show();
+            WorkspaceNavigator.Navigate(new AbsolutePrimaryWindow());
         }
 
         private void StubButton_Click(object sender, RoutedEventArgs e)
@@ -207,18 +188,7 @@ namespace ClinicStatisticsApp.UI
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            _previousWindow?.Show();
-            Close();
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-
-            if (_previousWindow != null && !_previousWindow.IsVisible)
-            {
-                _previousWindow.Show();
-            }
+            WorkspaceNavigator.Navigate(null);
         }
     }
 }

@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace ClinicStatisticsApp.UI
 {
-    public partial class EmployeesWindow : Window
+    public partial class EmployeesWindow : System.Windows.Controls.UserControl
     {
         private readonly EmployeeService _employeeService = new EmployeeService();
 
@@ -43,7 +43,7 @@ namespace ClinicStatisticsApp.UI
 
             var editWindow = new EmployeeEditWindow(newEmployee)
             {
-                Owner = this
+                Owner = Window.GetWindow(this)
             };
 
             if (editWindow.ShowDialog() == true)
@@ -89,7 +89,7 @@ namespace ClinicStatisticsApp.UI
 
             var editWindow = new EmployeeEditWindow(employeeFromDb)
             {
-                Owner = this
+                Owner = Window.GetWindow(this)
             };
 
             if (editWindow.ShowDialog() == true)

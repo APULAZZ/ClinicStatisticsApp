@@ -11,22 +11,20 @@ using System.Windows.Controls;
 
 namespace ClinicStatisticsApp.UI
 {
-    public partial class NaradWindow : Window
+    public partial class NaradWindow : System.Windows.Controls.UserControl
     {
         private readonly CurrentUserInfo _currentUser;
-        private readonly Window? _previousWindow;
         private readonly NaradService _naradService = new NaradService();
         private readonly NaradExcelExportService _excelExportService = new NaradExcelExportService();
         private readonly NaradPdfExportService _pdfExportService = new NaradPdfExportService();
 
         private ObservableCollection<NaradEntryViewModel> _items = new();
 
-        public NaradWindow(CurrentUserInfo currentUser, Window? previousWindow = null)
+        public NaradWindow(CurrentUserInfo currentUser)
         {
             InitializeComponent();
 
             _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
-            _previousWindow = previousWindow;
 
             if (_currentUser.BranchId == null)
             {
@@ -36,8 +34,7 @@ namespace ClinicStatisticsApp.UI
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
 
-                _previousWindow?.Show();
-                Close();
+                WorkspaceNavigator.Navigate(null);
                 return;
             }
 
@@ -336,18 +333,7 @@ namespace ClinicStatisticsApp.UI
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            _previousWindow?.Show();
-            Close();
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-
-            if (_previousWindow != null && !_previousWindow.IsVisible)
-            {
-                _previousWindow.Show();
-            }
+            WorkspaceNavigator.Navigate(null);
         }
     }
 }

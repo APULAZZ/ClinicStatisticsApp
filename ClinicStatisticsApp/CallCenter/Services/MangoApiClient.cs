@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -58,6 +59,24 @@ public sealed class MangoApiClient(HttpClient httpClient, MangoApiOptions option
         return FindTagId(call);
     }
 
+    public async Task<MangoRecordingFile> GetRecordingAsync(string recordingId, bool forDownload, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(options.ApiKey) || string.IsNullOrWhiteSpace(options.ApiSalt))
+            throw new InvalidOperationException("Не заданы ключи MANGO API в appsettings.Local.json.");
+
+        const string endpoint = "/vpbx/queries/recording/post/";
+        var json = JsonSerializer.Serialize(new { recording_id = recordingId, action = forDownload ? "download" : "play" });
+        using var content = new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["vpbx_api_key"] = options.ApiKey,
+            ["sign"] = Sign(json),
+            ["json"] = json
+        });
+        using var response = await httpClient.PostAsync($"{GetApiRoot()}{endpoint}", content, cancellationToken);
+        response.EnsureSuccessStatusCode();
+        return new MangoRecordingFile(await response.Content.ReadAsByteArrayAsync(cancellationToken), response.Content.Headers.ContentType?.MediaType ?? "audio/mpeg");
+    }
+
     private async Task<string> PollAsync(string key, CancellationToken token)
     {
         await Task.Delay(TimeSpan.FromSeconds(1.5), token);
@@ -80,7 +99,7 @@ public sealed class MangoApiClient(HttpClient httpClient, MangoApiOptions option
         if (string.IsNullOrWhiteSpace(options.ApiKey) || string.IsNullOrWhiteSpace(options.ApiSalt)) throw new InvalidOperationException("Не заданы ключи MANGO API в appsettings.Local.json.");
         var json = JsonSerializer.Serialize(payload);
         using var content = new FormUrlEncodedContent(new Dictionary<string, string> { ["vpbx_api_key"] = options.ApiKey, ["sign"] = Sign(json), ["json"] = json });
-        using var response = await httpClient.PostAsync($"{options.BaseUrl.TrimEnd('/')}{endpoint}", content, token);
+        using var response = await httpClient.PostAsync($"{GetApiRoot()}{endpoint}", content, token);
         if (response.StatusCode == HttpStatusCode.TooManyRequests) throw new InvalidOperationException("MANGO временно ограничил количество запросов. Повторите обновление позже.");
         response.EnsureSuccessStatusCode();
         var body = await response.Content.ReadAsStringAsync(token);
@@ -96,6 +115,14 @@ public sealed class MangoApiClient(HttpClient httpClient, MangoApiOptions option
     {
         using var sha = SHA256.Create();
         return Convert.ToHexString(sha.ComputeHash(Encoding.UTF8.GetBytes(options.ApiKey + json + options.ApiSalt))).ToLowerInvariant();
+    }
+
+    private string GetApiRoot()
+    {
+        var root = options.BaseUrl.TrimEnd('/');
+        return root.EndsWith("/vpbx", StringComparison.OrdinalIgnoreCase)
+            ? root[..^5]
+            : root;
     }
 
     private static List<MangoCallDto> ParseCalls(string json)

@@ -10,22 +10,20 @@ using System.Windows.Controls;
 
 namespace ClinicStatisticsApp.UI
 {
-    public partial class ProfiReportWindow : Window
+    public partial class ProfiReportWindow : System.Windows.Controls.UserControl
     {
         private readonly CurrentUserInfo _currentUser;
-        private readonly Window? _previousWindow;
         private readonly ProfiReportService _profiReportService = new ProfiReportService();
         private readonly CopyEmployeesFromPreviousMonthService _copyService = new CopyEmployeesFromPreviousMonthService();
 
         private ObservableCollection<ProfiEntryViewModel> _items = new();
         public ObservableCollection<Employee> Employees { get; set; } = new();
 
-        public ProfiReportWindow(CurrentUserInfo currentUser, Window? previousWindow = null)
+        public ProfiReportWindow(CurrentUserInfo currentUser)
         {
             InitializeComponent();
 
             _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
-            _previousWindow = previousWindow;
 
             if (_currentUser.BranchId == null)
             {
@@ -35,8 +33,7 @@ namespace ClinicStatisticsApp.UI
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
 
-                _previousWindow?.Show();
-                Close();
+                WorkspaceNavigator.Navigate(null);
                 return;
             }
 
@@ -356,8 +353,7 @@ namespace ClinicStatisticsApp.UI
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            _previousWindow?.Show();
-            Close();
+            WorkspaceNavigator.Navigate(new BranchReportWindow(_currentUser));
         }
 
         private void ProfiDataGrid_CurrentCellChanged(object? sender, EventArgs e)
@@ -368,16 +364,6 @@ namespace ClinicStatisticsApp.UI
             }
 
             RecalculateTotals();
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-
-            if (_previousWindow != null && !_previousWindow.IsVisible)
-            {
-                _previousWindow.Show();
-            }
         }
 
         private void RecalculateTotals()

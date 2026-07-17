@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="ClinicStatisticsApp.UI/ClinicStatisticsApp.UI.csproj" />
   <Project Path="ClinicStatisticsApp/ClinicStatisticsApp.csproj" />
+  <Project Path="../ClinicStatisticsApp.ChatServer/ClinicStatisticsApp.ChatServer.csproj" />
 </Solution>

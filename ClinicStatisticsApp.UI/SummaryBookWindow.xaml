@@ -1,12 +1,6 @@
-<Window x:Class="ClinicStatisticsApp.UI.SummaryBookWindow"
+<UserControl x:Class="ClinicStatisticsApp.UI.SummaryBookWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Сводная книга"
-        Height="860"
-        Width="1180"
-        MinHeight="820"
-        MinWidth="1080"
-        WindowStartupLocation="CenterOwner"
         Background="{StaticResource PageBackgroundSoftBrush}">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto"
@@ -361,4 +355,4 @@
             </Border>
         </Grid>
     </ScrollViewer>
-</Window>
+</UserControl>

@@ -1,12 +1,6 @@
-<Window x:Class="ClinicStatisticsApp.UI.DynamicsWindow"
+<UserControl x:Class="ClinicStatisticsApp.UI.DynamicsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Динамика"
-        Height="980"
-        Width="1580"
-        MinHeight="920"
-        MinWidth="1380"
-        WindowStartupLocation="CenterOwner"
         Background="{StaticResource PageBackgroundSoftBrush}">
 
     <Grid Margin="12">
@@ -131,4 +125,4 @@
             </ScrollViewer>
         </Border>
     </Grid>
-</Window>
+</UserControl>

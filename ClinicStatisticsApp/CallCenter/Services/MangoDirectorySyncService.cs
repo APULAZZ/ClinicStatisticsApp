@@ -10,7 +10,6 @@ public sealed class MangoDirectorySyncService(AppDbContext db, IMangoApiClient a
     public async Task SyncAllAsync(CancellationToken cancellationToken = default)
     {
         await SyncEmployeesAsync(cancellationToken);
-        await SyncGroupsAsync(cancellationToken);
         await SyncTopicsAsync(cancellationToken);
     }
 

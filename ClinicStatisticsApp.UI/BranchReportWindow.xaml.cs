@@ -8,10 +8,9 @@ using System.Windows.Media;
 
 namespace ClinicStatisticsApp.UI
 {
-    public partial class BranchReportWindow : Window
+    public partial class BranchReportWindow : System.Windows.Controls.UserControl
     {
         private readonly CurrentUserInfo _currentUser;
-        private readonly Window? _previousWindow;
         private readonly BranchReportStatusService _statusService = new BranchReportStatusService();
         private readonly BranchReportExcelExportService _excelExportService = new BranchReportExcelExportService();
         private readonly BranchReportPdfExportService _pdfExportService = new BranchReportPdfExportService();
@@ -19,12 +18,11 @@ namespace ClinicStatisticsApp.UI
         private readonly int _branchId;
         private readonly string _branchName;
 
-        public BranchReportWindow(CurrentUserInfo currentUser, Window? previousWindow = null)
+        public BranchReportWindow(CurrentUserInfo currentUser)
         {
             InitializeComponent();
 
             _currentUser = currentUser ?? throw new ArgumentNullException(nameof(currentUser));
-            _previousWindow = previousWindow;
             _branchId = currentUser.BranchId ?? 0;
             _branchName = currentUser.BranchName ?? "не задан";
 
@@ -36,7 +34,7 @@ namespace ClinicStatisticsApp.UI
             ConfigureButtons();
         }
 
-        public BranchReportWindow(SelectedBranchContext context, Window? previousWindow = null)
+        public BranchReportWindow(SelectedBranchContext context)
         {
             InitializeComponent();
 
@@ -44,7 +42,6 @@ namespace ClinicStatisticsApp.UI
                 throw new ArgumentNullException(nameof(context));
 
             _currentUser = context.CurrentUser ?? throw new ArgumentNullException(nameof(context.CurrentUser));
-            _previousWindow = previousWindow;
             _branchId = context.BranchId;
             _branchName = context.BranchName ?? "не задан";
 
@@ -298,49 +295,30 @@ namespace ClinicStatisticsApp.UI
         private void PerkButton_Click(object sender, RoutedEventArgs e)
         {
             var userContext = CloneUserWithSelectedBranch();
-            var window = new PerkReportWindow(userContext, this);
-            Hide();
-            window.Show();
+            WorkspaceNavigator.Navigate(new PerkReportWindow(userContext));
         }
 
         private void ProfiButton_Click(object sender, RoutedEventArgs e)
         {
             var userContext = CloneUserWithSelectedBranch();
-            var window = new ProfiReportWindow(userContext, this);
-            Hide();
-            window.Show();
+            WorkspaceNavigator.Navigate(new ProfiReportWindow(userContext));
         }
 
         private void HoursButton_Click(object sender, RoutedEventArgs e)
         {
             var userContext = CloneUserWithSelectedBranch();
-            var window = new HoursReportWindow(userContext, this);
-            Hide();
-            window.Show();
+            WorkspaceNavigator.Navigate(new HoursReportWindow(userContext));
         }
 
         private void ReviewsButton_Click(object sender, RoutedEventArgs e)
         {
             var userContext = CloneUserWithSelectedBranch();
-            var window = new ReviewReportWindow(userContext, this);
-            Hide();
-            window.Show();
+            WorkspaceNavigator.Navigate(new ReviewReportWindow(userContext));
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            _previousWindow?.Show();
-            Close();
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-
-            if (_previousWindow != null && !_previousWindow.IsVisible)
-            {
-                _previousWindow.Show();
-            }
+            WorkspaceNavigator.Navigate(null);
         }
 
         private CurrentUserInfo CloneUserWithSelectedBranch()

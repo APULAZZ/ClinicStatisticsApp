@@ -1,15 +1,9 @@
-<Window x:Class="ClinicStatisticsApp.UI.NaradWindow"
+<UserControl x:Class="ClinicStatisticsApp.UI.NaradWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Наряд"
-        Height="700"
-        Width="1220"
-        MinHeight="700"
-        MinWidth="1220"
-        WindowStartupLocation="CenterOwner"
         Background="{StaticResource PageBackgroundSoftBrush}">
 
-    <Window.Resources>
+    <UserControl.Resources>
         <Style x:Key="CenteredCellStyle" TargetType="TextBlock">
             <Setter Property="TextAlignment" Value="Center"/>
             <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -25,7 +19,7 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Foreground" Value="{StaticResource PrimaryDarkBrush}"/>
         </Style>
-    </Window.Resources>
+    </UserControl.Resources>
 
     <Grid Margin="12">
         <Grid.RowDefinitions>
@@ -291,4 +285,4 @@
             </Grid>
         </Border>
     </Grid>
-</Window>
+</UserControl>

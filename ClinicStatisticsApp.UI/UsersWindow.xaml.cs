@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace ClinicStatisticsApp.UI
 {
-    public partial class UsersWindow : Window
+    public partial class UsersWindow : System.Windows.Controls.UserControl
     {
         private readonly UserService _userService = new UserService();
 
@@ -42,7 +42,7 @@ namespace ClinicStatisticsApp.UI
 
             var editWindow = new UserEditWindow(user)
             {
-                Owner = this
+                Owner = Window.GetWindow(this)
             };
 
             if (editWindow.ShowDialog() == true)
@@ -88,7 +88,7 @@ namespace ClinicStatisticsApp.UI
 
             var editWindow = new UserEditWindow(userFromDb)
             {
-                Owner = this
+                Owner = Window.GetWindow(this)
             };
 
             if (editWindow.ShowDialog() == true)

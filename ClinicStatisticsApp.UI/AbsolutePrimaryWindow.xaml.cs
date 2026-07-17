@@ -4,15 +4,12 @@ using System.Windows;
 
 namespace ClinicStatisticsApp.UI
 {
-    public partial class AbsolutePrimaryWindow : Window
+    public partial class AbsolutePrimaryWindow : System.Windows.Controls.UserControl
     {
         private readonly AbsolutePrimaryService _service = new AbsolutePrimaryService();
-        private readonly Window? _previousWindow;
-
-        public AbsolutePrimaryWindow(Window? previousWindow = null)
+        public AbsolutePrimaryWindow()
         {
             InitializeComponent();
-            _previousWindow = previousWindow;
             LoadYears();
         }
 
@@ -65,18 +62,7 @@ namespace ClinicStatisticsApp.UI
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            _previousWindow?.Show();
-            Close();
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-
-            if (_previousWindow != null && !_previousWindow.IsVisible)
-            {
-                _previousWindow.Show();
-            }
+            WorkspaceNavigator.Navigate(new SummaryBookWindow());
         }
     }
 }

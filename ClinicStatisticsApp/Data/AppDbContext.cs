@@ -1,5 +1,6 @@
 ﻿using ClinicStatisticsApp.Models;
 using ClinicStatisticsApp.CallCenter.Models;
+using ClinicStatisticsApp.Chat;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicStatisticsApp.Data
@@ -27,6 +28,10 @@ namespace ClinicStatisticsApp.Data
         public DbSet<CallCenterSyncLog> CallCenterSyncLogs => Set<CallCenterSyncLog>();
         public DbSet<CallCenterSetting> CallCenterSettings => Set<CallCenterSetting>();
         public DbSet<CallCenterStatusRule> CallCenterStatusRules => Set<CallCenterStatusRule>();
+        public DbSet<ChatConversation> ChatConversations => Set<ChatConversation>();
+        public DbSet<ChatParticipant> ChatParticipants => Set<ChatParticipant>();
+        public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
+        public DbSet<ChatAttachment> ChatAttachments => Set<ChatAttachment>();
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
@@ -315,6 +320,22 @@ namespace ClinicStatisticsApp.Data
                 entity.Property(x => x.StatusCode).HasMaxLength(100).IsRequired();
                 entity.Property(x => x.StatusText).HasMaxLength(200);
                 entity.HasIndex(x => x.StatusCode);
+            });
+            modelBuilder.Entity<ChatConversation>(entity => { entity.ToTable("ChatConversations"); entity.Property(x => x.Title).HasMaxLength(200); });
+            modelBuilder.Entity<ChatParticipant>(entity =>
+            {
+                entity.ToTable("ChatParticipants"); entity.HasIndex(x => new { x.ConversationId, x.UserId }).IsUnique();
+                entity.HasOne(x => x.Conversation).WithMany(x => x.Participants).HasForeignKey(x => x.ConversationId).OnDelete(DeleteBehavior.Cascade);
+            });
+            modelBuilder.Entity<ChatMessage>(entity =>
+            {
+                entity.ToTable("ChatMessages"); entity.Property(x => x.Text).HasMaxLength(4000); entity.HasIndex(x => new { x.ConversationId, x.SentAt });
+                entity.HasOne(x => x.Conversation).WithMany(x => x.Messages).HasForeignKey(x => x.ConversationId).OnDelete(DeleteBehavior.Cascade);
+            });
+            modelBuilder.Entity<ChatAttachment>(entity =>
+            {
+                entity.ToTable("ChatAttachments"); entity.Property(x => x.FileName).HasMaxLength(260); entity.Property(x => x.StoredName).HasMaxLength(80); entity.Property(x => x.ContentType).HasMaxLength(100);
+                entity.HasOne(x => x.Message).WithMany(x => x.Attachments).HasForeignKey(x => x.MessageId).OnDelete(DeleteBehavior.Cascade);
             });
         }
     }

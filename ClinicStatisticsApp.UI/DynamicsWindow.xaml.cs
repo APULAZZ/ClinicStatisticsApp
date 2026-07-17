@@ -10,15 +10,12 @@ using System.Windows.Media;
 
 namespace ClinicStatisticsApp.UI
 {
-    public partial class DynamicsWindow : Window
+    public partial class DynamicsWindow : System.Windows.Controls.UserControl
     {
         private readonly DynamicsService _service = new DynamicsService();
-        private readonly Window? _previousWindow;
-
-        public DynamicsWindow(Window? previousWindow = null)
+        public DynamicsWindow()
         {
             InitializeComponent();
-            _previousWindow = previousWindow;
             LoadYears();
         }
 
@@ -355,18 +352,7 @@ namespace ClinicStatisticsApp.UI
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            _previousWindow?.Show();
-            Close();
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-
-            if (_previousWindow != null && !_previousWindow.IsVisible)
-            {
-                _previousWindow.Show();
-            }
+            WorkspaceNavigator.Navigate(new SummaryBookWindow());
         }
     }
 }

@@ -1,12 +1,6 @@
-<Window x:Class="ClinicStatisticsApp.UI.ComparativeProfiWindow"
+<UserControl x:Class="ClinicStatisticsApp.UI.ComparativeProfiWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Сравнительная статистика ПРОФЫ"
-        Height="860"
-        Width="1580"
-        MinHeight="860"
-        MinWidth="1400"
-        WindowStartupLocation="CenterOwner"
         Background="{StaticResource PageBackgroundSoftBrush}">
 
     <Grid Margin="12">
@@ -140,4 +134,4 @@
                       VerticalGridLinesBrush="#E5E7EB"/>
         </Border>
     </Grid>
-</Window>
+</UserControl>

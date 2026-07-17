@@ -9,15 +9,12 @@ using System.Windows.Data;
 
 namespace ClinicStatisticsApp.UI
 {
-    public partial class ComparativePerkWindow : Window
+    public partial class ComparativePerkWindow : System.Windows.Controls.UserControl
     {
         private readonly ComparativePerkService _service = new ComparativePerkService();
-        private readonly Window? _previousWindow;
-
-        public ComparativePerkWindow(Window? previousWindow = null)
+        public ComparativePerkWindow()
         {
             InitializeComponent();
-            _previousWindow = previousWindow;
             LoadYears();
         }
 
@@ -204,18 +201,7 @@ namespace ClinicStatisticsApp.UI
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            _previousWindow?.Show();
-            Close();
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-
-            if (_previousWindow != null && !_previousWindow.IsVisible)
-            {
-                _previousWindow.Show();
-            }
+            WorkspaceNavigator.Navigate(new SummaryBookWindow());
         }
     }
 }

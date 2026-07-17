@@ -9,6 +9,7 @@ namespace ClinicStatisticsApp.UI
     /// </summary>
     public partial class App : Application
     {
+        public static BusyService Busy { get; } = new();
     }
 
 }

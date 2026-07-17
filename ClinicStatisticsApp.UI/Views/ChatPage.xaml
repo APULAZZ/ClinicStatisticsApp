@@ -1,0 +1,23 @@
+<UserControl x:Class="ClinicStatisticsApp.UI.Views.ChatPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Grid Background="#F6F8FC">
+    <Grid.ColumnDefinitions><ColumnDefinition Width="320"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+    <Border Background="White" CornerRadius="10" Padding="16">
+      <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="38"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <TextBlock Text="Чаты" FontSize="20" FontWeight="SemiBold" Foreground="#172033"/>
+        <TextBox Grid.Row="1" x:Name="UserSearchTextBox" Margin="0,12,0,8" Padding="10,0" VerticalContentAlignment="Center" TextChanged="UserSearchTextBox_TextChanged"/>
+        <ListBox Grid.Row="2" x:Name="ChatsListBox" BorderThickness="0" SelectionChanged="ChatsListBox_SelectionChanged"/>
+      </Grid>
+    </Border>
+    <Border Grid.Column="2" Background="White" CornerRadius="10" Padding="20">
+      <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <TextBlock x:Name="ChatTitleTextBlock" Text="Выберите чат или пользователя" FontSize="20" FontWeight="SemiBold" Foreground="#172033"/>
+        <ListBox x:Name="MessagesListBox" Grid.Row="1" BorderThickness="0" DisplayMemberPath="Display"/>
+        <Grid Grid.Row="2"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="10"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="10"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+          <TextBox x:Name="MessageTextBox" Height="38" Padding="10,0" VerticalContentAlignment="Center" IsEnabled="False" KeyDown="MessageTextBox_KeyDown"/>
+          <Button Grid.Column="2" Content="Вложение" Height="38" Width="95" IsEnabled="False"/>
+          <Button x:Name="SendButton" Grid.Column="4" Content="Отправить" Height="38" Width="100" IsEnabled="False" Click="SendButton_Click"/>
+        </Grid>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>
