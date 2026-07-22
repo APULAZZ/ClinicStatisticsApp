@@ -1,0 +1,21 @@
+SET XACT_ABORT ON;
+SET ANSI_NULLS ON;
+SET QUOTED_IDENTIFIER ON;
+BEGIN TRANSACTION;
+
+IF COL_LENGTH(N'dbo.CrmPersons', N'PrimaryCardNumber') IS NULL
+    ALTER TABLE dbo.CrmPersons ADD PrimaryCardNumber NVARCHAR(100) NULL;
+
+COMMIT TRANSACTION;
+GO
+
+SET XACT_ABORT ON;
+SET ANSI_NULLS ON;
+SET QUOTED_IDENTIFIER ON;
+BEGIN TRANSACTION;
+
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE object_id = OBJECT_ID(N'dbo.CrmPersons') AND name = N'IX_CrmPersons_PrimaryCardNumber')
+    CREATE INDEX IX_CrmPersons_PrimaryCardNumber ON dbo.CrmPersons(PrimaryCardNumber)
+    WHERE PrimaryCardNumber IS NOT NULL;
+
+COMMIT TRANSACTION;

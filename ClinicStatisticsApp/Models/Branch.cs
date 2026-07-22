@@ -17,5 +17,6 @@ namespace ClinicStatisticsApp.Models
         public ICollection<BranchReport> BranchReports { get; set; } = new List<BranchReport>();
         public ICollection<SummaryProfoManualEntry> SummaryProfoManualEntries { get; set; } = new List<SummaryProfoManualEntry>();
         public ICollection<ProDoctorQrEntry> ProDoctorQrEntries { get; set; } = new List<ProDoctorQrEntry>();
+        public ICollection<ExternalPatientCard> ExternalPatientCards { get; set; } = new List<ExternalPatientCard>();
     }
 }

@@ -1,0 +1,19 @@
+<UserControl x:Class="ClinicStatisticsApp.UI.Views.CalendarPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="ToolbarButton" TargetType="Button"><Setter Property="Padding" Value="13,7"/><Setter Property="Margin" Value="0,0,7,0"/><Setter Property="Background" Value="White"/><Setter Property="BorderBrush" Value="#CBD5E1"/><Setter Property="Foreground" Value="#334155"/></Style>
+        <Style x:Key="ViewButton" TargetType="Button" BasedOn="{StaticResource ToolbarButton}"><Setter Property="Margin" Value="0"/><Setter Property="BorderThickness" Value="0"/><Setter Property="Background" Value="Transparent"/></Style>
+    </UserControl.Resources>
+    <Grid Background="#F8FAFC">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="24,16">
+            <Grid>
+                <StackPanel Orientation="Horizontal"><Button Content="+ Создать событие" Style="{StaticResource ToolbarButton}" Background="#2563EB" Foreground="White" BorderBrush="#2563EB" Click="CreateButton_Click"/><Button Content="‹" Style="{StaticResource ToolbarButton}" Click="PreviousButton_Click"/><Button Content="Сегодня" Style="{StaticResource ToolbarButton}" Click="TodayButton_Click"/><Button Content="›" Style="{StaticResource ToolbarButton}" Click="NextButton_Click"/><TextBlock x:Name="PeriodTextBlock" VerticalAlignment="Center" FontSize="18" FontWeight="SemiBold" Foreground="#172033" Margin="10,0,0,0"/></StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button x:Name="DayButton" Content="День" Style="{StaticResource ViewButton}" Click="ViewButton_Click" Tag="Day"/><Button x:Name="WeekButton" Content="Неделя" Style="{StaticResource ViewButton}" Click="ViewButton_Click" Tag="Week"/><Button x:Name="MonthButton" Content="Месяц" Style="{StaticResource ViewButton}" Click="ViewButton_Click" Tag="Month"/><Button x:Name="YearButton" Content="Год" Style="{StaticResource ViewButton}" Click="ViewButton_Click" Tag="Year"/></StackPanel>
+            </Grid>
+        </Border>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"><Grid x:Name="CalendarGrid" Margin="24"/></ScrollViewer>
+        <Border Grid.Row="2" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,1,0,0" Padding="24,9"><TextBlock x:Name="HintTextBlock" Foreground="#64748B" Text="Личный календарь: видны ваши события и встречи, куда вас пригласили."/></Border>
+    </Grid>
+</UserControl>

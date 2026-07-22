@@ -16,6 +16,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="QuestPDF" Version="2026.2.4" />
+    <PackageReference Include="FirebirdSql.Data.FirebirdClient" Version="10.3.4" />
   </ItemGroup>
 
 </Project>

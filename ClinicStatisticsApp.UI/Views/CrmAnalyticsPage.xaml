@@ -1,0 +1,48 @@
+<UserControl x:Class="ClinicStatisticsApp.UI.Views.CrmAnalyticsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="20">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <Border Padding="12" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6">
+            <WrapPanel>
+                <TextBlock Text="Период:" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                <ComboBox x:Name="SourceComboBox" Width="220" Margin="0,0,12,0" DisplayMemberPath="Name"/>
+                <DatePicker x:Name="FromDatePicker" Width="125"/>
+                <TextBlock Text="—" VerticalAlignment="Center" Margin="8,0"/>
+                <DatePicker x:Name="ToDatePicker" Width="125"/>
+                <Button x:Name="ImportButton" Content="Обновить данные из Firebird" Margin="14,0,0,0" Padding="12,6" Click="ImportButton_Click"/>
+                <TextBlock x:Name="StatusTextBlock" VerticalAlignment="Center" Margin="12,0,0,0" Foreground="#475569" TextWrapping="Wrap"/>
+            </WrapPanel>
+        </Border>
+        <TabControl x:Name="AnalyticsTabs" Grid.Row="1" Margin="0,14,0,0">
+            <TabItem Header="Воронка">
+                <StackPanel Margin="20">
+                    <TextBlock Text="Воронка пациентов" FontSize="24" FontWeight="SemiBold"/>
+                    <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" Foreground="#475569" Text="Этапы первичного пациента, конверсия между этапами, среднее время на этапе и список зависших пациентов. История этапов будет храниться в CRM-базе."/>
+                    <Border Margin="0,18,0,0" Padding="16" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6"><TextBlock x:Name="FunnelSummaryTextBlock" FontSize="16" TextWrapping="Wrap"/></Border>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Записи">
+                <StackPanel Margin="20">
+                    <TextBlock Text="Записи и загрузка" FontSize="24" FontWeight="SemiBold"/>
+                    <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" Foreground="#475569" Text="Новые и повторные пациенты, подтверждения, отмены, неявки, загрузка врачей и кабинетов. Данные берутся только для чтения из подключённых источников."/>
+                    <Border Margin="0,18,0,0" Padding="16" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6"><TextBlock x:Name="AppointmentsSummaryTextBlock" FontSize="16" TextWrapping="Wrap"/></Border>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Финансы">
+                <StackPanel Margin="20">
+                    <TextBlock Text="Финансы" FontSize="24" FontWeight="SemiBold"/>
+                    <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" Foreground="#475569" Text="Начислено, оплачено, средний чек и выручка по филиалам, врачам, услугам, первичным и повторным пациентам."/>
+                    <Border Margin="0,18,0,0" Padding="16" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6"><TextBlock x:Name="FinanceSummaryTextBlock" FontSize="16" TextWrapping="Wrap"/></Border>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Удержание">
+                <StackPanel Margin="20">
+                    <TextBlock Text="Удержание пациентов" FontSize="24" FontWeight="SemiBold"/>
+                    <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" Foreground="#475569" Text="Очереди пациентов без следующей записи, с просроченным контрольным визитом и с незавершённым планом лечения. В дальнейшем — задачи и напоминания из CRM."/>
+                    <Border Margin="0,18,0,0" Padding="16" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6"><TextBlock x:Name="RetentionSummaryTextBlock" FontSize="16" TextWrapping="Wrap"/></Border>
+                </StackPanel>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

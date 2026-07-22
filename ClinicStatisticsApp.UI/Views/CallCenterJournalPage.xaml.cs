@@ -2,6 +2,7 @@ using ClinicStatisticsApp.CallCenter.Services;
 using ClinicStatisticsApp.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Net.Http;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -24,11 +25,15 @@ public partial class CallCenterJournalPage : UserControl
     private CheckBox _withoutTopics = null!;
     private readonly List<(int Id, CheckBox CheckBox)> _topicChecks = [];
     private bool _suppressChoices;
+    private List<JournalRow> _journalRows = [];
+    private string? _sortMember;
+    private ListSortDirection _sortDirection;
 
     public CallCenterJournalPage()
     {
         InitializeComponent();
         CallsDataGrid.MouseDoubleClick += CallsDataGrid_MouseDoubleClick;
+        CallsDataGrid.Sorting += CallsDataGrid_Sorting;
         var journalTextStyle = new Style(typeof(TextBlock));
         journalTextStyle.Setters.Add(new Setter(FrameworkElement.MarginProperty, new Thickness(10, 0, 10, 0)));
         journalTextStyle.Setters.Add(new Setter(FrameworkElement.VerticalAlignmentProperty, VerticalAlignment.Center));
@@ -38,6 +43,10 @@ public partial class CallCenterJournalPage : UserControl
             if (column is DataGridTextColumn textColumn)
                 textColumn.ElementStyle = journalTextStyle;
         }
+        // The automatic content width makes long headers unreadable in an empty or short result set.
+        // Keep the two informative columns wide enough for their captions, as in the standalone journal.
+        CallsDataGrid.Columns[4].Width = 220;
+        CallsDataGrid.Columns[6].Width = 120;
         CallsDataGrid.CellStyle = (Style)Resources["JournalCellStyle"];
         CallsDataGrid.ColumnHeaderStyle = (Style)Resources["JournalHeaderStyle"];
         CallsDataGrid.GridLinesVisibility = DataGridGridLinesVisibility.None;
@@ -103,8 +112,8 @@ public partial class CallCenterJournalPage : UserControl
         if (duration == "1–5 минут") query = query.Where(x => (x.DurationSeconds ?? 0) >= 60 && (x.DurationSeconds ?? 0) < 300);
         if (duration == "От 5 минут") query = query.Where(x => (x.DurationSeconds ?? 0) >= 300);
         var search = SearchTextBox.Text.Trim(); if (!string.IsNullOrWhiteSpace(search)) query = query.Where(x => (x.ExternalPhoneNumber ?? "").Contains(search) || (x.Employee != null && x.Employee.FullName.Contains(search)) || (x.Topic != null && x.Topic.Name.Contains(search)));
-        var rows = await query.OrderByDescending(x => x.CallDateTime).Select(x => new JournalRow(x.Id, x.CallDateTime, x.Employee == null ? "—" : x.Employee.FullName, x.Group == null ? "—" : x.Group.Name, x.ExternalPhoneNumber ?? "—", x.Topic == null ? "—" : x.Topic.Name, x.IsIncoming ? "Входящий" : x.IsOutgoing ? "Исходящий" : x.Direction, x.DurationSeconds.HasValue ? TimeSpan.FromSeconds(x.DurationSeconds.Value).ToString(@"m\:ss") : "—")).ToListAsync();
-        CallsDataGrid.ItemsSource = rows; StatusTextBlock.Text = $"Записей: {rows.Count}";
+        var rows = await query.OrderByDescending(x => x.CallDateTime).Select(x => new JournalRow(x.Id, x.CallDateTime, x.Employee == null ? "—" : x.Employee.FullName, x.Group == null ? "—" : x.Group.Name, x.ExternalPhoneNumber ?? "—", x.Topic == null ? "—" : x.Topic.Name, x.IsIncoming ? "Входящий" : x.IsOutgoing ? "Исходящий" : x.Direction, x.DurationSeconds.HasValue ? TimeSpan.FromSeconds(x.DurationSeconds.Value).ToString(@"m\:ss") : "—", x.DurationSeconds ?? 0, false)).ToListAsync();
+        _journalRows = rows; DisplayJournalRows(); StatusTextBlock.Text = $"Записей: {rows.Count}";
     }
     private bool TryGetPeriod(out DateTime from, out DateTime to) { from = (FromDatePicker.SelectedDate ?? DateTime.Today).Date; to = (ToDatePicker.SelectedDate ?? from).Date.AddDays(1).AddTicks(-1); return to >= from; }
     private void SetBusy(bool busy) { RefreshButton.IsEnabled = !busy; RefreshButton.Content = busy ? "Обновление…" : "Обновить"; }
@@ -141,15 +150,37 @@ public partial class CallCenterJournalPage : UserControl
     private void ConfigureChoices(MultiChoiceFilter filter, IEnumerable<FilterOption> options)
     {
         _suppressChoices = true; filter.ChoicesPanel.Children.Clear(); filter.Choices.Clear();
-        foreach (var option in options) { var check = new CheckBox { Content = option.Name, Margin = new Thickness(4, 3, 4, 3) }; check.Checked += (_, _) => ChoiceChanged(filter); check.Unchecked += (_, _) => ChoiceChanged(filter); filter.ChoicesPanel.Children.Add(check); filter.Choices.Add((option.Id, check)); }
+        foreach (var optionGroup in options.GroupBy(x => x.Name.Trim(), StringComparer.OrdinalIgnoreCase))
+        {
+            var check = new CheckBox { Content = optionGroup.Key, Margin = new Thickness(4, 3, 4, 3) };
+            check.Checked += (_, _) => ChoiceChanged(filter);
+            check.Unchecked += (_, _) => ChoiceChanged(filter);
+            filter.ChoicesPanel.Children.Add(check);
+            foreach (var option in optionGroup)
+                filter.Choices.Add((option.Id, check));
+        }
         _suppressChoices = false; SelectAll(filter);
     }
     private void SelectAll(MultiChoiceFilter filter) { _suppressChoices = true; filter.Without.IsChecked = false; filter.All.IsChecked = true; foreach (var (_, check) in filter.Choices) check.IsChecked = true; _suppressChoices = false; UpdateCaption(filter); }
-    private void AllChanged(MultiChoiceFilter filter) { if (_suppressChoices) return; _suppressChoices = true; filter.Without.IsChecked = false; foreach (var (_, check) in filter.Choices) check.IsChecked = filter.All.IsChecked == true; _suppressChoices = false; UpdateCaption(filter); }
-    private void WithoutChanged(MultiChoiceFilter filter) { if (_suppressChoices) return; _suppressChoices = true; if (filter.Without.IsChecked == true) { filter.All.IsChecked = false; foreach (var (_, check) in filter.Choices) check.IsChecked = false; } _suppressChoices = false; UpdateCaption(filter); }
-    private void ChoiceChanged(MultiChoiceFilter filter) { if (_suppressChoices) return; _suppressChoices = true; filter.Without.IsChecked = false; filter.All.IsChecked = filter.Choices.Count > 0 && filter.Choices.All(x => x.CheckBox.IsChecked == true); _suppressChoices = false; UpdateCaption(filter); }
+    private void AllChanged(MultiChoiceFilter filter) { if (_suppressChoices) return; _suppressChoices = true; filter.Without.IsChecked = false; foreach (var (_, check) in filter.Choices) check.IsChecked = filter.All.IsChecked == true; _suppressChoices = false; UpdateCaption(filter); if (ReferenceEquals(filter, _groupFilter) && _ready) _ = ConfigureEmployeesForSelectedGroupsAsync(); }
+    private void WithoutChanged(MultiChoiceFilter filter) { if (_suppressChoices) return; _suppressChoices = true; if (filter.Without.IsChecked == true) { filter.All.IsChecked = false; foreach (var (_, check) in filter.Choices) check.IsChecked = false; } _suppressChoices = false; UpdateCaption(filter); if (ReferenceEquals(filter, _groupFilter) && _ready) _ = ConfigureEmployeesForSelectedGroupsAsync(); }
+    private void ChoiceChanged(MultiChoiceFilter filter) { if (_suppressChoices) return; _suppressChoices = true; filter.Without.IsChecked = false; filter.All.IsChecked = filter.Choices.Count > 0 && filter.Choices.All(x => x.CheckBox.IsChecked == true); _suppressChoices = false; UpdateCaption(filter); if (ReferenceEquals(filter, _groupFilter) && _ready) _ = ConfigureEmployeesForSelectedGroupsAsync(); }
     private static List<int> SelectedIds(MultiChoiceFilter filter) => filter.Choices.Where(x => x.CheckBox.IsChecked == true).Select(x => x.Id).ToList();
-    private static void UpdateCaption(MultiChoiceFilter filter) { if (filter.Without.IsChecked == true) { filter.Caption.Text = filter.WithoutText; return; } var count = filter.Choices.Count(x => x.CheckBox.IsChecked == true); filter.Caption.Text = count == 0 ? "Выберите значения" : count == filter.Choices.Count ? filter.AllText : $"Выбрано: {count}"; }
+
+    private async Task ConfigureEmployeesForSelectedGroupsAsync()
+    {
+        var employees = await _db.CallCenterEmployees.AsNoTracking().Where(x => x.IsActive).OrderBy(x => x.FullName).Select(x => new FilterOption(x.Id, x.FullName)).ToListAsync();
+        var selectedGroupIds = SelectedIds(_groupFilter);
+        var groupFilterIsActive = _groupFilter.All.IsChecked != true && _groupFilter.Without.IsChecked != true;
+        if (groupFilterIsActive && selectedGroupIds.Count > 0)
+        {
+            var isCallCenterSelected = await _db.CallCenterGroups.AsNoTracking().AnyAsync(x => selectedGroupIds.Contains(x.Id) && x.Name == "Коллцентр");
+            if (isCallCenterSelected)
+                employees = employees.Where(x => x.Name.StartsWith("КЦ ", StringComparison.OrdinalIgnoreCase) || string.Equals(x.Name, "Зоя Ершова", StringComparison.OrdinalIgnoreCase)).ToList();
+        }
+        ConfigureChoices(_employeeFilter, employees);
+    }
+    private static void UpdateCaption(MultiChoiceFilter filter) { if (filter.Without.IsChecked == true) { filter.Caption.Text = filter.WithoutText; return; } var checks = filter.Choices.Select(x => x.CheckBox).Distinct().ToList(); var count = checks.Count(x => x.IsChecked == true); filter.Caption.Text = count == 0 ? "Выберите значения" : count == checks.Count ? filter.AllText : $"Выбрано: {count}"; }
 
     private void ConfigureTopicChoices(IEnumerable<FilterOption> topics)
     {
@@ -166,12 +197,36 @@ public partial class CallCenterJournalPage : UserControl
     private sealed class MultiChoiceFilter { public string AllText { get; init; } = string.Empty; public string WithoutText { get; init; } = string.Empty; public TextBlock Caption { get; init; } = null!; public CheckBox All { get; init; } = null!; public CheckBox Without { get; init; } = null!; public StackPanel ChoicesPanel { get; init; } = null!; public Popup Popup { get; set; } = null!; public List<(int Id, CheckBox CheckBox)> Choices { get; } = []; }
     private async void CallsDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (CallsDataGrid.SelectedItem is not JournalRow row) return;
+        if (CallsDataGrid.SelectedItem is not JournalRow row || row.IsTotal) return;
         var api = new MangoApiClient(new HttpClient { Timeout = TimeSpan.FromMinutes(10) }, MangoApiOptionsLoader.Load());
         var window = new CallDetailsWindow(_db, api) { Owner = Window.GetWindow(this) };
         await window.LoadAsync(row.Id);
-        if (window.IsVisible) window.ShowDialog();
+        window.ShowDialog();
     }
 
-    private sealed record JournalRow(int Id, DateTime CallDateTime, string EmployeeName, string GroupName, string PhoneNumber, string TopicName, string Direction, string Duration);
+    private void CallsDataGrid_Sorting(object sender, DataGridSortingEventArgs e)
+    {
+        var member = e.Column.SortMemberPath;
+        if (string.IsNullOrWhiteSpace(member) && e.Column is DataGridBoundColumn bound && bound.Binding is System.Windows.Data.Binding binding) member = binding.Path?.Path;
+        if (string.IsNullOrWhiteSpace(member)) return;
+        e.Handled = true;
+        _sortDirection = _sortMember == member && _sortDirection == ListSortDirection.Ascending ? ListSortDirection.Descending : ListSortDirection.Ascending;
+        _sortMember = member;
+        DisplayJournalRows();
+    }
+
+    private void DisplayJournalRows()
+    {
+        IEnumerable<JournalRow> rows = _journalRows;
+        if (_sortMember != null)
+        {
+            var property = typeof(JournalRow).GetProperty(_sortMember);
+            if (property != null) rows = _sortDirection == ListSortDirection.Ascending ? rows.OrderBy(x => property.GetValue(x)) : rows.OrderByDescending(x => property.GetValue(x));
+        }
+        var result = rows.ToList();
+        result.Add(new JournalRow(0, DateTime.MinValue, $"Всего: {_journalRows.Count:N0}", "—", "—", $"С тематикой: {_journalRows.Count(x => x.TopicName != "—"):N0}", "—", _journalRows.Sum(x => x.DurationSeconds) > 0 ? TimeSpan.FromSeconds(_journalRows.Sum(x => x.DurationSeconds)).ToString(@"h\:mm\:ss") : "—", 0, true));
+        CallsDataGrid.ItemsSource = result;
+    }
+
+    private sealed record JournalRow(int Id, DateTime CallDateTime, string EmployeeName, string GroupName, string PhoneNumber, string TopicName, string Direction, string Duration, int DurationSeconds, bool IsTotal = false);
 }

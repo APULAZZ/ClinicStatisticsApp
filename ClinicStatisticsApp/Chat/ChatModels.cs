@@ -18,6 +18,7 @@ public class ChatParticipant
     public ChatConversation? Conversation { get; set; }
     public int UserId { get; set; }
     public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
+    public DateTime? LastReadAt { get; set; }
 }
 
 public class ChatMessage

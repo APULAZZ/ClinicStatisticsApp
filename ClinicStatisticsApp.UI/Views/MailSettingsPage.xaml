@@ -1,0 +1,31 @@
+<UserControl x:Class="ClinicStatisticsApp.UI.Views.MailSettingsPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="ActionButton" TargetType="Button"><Setter Property="Background" Value="#2563EB"/><Setter Property="Foreground" Value="White"/><Setter Property="BorderBrush" Value="#2563EB"/><Setter Property="Padding" Value="16,9"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border Background="{TemplateBinding Background}" CornerRadius="7" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center"/></Border></ControlTemplate></Setter.Value></Setter></Style>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel MaxWidth="680" HorizontalAlignment="Left">
+        <TextBlock Text="Настройки почты" FontSize="26" FontWeight="SemiBold" Foreground="#172033"/>
+        <TextBlock Text="Подключите личный или рабочий ящик Mail.ru. Эти параметры доступны каждому пользователю отдельно." Foreground="#64748B" Margin="0,8,0,0" TextWrapping="Wrap"/>
+        <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="24" Margin="0,24,0,0"><StackPanel>
+            <TextBlock Text="Учётная запись" FontSize="18" FontWeight="SemiBold" Foreground="#172033"/>
+            <TextBlock Text="Почтовый ящик" Foreground="#475569" Margin="0,20,0,6"/>
+            <TextBox x:Name="AddressTextBox" Padding="10" FontSize="14"/>
+            <TextBlock Text="Пароль приложения или пароль от почты" Foreground="#475569" Margin="0,16,0,6"/>
+            <PasswordBox x:Name="PasswordBox" Padding="10" FontSize="14"/>
+            <WrapPanel Margin="0,22,0,0"><Button Content="Сохранить" Style="{StaticResource ActionButton}" Click="SaveButton_Click"/><Button Content="Проверить подключение" Padding="16,9" Margin="10,0,0,0" Click="TestButton_Click"/></WrapPanel>
+            <TextBlock x:Name="StatusTextBlock" Foreground="#475569" Margin="0,16,0,0" TextWrapping="Wrap"/>
+        </StackPanel></Border>
+        <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12" Padding="24" Margin="0,16,0,0"><StackPanel>
+            <TextBlock Text="Фильтры входящих" FontSize="18" FontWeight="SemiBold" Foreground="#172033"/>
+            <TextBlock Text="Правило применяется при загрузке новых писем во «Входящих»." Foreground="#64748B" Margin="0,6,0,12"/>
+            <TextBox x:Name="FilterSenderTextBox" Padding="10" ToolTip="Отправитель содержит"/>
+            <TextBox x:Name="FilterSubjectTextBox" Padding="10" Margin="0,8,0,0" ToolTip="Тема содержит"/>
+            <ComboBox x:Name="FilterDestinationComboBox" Padding="8" Margin="0,8,0,0" DisplayMemberPath="." ToolTip="Переместить в папку"/>
+            <CheckBox x:Name="FilterMarkReadCheckBox" Content="Помечать как прочитанное" Foreground="#334155" Margin="0,10,0,0"/>
+            <Button Content="Добавить правило" Style="{StaticResource ActionButton}" HorizontalAlignment="Left" Margin="0,14,0,0" Click="AddFilterButton_Click"/>
+            <ListBox x:Name="FiltersListBox" Margin="0,14,0,0" DisplayMemberPath="Description" MaxHeight="160"/>
+            <Button Content="Удалить выбранное правило" HorizontalAlignment="Left" Margin="0,8,0,0" Padding="12,7" Click="DeleteFilterButton_Click"/>
+        </StackPanel></Border>
+        <Border Background="#EFF6FF" CornerRadius="10" Padding="18" Margin="0,16,0,0"><StackPanel><TextBlock Text="Параметры сервера" FontWeight="SemiBold" Foreground="#1E3A8A"/><TextBlock Text="Входящая почта: IMAP imap.mail.ru, SSL, порт 993&#x0a;Исходящая почта: SMTP smtp.mail.ru, SSL, порт 465" Foreground="#1E3A8A" Margin="0,6,0,0"/></StackPanel></Border>
+        <TextBlock Text="Пароль сохраняется только на этом компьютере в зашифрованном виде и не передаётся в базу данных." Foreground="#64748B" FontSize="12" Margin="0,14,0,0" TextWrapping="Wrap"/>
+    </StackPanel></ScrollViewer>
+</UserControl>

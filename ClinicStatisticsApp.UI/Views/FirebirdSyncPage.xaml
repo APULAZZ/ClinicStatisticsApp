@@ -1,0 +1,22 @@
+<UserControl x:Class="ClinicStatisticsApp.UI.Views.FirebirdSyncPage" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Grid Background="#F6F8FC">
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+    <StackPanel>
+      <TextBlock Text="Импорт пациентов из Firebird" FontSize="26" FontWeight="SemiBold" Foreground="#172033"/>
+      <TextBlock Text="Выберите источник. Рабочие базы Firebird используются только для чтения и не изменяются." Foreground="#64748B" Margin="0,8,0,0"/>
+    </StackPanel>
+    <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="26" Margin="0,24,0,0" MaxWidth="680" HorizontalAlignment="Left" VerticalAlignment="Top">
+      <StackPanel>
+        <TextBlock x:Name="SourceTextBlock" FontSize="16" FontWeight="SemiBold"/>
+        <ComboBox x:Name="SourceComboBox" Margin="0,10,0,0" Height="34" DisplayMemberPath="Name" SelectedValuePath="Id" SelectionChanged="SourceComboBox_SelectionChanged"/>
+        <TextBlock Text="Импортируются только идентификатор карты, ФИО, дата рождения, телефоны и e-mail. Медицинская информация не копируется." TextWrapping="Wrap" Foreground="#475569" Margin="0,10,0,18"/>
+        <WrapPanel>
+          <Button x:Name="RunButton" Content="Импортировать" Padding="18,9" Margin="0,0,10,0" Click="RunButton_Click"/>
+          <Button x:Name="ImportAllButton" Content="Импортировать все настроенные рабочие базы" Padding="18,9" Click="ImportAllButton_Click"/>
+          <Button Content="История импортов" Padding="18,9" Margin="10,0,0,0" Click="ShowHistoryButton_Click"/>
+        </WrapPanel>
+        <Border Background="#F1F5F9" CornerRadius="6" Padding="12" Margin="0,20,0,0"><TextBlock x:Name="StatusTextBlock" Text="Проверяем локальную конфигурацию…" Foreground="#475569" TextWrapping="Wrap"/></Border>
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>

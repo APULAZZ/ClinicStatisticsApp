@@ -32,6 +32,25 @@ namespace ClinicStatisticsApp.Data
         public DbSet<ChatParticipant> ChatParticipants => Set<ChatParticipant>();
         public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
         public DbSet<ChatAttachment> ChatAttachments => Set<ChatAttachment>();
+        public DbSet<CalendarEvent> CalendarEvents => Set<CalendarEvent>();
+        public DbSet<CalendarEventParticipant> CalendarEventParticipants => Set<CalendarEventParticipant>();
+        public DbSet<WorkTask> WorkTasks => Set<WorkTask>();
+        public DbSet<WorkTaskChecklistItem> WorkTaskChecklistItems => Set<WorkTaskChecklistItem>();
+        public DbSet<WorkTaskComment> WorkTaskComments => Set<WorkTaskComment>();
+        public DbSet<WorkTaskStatusHistory> WorkTaskStatusHistory => Set<WorkTaskStatusHistory>();
+        public DbSet<WorkTaskNotification> WorkTaskNotifications => Set<WorkTaskNotification>();
+        public DbSet<CrmPerson> CrmPersons => Set<CrmPerson>();
+        public DbSet<ClinicDataSource> ClinicDataSources => Set<ClinicDataSource>();
+        public DbSet<ExternalPatientCard> ExternalPatientCards => Set<ExternalPatientCard>();
+        public DbSet<PatientMatchCandidate> PatientMatchCandidates => Set<PatientMatchCandidate>();
+        public DbSet<PatientIdentityAuditEntry> PatientIdentityAuditEntries => Set<PatientIdentityAuditEntry>();
+        public DbSet<CrmActivityLink> CrmActivityLinks => Set<CrmActivityLink>();
+        public DbSet<CrmPatientNote> CrmPatientNotes => Set<CrmPatientNote>();
+        public DbSet<CrmAnalyticsPayment> CrmAnalyticsPayments => Set<CrmAnalyticsPayment>();
+        public DbSet<CrmAnalyticsAppointment> CrmAnalyticsAppointments => Set<CrmAnalyticsAppointment>();
+        public DbSet<FirebirdImportRun> FirebirdImportRuns => Set<FirebirdImportRun>();
+        public DbSet<PatientDuplicateReviewDecision> PatientDuplicateReviewDecisions => Set<PatientDuplicateReviewDecision>();
+        public DbSet<PatientDossierSnapshot> PatientDossierSnapshots => Set<PatientDossierSnapshot>();
 
         public AppDbContext(DbContextOptions<AppDbContext> options)
             : base(options)
@@ -336,6 +355,180 @@ namespace ClinicStatisticsApp.Data
             {
                 entity.ToTable("ChatAttachments"); entity.Property(x => x.FileName).HasMaxLength(260); entity.Property(x => x.StoredName).HasMaxLength(80); entity.Property(x => x.ContentType).HasMaxLength(100);
                 entity.HasOne(x => x.Message).WithMany(x => x.Attachments).HasForeignKey(x => x.MessageId).OnDelete(DeleteBehavior.Cascade);
+            });
+            modelBuilder.Entity<CalendarEvent>(entity =>
+            {
+                entity.ToTable("CalendarEvents");
+                entity.HasKey(x => x.Id);
+                entity.Property(x => x.Title).HasMaxLength(200).IsRequired();
+                entity.Property(x => x.Description).HasMaxLength(2000);
+                entity.Property(x => x.Color).HasMaxLength(20).IsRequired();
+                entity.Property(x => x.RecurrenceType).HasMaxLength(20).IsRequired();
+                entity.HasIndex(x => new { x.StartsAt, x.EndsAt });
+                entity.HasOne<User>().WithMany().HasForeignKey(x => x.CreatedByUserId).OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<CalendarEventParticipant>(entity =>
+            {
+                entity.ToTable("CalendarEventParticipants");
+                entity.HasKey(x => new { x.CalendarEventId, x.UserId });
+                entity.HasOne(x => x.CalendarEvent).WithMany(x => x.Participants).HasForeignKey(x => x.CalendarEventId).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne<User>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<WorkTask>(entity =>
+            {
+                entity.ToTable("WorkTasks"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.Title).HasMaxLength(250).IsRequired();
+                entity.Property(x => x.Description).HasColumnType("nvarchar(max)");
+                entity.Property(x => x.Status).HasMaxLength(20).IsRequired();
+                entity.Property(x => x.Priority).HasMaxLength(20).IsRequired();
+                entity.Property(x => x.CompletionResult).HasMaxLength(2000);
+                entity.HasIndex(x => new { x.ResponsibleUserId, x.Status, x.DueAt });
+                entity.HasOne<User>().WithMany().HasForeignKey(x => x.CreatedByUserId).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne<User>().WithMany().HasForeignKey(x => x.ResponsibleUserId).OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<WorkTaskChecklistItem>(entity =>
+            {
+                entity.ToTable("WorkTaskChecklistItems"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.Text).HasMaxLength(500).IsRequired();
+                entity.HasOne(x => x.WorkTask).WithMany(x => x.ChecklistItems).HasForeignKey(x => x.WorkTaskId).OnDelete(DeleteBehavior.Cascade);
+            });
+            modelBuilder.Entity<WorkTaskComment>(entity =>
+            {
+                entity.ToTable("WorkTaskComments"); entity.HasKey(x => x.Id); entity.Property(x => x.Text).HasMaxLength(2000).IsRequired();
+                entity.HasIndex(x => new { x.WorkTaskId, x.CreatedAt });
+                entity.HasOne(x => x.WorkTask).WithMany(x => x.Comments).HasForeignKey(x => x.WorkTaskId).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne<User>().WithMany().HasForeignKey(x => x.AuthorUserId).OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<WorkTaskStatusHistory>(entity =>
+            {
+                entity.ToTable("WorkTaskStatusHistory"); entity.HasKey(x => x.Id); entity.Property(x => x.Status).HasMaxLength(20).IsRequired();
+                entity.HasIndex(x => new { x.WorkTaskId, x.StartedAt });
+                entity.HasOne(x => x.WorkTask).WithMany(x => x.StatusHistory).HasForeignKey(x => x.WorkTaskId).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne<User>().WithMany().HasForeignKey(x => x.ChangedByUserId).OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<WorkTaskNotification>(entity =>
+            {
+                entity.ToTable("WorkTaskNotifications"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.Type).HasMaxLength(40).IsRequired(); entity.Property(x => x.Message).HasMaxLength(500).IsRequired();
+                entity.HasIndex(x => new { x.UserId, x.ReadAt, x.CreatedAt });
+                entity.HasOne(x => x.WorkTask).WithMany().HasForeignKey(x => x.WorkTaskId).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne<User>().WithMany().HasForeignKey(x => x.UserId).OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<CrmPerson>(entity =>
+            {
+                entity.ToTable("CrmPersons"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.LastName).HasMaxLength(100).IsRequired();
+                entity.Property(x => x.FirstName).HasMaxLength(100).IsRequired();
+                entity.Property(x => x.MiddleName).HasMaxLength(100);
+                entity.Property(x => x.PrimaryCardNumber).HasMaxLength(100);
+                entity.Property(x => x.Status).HasMaxLength(20).IsRequired();
+                entity.HasIndex(x => new { x.LastName, x.FirstName, x.DateOfBirth });
+                entity.HasIndex(x => x.PrimaryCardNumber);
+            });
+            modelBuilder.Entity<ExternalPatientCard>(entity =>
+            {
+                entity.ToTable("ExternalPatientCards"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.SourceCardNumber).HasMaxLength(100);
+                entity.Property(x => x.LastName).HasMaxLength(100).IsRequired();
+                entity.Property(x => x.FirstName).HasMaxLength(100).IsRequired();
+                entity.Property(x => x.MiddleName).HasMaxLength(100);
+                entity.Property(x => x.MobilePhone).HasMaxLength(50);
+                entity.Property(x => x.NormalizedMobilePhone).HasMaxLength(32);
+                entity.Property(x => x.Email).HasMaxLength(320);
+                entity.Property(x => x.NormalizedEmail).HasMaxLength(320);
+                entity.Property(x => x.LeadingDoctorName).HasMaxLength(200);
+                entity.Property(x => x.SourceFingerprint).HasMaxLength(128);
+                entity.HasIndex(x => new { x.BranchId, x.SourcePatientId }).IsUnique();
+                entity.HasIndex(x => x.NormalizedMobilePhone);
+                entity.HasIndex(x => x.NormalizedEmail);
+                entity.HasIndex(x => x.CrmPersonId);
+                entity.HasIndex(x => x.ClinicDataSourceId);
+                entity.HasOne(x => x.Branch).WithMany(x => x.ExternalPatientCards).HasForeignKey(x => x.BranchId).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(x => x.ClinicDataSource).WithMany(x => x.ExternalPatientCards).HasForeignKey(x => x.ClinicDataSourceId).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(x => x.CrmPerson).WithMany(x => x.ExternalPatientCards).HasForeignKey(x => x.CrmPersonId).OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<ClinicDataSource>(entity =>
+            {
+                entity.ToTable("ClinicDataSources"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.Code).HasMaxLength(50).IsRequired();
+                entity.Property(x => x.Name).HasMaxLength(150).IsRequired();
+                entity.HasIndex(x => x.Code).IsUnique();
+                entity.HasIndex(x => new { x.BranchId, x.IsActive });
+                entity.HasOne(x => x.Branch).WithMany().HasForeignKey(x => x.BranchId).OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<PatientMatchCandidate>(entity =>
+            {
+                entity.ToTable("PatientMatchCandidates"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.ConfidenceScore).HasColumnType("decimal(5,2)");
+                entity.Property(x => x.EvidenceJson).HasColumnType("nvarchar(max)").IsRequired();
+                entity.Property(x => x.Status).HasMaxLength(20).IsRequired();
+                entity.Property(x => x.DecisionComment).HasMaxLength(1000);
+                entity.HasIndex(x => new { x.ExternalPatientCardId, x.ProposedCrmPersonId }).IsUnique();
+                entity.HasIndex(x => new { x.Status, x.CreatedAt });
+                entity.HasOne(x => x.ExternalPatientCard).WithMany(x => x.MatchCandidates).HasForeignKey(x => x.ExternalPatientCardId).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(x => x.ProposedCrmPerson).WithMany().HasForeignKey(x => x.ProposedCrmPersonId).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(x => x.DecidedByUser).WithMany().HasForeignKey(x => x.DecidedByUserId).OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<PatientIdentityAuditEntry>(entity =>
+            {
+                entity.ToTable("PatientIdentityAuditEntries"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.Action).HasMaxLength(40).IsRequired();
+                entity.Property(x => x.Comment).HasMaxLength(1000);
+                entity.HasIndex(x => new { x.ExternalPatientCardId, x.PerformedAt });
+                entity.HasOne(x => x.ExternalPatientCard).WithMany().HasForeignKey(x => x.ExternalPatientCardId).OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(x => x.PerformedByUser).WithMany().HasForeignKey(x => x.PerformedByUserId).OnDelete(DeleteBehavior.Restrict);
+              });
+            modelBuilder.Entity<CrmActivityLink>(entity =>
+            {
+                entity.ToTable("CrmActivityLinks"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.ActivityType).HasMaxLength(30).IsRequired();
+                entity.Property(x => x.ExternalId).HasMaxLength(100).IsRequired();
+                entity.Property(x => x.Title).HasMaxLength(300).IsRequired();
+                entity.Property(x => x.ContactValue).HasMaxLength(320);
+                entity.HasIndex(x => new { x.CrmPersonId, x.ActivityType, x.ExternalId }).IsUnique();
+                entity.HasIndex(x => new { x.CrmPersonId, x.OccurredAt });
+                entity.HasOne(x => x.CrmPerson).WithMany().HasForeignKey(x => x.CrmPersonId).OnDelete(DeleteBehavior.Cascade);
+              });
+            modelBuilder.Entity<FirebirdImportRun>(entity =>
+            {
+                entity.ToTable("FirebirdImportRuns"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.ErrorText).HasMaxLength(2000);
+                entity.HasIndex(x => new { x.ClinicDataSourceId, x.FinishedAt });
+                entity.HasOne(x => x.ClinicDataSource).WithMany().HasForeignKey(x => x.ClinicDataSourceId).OnDelete(DeleteBehavior.Restrict);
+              });
+            modelBuilder.Entity<PatientDossierSnapshot>(entity =>
+            {
+                entity.ToTable("PatientDossierSnapshots"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.PayloadJson).HasColumnType("nvarchar(max)").IsRequired();
+                entity.Property(x => x.ErrorText).HasMaxLength(2000);
+                entity.HasIndex(x => x.ExternalPatientCardId).IsUnique();
+                entity.HasOne(x => x.ExternalPatientCard).WithMany().HasForeignKey(x => x.ExternalPatientCardId).OnDelete(DeleteBehavior.Cascade);
+            });
+            modelBuilder.Entity<CrmPatientNote>(entity =>
+            {
+                entity.ToTable("CrmPatientNotes"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.Text).HasMaxLength(4000).IsRequired();
+                entity.HasIndex(x => new { x.CrmPersonId, x.CreatedAt });
+                entity.HasOne(x => x.CrmPerson).WithMany().HasForeignKey(x => x.CrmPersonId).OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(x => x.Author).WithMany().HasForeignKey(x => x.AuthorUserId).OnDelete(DeleteBehavior.Restrict);
+            });
+            modelBuilder.Entity<CrmAnalyticsPayment>(entity =>
+            {
+                entity.ToTable("CrmAnalyticsPayments"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.Amount).HasColumnType("decimal(18,2)"); entity.Property(x => x.Description).HasMaxLength(1000); entity.Property(x => x.CashDesk).HasMaxLength(100);
+                entity.HasIndex(x => new { x.ClinicDataSourceId, x.SourcePaymentId }).IsUnique(); entity.HasIndex(x => x.PaymentDate);
+            });
+            modelBuilder.Entity<CrmAnalyticsAppointment>(entity =>
+            {
+                entity.ToTable("CrmAnalyticsAppointments"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.DoctorName).HasMaxLength(200); entity.Property(x => x.Room).HasMaxLength(100); entity.Property(x => x.Info).HasMaxLength(2000);
+                entity.HasIndex(x => new { x.ClinicDataSourceId, x.SourceAppointmentId }).IsUnique(); entity.HasIndex(x => x.AppointmentDate);
+            });
+            modelBuilder.Entity<PatientDuplicateReviewDecision>(entity =>
+            {
+                entity.ToTable("PatientDuplicateReviewDecisions"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.Status).HasMaxLength(20).IsRequired();
+                entity.HasIndex(x => new { x.FirstExternalPatientCardId, x.SecondExternalPatientCardId }).IsUnique();
             });
         }
     }

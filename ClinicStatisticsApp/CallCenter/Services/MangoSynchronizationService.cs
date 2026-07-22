@@ -1,9 +1,6 @@
 namespace ClinicStatisticsApp.CallCenter.Services;
 
-/// <summary>
-/// The same synchronization sequence used by the original CallCenterStatisticsApp.
-/// The separate UI projects use different models, but the operation order is kept identical.
-/// </summary>
+/// <summary>Synchronizes reference data and calls in the same order as the standalone application.</summary>
 public sealed class MangoSynchronizationService(
     MangoDirectorySyncService directory,
     MangoCallImportService calls)
@@ -13,23 +10,27 @@ public sealed class MangoSynchronizationService(
         DateTime to,
         bool syncEmployees,
         bool syncTopics,
+        IProgress<string>? progress = null,
         CancellationToken cancellationToken = default)
     {
         var completed = new List<string>();
 
         if (syncEmployees)
         {
+            progress?.Report("Обновляем список сотрудников…");
             await directory.SyncEmployeesAsync(cancellationToken);
             completed.Add("сотрудники");
         }
 
         if (syncTopics)
         {
+            progress?.Report("Обновляем справочник тематик…");
             await directory.SyncTopicsAsync(cancellationToken);
             completed.Add("тематики");
         }
 
-        await calls.ImportCallsAsync(from, to, cancellationToken);
+        progress?.Report("Проверяем и обновляем журнал звонков…");
+        await calls.EnsurePeriodImportedAsync(from, to, progress, cancellationToken);
         completed.Add("звонки");
 
         return $"Синхронизация завершена: {string.Join(", ", completed)}.";

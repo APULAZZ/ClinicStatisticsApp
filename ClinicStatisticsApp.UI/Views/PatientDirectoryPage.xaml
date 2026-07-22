@@ -1,0 +1,70 @@
+<UserControl x:Class="ClinicStatisticsApp.UI.Views.PatientDirectoryPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="18" Margin="0,0,0,16">
+            <StackPanel>
+                <TextBlock Text="Единая клиентская база" FontSize="22" FontWeight="SemiBold" Foreground="#172033"/>
+                <TextBlock Text="Поиск ведётся по импортированным карточкам. Объединение филиалов выполняется только вручную." Foreground="#64748B" Margin="0,5,0,14"/>
+                <Grid>
+                    <Grid.ColumnDefinitions><ColumnDefinition Width="190"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="100"/></Grid.ColumnDefinitions>
+                    <ComboBox x:Name="BranchComboBox" Grid.Column="0" Height="34" DisplayMemberPath="Name" SelectedValuePath="Id"/>
+                    <TextBox x:Name="SearchTextBox" Grid.Column="2" Height="34" MinWidth="360" VerticalContentAlignment="Center" ToolTip="ФИО, телефон, e-mail или номер карты" KeyDown="SearchTextBox_KeyDown"/>
+                    <Button Grid.Column="4" Content="Найти" Height="34" Click="SearchButton_Click"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="440"/></Grid.ColumnDefinitions>
+            <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="10" Margin="0,0,16,0">
+                <DataGrid x:Name="PatientsGrid" AutoGenerateColumns="False" IsReadOnly="True" SelectionChanged="PatientsGrid_SelectionChanged" MouseDoubleClick="PatientsGrid_MouseDoubleClick" CanUserAddRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Пациент" Binding="{Binding FullName}" Width="*"/>
+                        <DataGridTextColumn Header="№ карты" Binding="{Binding CardNumber}" Width="100"/>
+                        <DataGridTextColumn Header="Дата рождения" Binding="{Binding DateOfBirth, StringFormat={}{0:dd.MM.yyyy}}" Width="110"/>
+                        <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}" Width="130"/>
+                        <DataGridTextColumn Header="Филиал" Binding="{Binding BranchName}" Width="130"/>
+                        <DataGridTextColumn Header="Статус" Binding="{Binding PersonState}" Width="150"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+            <Border Grid.Column="1" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="18">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock x:Name="PatientNameTextBlock" Text="Выберите карточку пациента" FontSize="20" FontWeight="SemiBold" Foreground="#172033" TextWrapping="Wrap"/>
+                        <TextBlock x:Name="PatientInfoTextBlock" Foreground="#64748B" Margin="0,6,0,14" TextWrapping="Wrap"/>
+                        <WrapPanel Margin="0,0,0,14">
+                            <Button x:Name="CreatePersonButton" Content="Создать CRM-карточку" Margin="0,0,8,8" Padding="12,7" Click="CreatePersonButton_Click" IsEnabled="False"/>
+                            <Button x:Name="FindDuplicatesButton" Content="Найти дубли" Margin="0,0,8,8" Padding="12,7" Click="FindDuplicatesButton_Click" IsEnabled="False"/>
+                            <Button x:Name="LinkCallsButton" Content="Связать звонки Mango" Margin="0,0,8,8" Padding="12,7" Click="LinkCallsButton_Click" IsEnabled="False"/>
+                            <Button x:Name="CreateTaskButton" Content="Создать задачу" Margin="0,0,8,8" Padding="12,7" Click="CreateTaskButton_Click" IsEnabled="False"/>
+                            <Button x:Name="MergeCrmProfilesButton" Content="Объединить CRM-карточки" Margin="0,0,8,8" Padding="12,7" Click="MergeCrmProfilesButton_Click" IsEnabled="False"/>
+                        </WrapPanel>
+                        <TextBlock Text="Карточки филиалов" FontWeight="SemiBold" Foreground="#172033"/>
+                        <DataGrid x:Name="LinkedCardsGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="150" Margin="0,5,0,14">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Филиал" Binding="{Binding Branch.Name}" Width="*"/>
+                                <DataGridTextColumn Header="№ карты" Binding="{Binding SourceCardNumber}" Width="90"/>
+                                <DataGridTextColumn Header="Источник" Binding="{Binding ClinicDataSource.Name}" Width="120"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <TextBlock Text="Предполагаемые совпадения" FontWeight="SemiBold" Foreground="#172033"/>
+                        <DataGrid x:Name="CandidatesGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" Height="120" Margin="0,5,0,6">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ФИО" Binding="{Binding ProposedCrmPerson.LastName}" Width="*"/>
+                                <DataGridTextColumn Header="%" Binding="{Binding ConfidenceScore}" Width="55"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                        <Button x:Name="AcceptCandidateButton" Content="Связать с выбранным CRM-пациентом" HorizontalAlignment="Left" Padding="12,7" Margin="0,0,0,14" Click="AcceptCandidateButton_Click" IsEnabled="False"/>
+                        <TextBlock Text="Задачи" FontWeight="SemiBold" Foreground="#172033"/>
+                        <ItemsControl x:Name="TasksItems" Margin="0,5,0,14"><ItemsControl.ItemTemplate><DataTemplate><TextBlock Text="{Binding Title}" Foreground="#475569" TextWrapping="Wrap"/></DataTemplate></ItemsControl.ItemTemplate></ItemsControl>
+                        <TextBlock Text="Коммуникации" FontWeight="SemiBold" Foreground="#172033"/>
+                        <ListBox x:Name="ActivityItems" Margin="0,5,0,0" BorderThickness="0" MouseDoubleClick="ActivityItems_MouseDoubleClick"><ListBox.ItemTemplate><DataTemplate><TextBlock Text="{Binding Title}" Foreground="#475569" TextWrapping="Wrap" Padding="3"/></DataTemplate></ListBox.ItemTemplate></ListBox>
+                        <Button x:Name="OpenCallButton" Content="Открыть выбранный звонок Mango" HorizontalAlignment="Left" Padding="12,7" Margin="0,5,0,0" Click="OpenCallButton_Click" IsEnabled="False"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

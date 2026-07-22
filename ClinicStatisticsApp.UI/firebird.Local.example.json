@@ -1,0 +1,24 @@
+{
+  "FirebirdClinics": [
+    {
+      "ClinicDataSourceId": 1,
+      "Server": "D4",
+      "Port": 3050,
+      "ConnectionTimeoutSeconds": 60,
+      "DatabasePath": "C:\\workdb\\centr_test\\med.GDB",
+      "User": "<local-user>",
+      "Password": "<local-password>",
+      "Charset": "WIN1251"
+    },
+    {
+      "ClinicDataSourceId": 2,
+      "Server": "<server-for-central-production>",
+      "Port": 3050,
+      "ConnectionTimeoutSeconds": 60,
+      "DatabasePath": "<path-to-firebird-gdb>",
+      "User": "<local-user>",
+      "Password": "<local-password>",
+      "Charset": "WIN1251"
+    }
+  ]
+}

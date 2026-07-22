@@ -60,5 +60,6 @@ public interface IMangoApiClient
     Task<List<MangoTopicDto>> GetTopicsAsync(CancellationToken cancellationToken = default);
     Task<List<MangoCallDto>> GetCallsAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default);
     Task<string?> GetCallTopicIdAsync(string entryId, CancellationToken cancellationToken = default);
+    Task<MangoTopicDto?> GetCallTopicAsync(string entryId, CancellationToken cancellationToken = default);
     Task<MangoRecordingFile> GetRecordingAsync(string recordingId, bool forDownload, CancellationToken cancellationToken = default);
 }

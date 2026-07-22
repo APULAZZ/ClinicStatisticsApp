@@ -1,6 +1,9 @@
 ﻿using ClinicStatisticsApp.Models;
 using ClinicStatisticsApp.Services;
 using ClinicStatisticsApp.UI.Views;
+using System.Media;
+using System.Net.Http;
+using System.Text.Json;
 using System.Windows;
 
 namespace ClinicStatisticsApp.UI
@@ -8,6 +11,9 @@ namespace ClinicStatisticsApp.UI
     public partial class MainWindow : Window
     {
         private readonly CurrentUserInfo _currentUser;
+        private readonly HttpClient _chatHttp = new();
+        private readonly System.Windows.Threading.DispatcherTimer _chatBadgeTimer = new() { Interval = TimeSpan.FromSeconds(5) };
+        private int _lastUnreadCount = -1;
 
         public MainWindow(CurrentUserInfo currentUser)
         {
@@ -19,7 +25,28 @@ namespace ClinicStatisticsApp.UI
 
             LoadUserInfo();
             ConfigureByRole();
+            _chatHttp.BaseAddress = ChatServerEndpoint.GetBaseUri();
+            _chatBadgeTimer.Tick += async (_, _) => await RefreshChatBadgeAsync();
+            Loaded += async (_, _) => { await RefreshChatBadgeAsync(); _chatBadgeTimer.Start(); };
+            Closed += (_, _) => { _chatBadgeTimer.Stop(); _chatHttp.Dispose(); };
         }
+
+        private async Task RefreshChatBadgeAsync()
+        {
+            try
+            {
+                using var response = await _chatHttp.GetAsync($"/api/chat/unread/{_currentUser.UserId}");
+                response.EnsureSuccessStatusCode();
+                var result = await JsonSerializer.DeserializeAsync<UnreadResult>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var count = result?.Count ?? 0;
+                ChatButton.Content = count > 0 ? $"Чат  ({count})" : "Чат";
+                if (_lastUnreadCount >= 0 && count > _lastUnreadCount) SystemSounds.Asterisk.Play();
+                _lastUnreadCount = count;
+            }
+            catch { ChatButton.Content = "Чат"; }
+        }
+
+        private sealed class UnreadResult { public int Count { get; init; } }
 
         private void LoadUserInfo()
         {
@@ -28,7 +55,7 @@ namespace ClinicStatisticsApp.UI
                 : _currentUser.BranchName;
 
             UserInfoTextBlock.Text =
-                $"Пользователь: {_currentUser.FullName} | Роль: {_currentUser.RoleName} | Филиал: {branchText}";
+                $"Пользователь: {RussianText.Fix(_currentUser.FullName)} | Роль: {RussianText.Fix(_currentUser.RoleName)} | Филиал: {RussianText.Fix(branchText)}";
         }
 
         private void ConfigureByRole()
@@ -55,6 +82,7 @@ namespace ClinicStatisticsApp.UI
                 CallCenterSettingsButton.Visibility = ModuleAccessPolicy.CanManageCallCenter(_currentUser.RoleCode)
                     ? Visibility.Visible
                     : Visibility.Collapsed;
+                FirebirdSyncButton.Visibility = _currentUser.RoleCode == ModuleAccessPolicy.AdminRole ? Visibility.Visible : Visibility.Collapsed;
                 OpenCallCenterJournal();
                 return;
             }
@@ -70,6 +98,14 @@ namespace ClinicStatisticsApp.UI
                 SummaryButton.IsEnabled = true;
                 EmployeesButton.IsEnabled = true;
                 UsersButton.IsEnabled = true;
+                FirebirdSyncButton.Visibility = Visibility.Visible;
+                CallCenterDashboardButton.Visibility = Visibility.Visible;
+                CallCenterJournalButton.Visibility = Visibility.Visible;
+                CallCenterEmployeeStatisticsButton.Visibility = Visibility.Visible;
+                CallCenterGroupStatisticsButton.Visibility = Visibility.Visible;
+                CallCenterImportButton.Visibility = Visibility.Visible;
+                CallCenterGoogleTablesButton.Visibility = Visibility.Visible;
+                CallCenterSettingsButton.Visibility = Visibility.Visible;
             }
             else if (_currentUser.RoleCode is "Manager" or ModuleAccessPolicy.StatisticsRole)
             {
@@ -220,6 +256,58 @@ namespace ClinicStatisticsApp.UI
         {
             CallCenterPageTitleTextBlock.Text = "Чат";
             ShowWorkspaceContent(new ChatPage(_currentUser));
+        }
+
+        private void MailButton_Click(object sender, RoutedEventArgs e)
+        {
+            CallCenterPageTitleTextBlock.Text = "Почта";
+            ShowWorkspaceContent(new MailPage(_currentUser));
+        }
+
+        private void MailSettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            CallCenterPageTitleTextBlock.Text = "Настройки почты";
+            ShowWorkspaceContent(new MailSettingsPage(_currentUser));
+        }
+
+        private void CalendarButton_Click(object sender, RoutedEventArgs e)
+        {
+            CallCenterPageTitleTextBlock.Text = "Календарь";
+            ShowWorkspaceContent(new CalendarPage(_currentUser));
+        }
+
+        private void TasksButton_Click(object sender, RoutedEventArgs e)
+        {
+            CallCenterPageTitleTextBlock.Text = "Задачи";
+            ShowWorkspaceContent(new TasksPage(_currentUser));
+        }
+
+        private void FirebirdSyncButton_Click(object sender, RoutedEventArgs e)
+        {
+            CallCenterPageTitleTextBlock.Text = "Импорт пациентов";
+            ShowWorkspaceContent(new FirebirdSyncPage());
+        }
+
+        private void PatientsButton_Click(object sender, RoutedEventArgs e)
+        {
+            CallCenterPageTitleTextBlock.Text = "Пациенты CRM";
+            ShowWorkspaceContent(new PatientDirectoryPage(_currentUser));
+        }
+
+        private void DuplicatesButton_Click(object sender, RoutedEventArgs e)
+        {
+            CallCenterPageTitleTextBlock.Text = "Проверка дублей";
+            ShowWorkspaceContent(new DuplicateReviewPage(_currentUser));
+        }
+
+        private void CrmFunnelButton_Click(object sender, RoutedEventArgs e) => OpenCrmAnalytics(0, "CRM · Воронка");
+        private void CrmAppointmentsButton_Click(object sender, RoutedEventArgs e) => OpenCrmAnalytics(1, "CRM · Записи");
+        private void CrmFinanceButton_Click(object sender, RoutedEventArgs e) => OpenCrmAnalytics(2, "CRM · Финансы");
+        private void CrmRetentionButton_Click(object sender, RoutedEventArgs e) => OpenCrmAnalytics(3, "CRM · Удержание");
+        private void OpenCrmAnalytics(int tabIndex, string title)
+        {
+            CallCenterPageTitleTextBlock.Text = title;
+            ShowWorkspaceContent(new CrmAnalyticsPage(tabIndex));
         }
 
         private void CallCenterDashboardButton_Click(object sender, RoutedEventArgs e)

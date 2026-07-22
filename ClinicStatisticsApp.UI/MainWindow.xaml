@@ -41,18 +41,35 @@
         <Border Background="#15233D">
             <DockPanel>
                 <StackPanel DockPanel.Dock="Top" Margin="26,28,16,22">
-                    <TextBlock Text="MANGO" Foreground="#60A5FA" FontWeight="Bold" FontSize="12"/>
-                    <TextBlock Text="Статистика" Foreground="White" FontWeight="SemiBold" FontSize="22" Margin="0,4,0,0"/>
+                    <TextBlock Text="EDKAR" Foreground="#60A5FA" FontWeight="Bold" FontSize="12"/>
+                    <TextBlock Text="CRM" Foreground="White" FontWeight="SemiBold" FontSize="22" Margin="0,4,0,0"/>
                     <TextBlock x:Name="NavigationTitleTextBlock" Text="Клиники и коллцентр" Foreground="#94A3B8" FontSize="12" Margin="0,3,0,0"/>
                 </StackPanel>
 
                 <StackPanel DockPanel.Dock="Top">
+                    <Expander Header="Сводная статистика" Foreground="#CBD5E1" Margin="10,2" Padding="6"><StackPanel>
                     <Button x:Name="ReportsButton" Content="Филиальный отчёт" Style="{StaticResource NavButton}" Click="ReportsButton_Click"/>
                     <Button x:Name="NaradButton" Content="Наряд" Style="{StaticResource NavButton}" Click="NaradButton_Click"/>
                     <Button x:Name="SummaryButton" Content="Сводная книга" Style="{StaticResource NavButton}" Click="SummaryButton_Click"/>
-                    <Button x:Name="EmployeesButton" Content="Сотрудники" Style="{StaticResource NavButton}" Click="EmployeesButton_Click"/>
-                    <Button x:Name="UsersButton" Content="Пользователи" Style="{StaticResource NavButton}" Click="UsersButton_Click"/>
+                    </StackPanel></Expander>
+                    <Expander Header="Органайзер" Foreground="#CBD5E1" Margin="10,2" Padding="6"><StackPanel>
+                    <Button x:Name="CalendarButton" Content="Календарь" Style="{StaticResource NavButton}" Click="CalendarButton_Click"/>
+                    <Button x:Name="TasksButton" Content="Задачи" Style="{StaticResource NavButton}" Click="TasksButton_Click"/>
                     <Button x:Name="ChatButton" Content="Чат" Style="{StaticResource NavButton}" Click="ChatButton_Click"/>
+                    <Button x:Name="MailButton" Content="Почта" Style="{StaticResource NavButton}" Click="MailButton_Click"/>
+                    </StackPanel></Expander>
+                    <Expander Header="CRM" Foreground="#CBD5E1" Margin="10,2" Padding="6"><StackPanel>
+                    <Button x:Name="PatientsButton" Content="Пациенты CRM" Style="{StaticResource NavButton}" Click="PatientsButton_Click"/>
+                    <Button x:Name="DuplicatesButton" Content="Проверка дублей" Style="{StaticResource NavButton}" Click="DuplicatesButton_Click"/>
+                    <Button x:Name="FirebirdSyncButton" Content="Импорт пациентов" Style="{StaticResource NavButton}" Visibility="Collapsed" Click="FirebirdSyncButton_Click"/>
+                    <Separator Background="#2B3B58" Margin="12,7"/>
+                    <Button Content="Воронка" Style="{StaticResource NavButton}" Click="CrmFunnelButton_Click"/>
+                    <Button Content="Записи" Style="{StaticResource NavButton}" Click="CrmAppointmentsButton_Click"/>
+                    <Button Content="Финансы" Style="{StaticResource NavButton}" Click="CrmFinanceButton_Click"/>
+                    <Button Content="Удержание" Style="{StaticResource NavButton}" Click="CrmRetentionButton_Click"/>
+                    </StackPanel></Expander>
+
+                    <Expander Header="Коллцентр" Foreground="#CBD5E1" Margin="10,2" Padding="6"><StackPanel>
 
                     <Button x:Name="CallCenterDashboardButton" Content="Обзор" Style="{StaticResource NavButton}" Visibility="Collapsed" Click="CallCenterDashboardButton_Click"/>
                     <Button x:Name="CallCenterJournalButton" Content="Журнал звонков" Style="{StaticResource NavButton}" Visibility="Collapsed" Click="CallCenterJournalButton_Click"/>
@@ -60,12 +77,20 @@
                     <Button x:Name="CallCenterGroupStatisticsButton" Content="Статистика групп" Style="{StaticResource NavButton}" Visibility="Collapsed" Click="CallCenterGroupStatisticsButton_Click"/>
                     <Button x:Name="CallCenterImportButton" Content="Импорт из Mango" Style="{StaticResource NavButton}" Visibility="Collapsed" Click="CallCenterImportButton_Click"/>
                     <Button x:Name="CallCenterGoogleTablesButton" Content="Гугл-таблички" Style="{StaticResource NavButton}" Visibility="Collapsed" Click="CallCenterGoogleTablesButton_Click"/>
+                    </StackPanel></Expander>
                 </StackPanel>
 
                 <StackPanel DockPanel.Dock="Bottom" Margin="0,0,0,20">
                     <Separator Background="#2B3B58" Margin="20,8"/>
-                    <Button x:Name="CallCenterSettingsButton" Content="Настройки API" Style="{StaticResource NavButton}" Visibility="Collapsed" Click="CallCenterSettingsButton_Click"/>
-                    <TextBlock Text="Система статистики" Foreground="#94A3B8" FontSize="12" Margin="26,8,10,0"/>
+                    <Expander Header="Настройки" Foreground="#CBD5E1" Margin="10,2" Padding="6">
+                        <StackPanel>
+                        <Button x:Name="EmployeesButton" Content="Сотрудники" Style="{StaticResource NavButton}" Click="EmployeesButton_Click"/>
+                        <Button x:Name="UsersButton" Content="Пользователи" Style="{StaticResource NavButton}" Click="UsersButton_Click"/>
+                        <Button x:Name="CallCenterSettingsButton" Content="Настройки API" Style="{StaticResource NavButton}" Visibility="Collapsed" Click="CallCenterSettingsButton_Click"/>
+                        <Button x:Name="MailSettingsButton" Content="Настройки почты" Style="{StaticResource NavButton}" Margin="0,2" Padding="12,8" Click="MailSettingsButton_Click"/>
+                        </StackPanel>
+                    </Expander>
+                    <TextBlock Text="Система статистики · версия 1.0.0" Foreground="#94A3B8" FontSize="12" Margin="26,8,10,0"/>
                 </StackPanel>
             </DockPanel>
         </Border>

@@ -11,6 +11,8 @@ public sealed class BusyService
         return new Scope(this);
     }
 
+    public void Report(string message) => Changed?.Invoke(this, new BusyChangedEventArgs(true, message));
+
     private void End() => Changed?.Invoke(this, new BusyChangedEventArgs(false, string.Empty));
 
     private sealed class Scope(BusyService service) : IDisposable
