@@ -67,6 +67,7 @@
                     <Button Content="Записи" Style="{StaticResource NavButton}" Click="CrmAppointmentsButton_Click"/>
                     <Button Content="Финансы" Style="{StaticResource NavButton}" Click="CrmFinanceButton_Click"/>
                     <Button Content="Удержание" Style="{StaticResource NavButton}" Click="CrmRetentionButton_Click"/>
+                    <Button Content="Воронка имплантов" Style="{StaticResource NavButton}" Click="ImplantFunnelButton_Click"/>
                     </StackPanel></Expander>
 
                     <Expander Header="Коллцентр" Foreground="#CBD5E1" Margin="10,2" Padding="6"><StackPanel>

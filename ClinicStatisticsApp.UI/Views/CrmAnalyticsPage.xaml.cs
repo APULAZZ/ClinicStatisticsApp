@@ -56,15 +56,22 @@ public partial class CrmAnalyticsPage : UserControl
     {
         try
         {
+            if (FromDatePicker.SelectedDate is not DateTime from || ToDatePicker.SelectedDate is not DateTime to)
+                return;
             var selected = SourceComboBox.SelectedItem as AnalyticsSourceOption;
-            var summary = await new CrmAnalyticsWarehouseService().GetSummaryAsync(selected?.SourceIds);
+            var service = new CrmAnalyticsWarehouseService();
+            var summary = await service.GetSummaryAsync(from, to, selected?.SourceIds);
+            var primary = await service.GetPrimaryPatientsAsync(from, to, selected?.SourceIds);
             var conversion = summary.UniquePatients == 0 ? 0m : 100m * summary.AttendedPatientCount / summary.UniquePatients;
-            FunnelSummaryTextBlock.Text = $"Воронка записей: записаны — {summary.UniquePatients:N0} → пришли — {summary.AttendedPatientCount:N0} ({conversion:N1}%) → ближайшая запись — {summary.UpcomingPatientCount:N0}. Неявка — {summary.NoShowPatientCount:N0} пациентов.";
-            AppointmentsSummaryTextBlock.Text = $"Записей: {summary.AppointmentCount:N0} · пациентов: {summary.UniquePatients:N0} · неявок: {summary.NoShowCount:N0} · врачей: {summary.DoctorCount:N0} · кабинетов: {summary.RoomCount:N0}";
+            FunnelSummaryTextBlock.Text = $"Воронка записей: записаны — {summary.UniquePatients:N0} → не отмечены как неявка — {summary.AttendedPatientCount:N0} ({conversion:N1}%) → ближайшая запись — {summary.UpcomingPatientCount:N0}. Неявка — {summary.NoShowPatientCount:N0} пациентов; снято — {summary.CancelledPatientCount:N0}. Новые для клиники (ПерК): {summary.NewClinicPatientCount:N0}; первичные у врача (ПерВ): {summary.NewDoctorPatientCount:N0}.";
+            AppointmentsSummaryTextBlock.Text = $"Активных записей: {summary.AppointmentCount:N0} · пациентов: {summary.UniquePatients:N0} · неявок: {summary.NoShowCount:N0} · снято: {summary.CancelledAppointmentCount:N0} · врачей: {summary.DoctorCount:N0} · кабинетов: {summary.RoomCount:N0}";
             FinanceSummaryTextBlock.Text = $"Оплат: {summary.PaymentCount:N0} · оплачено: {summary.TotalPaid:N2} · средний чек: {(summary.PaymentCount == 0 ? 0m : summary.TotalPaid / summary.PaymentCount):N2}";
             RetentionSummaryTextBlock.Text = $"Пациентов без записи более 6 месяцев: {summary.InactivePatientCount:N0}. Очередь для возврата будет формироваться на следующем этапе.";
+            PrimarySummaryTextBlock.Text = $"Первичных для клиники (ПерК): {primary.NewClinicPatientCount:N0}; первичных у врача (ПерВ): {primary.NewDoctorPatientCount:N0}; уникальных пациентов в списке: {primary.Patients.Count:N0}. Один пациент может одновременно попасть в оба показателя.";
+            PrimaryDoctorsGrid.ItemsSource = primary.Doctors;
+            PrimaryPatientsGrid.ItemsSource = primary.Patients;
         }
-        catch { FunnelSummaryTextBlock.Text = AppointmentsSummaryTextBlock.Text = FinanceSummaryTextBlock.Text = RetentionSummaryTextBlock.Text = "Данные ещё не импортированы для выбранного источника."; }
+        catch { FunnelSummaryTextBlock.Text = AppointmentsSummaryTextBlock.Text = FinanceSummaryTextBlock.Text = RetentionSummaryTextBlock.Text = PrimarySummaryTextBlock.Text = "Данные ещё не импортированы для выбранного источника."; }
     }
     private sealed record AnalyticsSourceOption(string Name, IReadOnlyCollection<int>? SourceIds);
 }

@@ -65,6 +65,7 @@ public sealed class ExternalPatientSynchronizationService
         }
 
         await WriteCardsAsync(cards, cancellationToken);
+        await SynchronizePhoneIndexAsync(clinicDataSourceId, snapshots, cancellationToken);
 
         return new ExternalPatientSynchronizationResult(created, updated, snapshots.Count);
     }
@@ -143,6 +144,69 @@ public sealed class ExternalPatientSynchronizationService
         }
     }
 
+    private async Task SynchronizePhoneIndexAsync(int clinicDataSourceId, IReadOnlyList<FirebirdPatientSnapshot> snapshots, CancellationToken cancellationToken)
+    {
+        var connection = _db.Database.GetDbConnection();
+        var closeConnection = connection.State != ConnectionState.Open;
+        if (closeConnection) await connection.OpenAsync(cancellationToken);
+        try
+        {
+            if (connection is not SqlConnection sqlConnection)
+                throw new InvalidOperationException("CRM-импорт поддерживает только Microsoft SQL Server.");
+            await using var transaction = (SqlTransaction)await sqlConnection.BeginTransactionAsync(cancellationToken);
+            await using (var setup = sqlConnection.CreateCommand())
+            {
+                setup.Transaction = transaction;
+                setup.CommandText = """
+IF OBJECT_ID(N'dbo.CrmPatientContactPhones', N'U') IS NULL
+CREATE TABLE dbo.CrmPatientContactPhones (
+ Id int IDENTITY(1,1) NOT NULL PRIMARY KEY, ClinicDataSourceId int NOT NULL, SourcePatientId bigint NOT NULL,
+ PhoneKind nvarchar(20) NOT NULL, OriginalPhone nvarchar(100) NOT NULL, NormalizedPhone nvarchar(32) NOT NULL, SyncedAt datetime2 NOT NULL,
+ CONSTRAINT UQ_CrmPatientContactPhones UNIQUE(ClinicDataSourceId, SourcePatientId, PhoneKind, NormalizedPhone));
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = N'IX_CrmPatientContactPhones_NormalizedPhone') CREATE INDEX IX_CrmPatientContactPhones_NormalizedPhone ON dbo.CrmPatientContactPhones(NormalizedPhone);
+DELETE FROM dbo.CrmPatientContactPhones WHERE ClinicDataSourceId = @sourceId;
+""";
+                setup.Parameters.AddWithValue("@sourceId", clinicDataSourceId);
+                await setup.ExecuteNonQueryAsync(cancellationToken);
+            }
+            var phones = CreatePhoneIndexTable(clinicDataSourceId, snapshots);
+            if (phones.Rows.Count > 0)
+            {
+                using var bulkCopy = new SqlBulkCopy(sqlConnection, SqlBulkCopyOptions.Default, transaction) { DestinationTableName = "dbo.CrmPatientContactPhones" };
+                // The destination begins with the identity column Id, whereas
+                // the in-memory table deliberately does not. Map by name so a
+                // phone kind can never be shifted into SourcePatientId.
+                foreach (DataColumn column in phones.Columns)
+                    bulkCopy.ColumnMappings.Add(column.ColumnName, column.ColumnName);
+                await bulkCopy.WriteToServerAsync(phones, cancellationToken);
+            }
+            await transaction.CommitAsync(cancellationToken);
+        }
+        finally
+        {
+            if (closeConnection) await connection.CloseAsync();
+        }
+    }
+
+    private static DataTable CreatePhoneIndexTable(int clinicDataSourceId, IEnumerable<FirebirdPatientSnapshot> snapshots)
+    {
+        var table = new DataTable();
+        table.Columns.Add("ClinicDataSourceId", typeof(int)); table.Columns.Add("SourcePatientId", typeof(long)); table.Columns.Add("PhoneKind", typeof(string));
+        table.Columns.Add("OriginalPhone", typeof(string)); table.Columns.Add("NormalizedPhone", typeof(string)); table.Columns.Add("SyncedAt", typeof(DateTime));
+        var unique = new HashSet<(long PatientId, string Kind, string Phone)>();
+        var syncedAt = DateTime.UtcNow;
+        foreach (var snapshot in snapshots)
+        {
+            foreach (var (kind, original) in new[] { ("Mobile", snapshot.MobilePhone), ("Work", snapshot.WorkPhone), ("Home", snapshot.HomePhone) })
+            {
+                var normalized = NormalizePhone(original);
+                if (normalized is null || string.IsNullOrWhiteSpace(original) || !unique.Add((snapshot.SourcePatientId, kind, normalized))) continue;
+                table.Rows.Add(clinicDataSourceId, snapshot.SourcePatientId, kind, original.Trim(), normalized, syncedAt);
+            }
+        }
+        return table;
+    }
+
     private static DataTable CreateImportTable(IEnumerable<ExternalPatientCard> cards)
     {
         var table = new DataTable();
@@ -182,6 +246,7 @@ public sealed class ExternalPatientSynchronizationService
     {
         if (string.IsNullOrWhiteSpace(value)) return null;
         var digits = new string(value.Where(char.IsDigit).ToArray());
+        if (digits.Length == 10) digits = "7" + digits;
         if (digits.Length == 11 && digits[0] == '8') digits = "7" + digits[1..];
         return digits.Length is >= 10 and <= 15 ? "+" + digits : null;
     }

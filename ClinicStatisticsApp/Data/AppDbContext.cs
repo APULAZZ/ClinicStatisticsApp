@@ -48,6 +48,7 @@ namespace ClinicStatisticsApp.Data
         public DbSet<CrmPatientNote> CrmPatientNotes => Set<CrmPatientNote>();
         public DbSet<CrmAnalyticsPayment> CrmAnalyticsPayments => Set<CrmAnalyticsPayment>();
         public DbSet<CrmAnalyticsAppointment> CrmAnalyticsAppointments => Set<CrmAnalyticsAppointment>();
+        public DbSet<CrmDepartureReasonMapping> CrmDepartureReasonMappings => Set<CrmDepartureReasonMapping>();
         public DbSet<FirebirdImportRun> FirebirdImportRuns => Set<FirebirdImportRun>();
         public DbSet<PatientDuplicateReviewDecision> PatientDuplicateReviewDecisions => Set<PatientDuplicateReviewDecision>();
         public DbSet<PatientDossierSnapshot> PatientDossierSnapshots => Set<PatientDossierSnapshot>();
@@ -521,8 +522,14 @@ namespace ClinicStatisticsApp.Data
             modelBuilder.Entity<CrmAnalyticsAppointment>(entity =>
             {
                 entity.ToTable("CrmAnalyticsAppointments"); entity.HasKey(x => x.Id);
-                entity.Property(x => x.DoctorName).HasMaxLength(200); entity.Property(x => x.Room).HasMaxLength(100); entity.Property(x => x.Info).HasMaxLength(2000);
+                entity.Property(x => x.DoctorName).HasMaxLength(200); entity.Property(x => x.AppointmentType).HasMaxLength(50); entity.Property(x => x.Room).HasMaxLength(100); entity.Property(x => x.Info).HasMaxLength(2000);
                 entity.HasIndex(x => new { x.ClinicDataSourceId, x.SourceAppointmentId }).IsUnique(); entity.HasIndex(x => x.AppointmentDate);
+            });
+            modelBuilder.Entity<CrmDepartureReasonMapping>(entity =>
+            {
+                entity.ToTable("CrmDepartureReasonMappings"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.Name).HasMaxLength(200).IsRequired();
+                entity.HasIndex(x => x.SourceCode).IsUnique();
             });
             modelBuilder.Entity<PatientDuplicateReviewDecision>(entity =>
             {

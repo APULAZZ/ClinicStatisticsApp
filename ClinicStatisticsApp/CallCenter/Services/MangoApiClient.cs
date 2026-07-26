@@ -169,7 +169,10 @@ public sealed class MangoApiClient(HttpClient httpClient, MangoApiOptions option
             {
                 var delay = _nextRequestAtUtc - DateTime.UtcNow;
                 if (delay > TimeSpan.Zero) await Task.Delay(delay, cancellationToken);
-                _nextRequestAtUtc = DateTime.UtcNow.AddMilliseconds(1_000);
+                // MANGO answers a single call-card request in a fraction of a second.
+                // A short pace keeps a safe limit while avoiding minutes of idle waiting
+                // when a day contains many calls with tags.
+                _nextRequestAtUtc = DateTime.UtcNow.AddMilliseconds(200);
             }
             finally { _gate.Release(); }
         }

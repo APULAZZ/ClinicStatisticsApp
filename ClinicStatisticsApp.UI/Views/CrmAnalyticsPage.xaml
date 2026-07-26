@@ -43,6 +43,49 @@
                     <Border Margin="0,18,0,0" Padding="16" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6"><TextBlock x:Name="RetentionSummaryTextBlock" FontSize="16" TextWrapping="Wrap"/></Border>
                 </StackPanel>
             </TabItem>
+            <TabItem Header="Первичные">
+                <Grid Margin="20">
+                    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                    <StackPanel>
+                        <TextBlock Text="Первичные пациенты и приход к врачам" FontSize="24" FontWeight="SemiBold"/>
+                        <TextBlock Margin="0,8,0,0" TextWrapping="Wrap" Foreground="#475569" Text="ПерК — первый визит в клинику; ПерВ — первый визит к врачу. Показатели считаются только за выбранный период."/>
+                    </StackPanel>
+                    <Border Grid.Row="1" Margin="0,18,0,14" Padding="14" Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="6"><TextBlock x:Name="PrimarySummaryTextBlock" FontSize="16" TextWrapping="Wrap"/></Border>
+                    <Grid Grid.Row="2">
+                        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="1.35*"/></Grid.ColumnDefinitions>
+                        <Grid Margin="0,0,12,0">
+                            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                            <TextBlock Text="Врачи" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,8"/>
+                            <DataGrid Grid.Row="1" x:Name="PrimaryDoctorsGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Врач" Binding="{Binding DoctorName}" Width="*"/>
+                                    <DataGridTextColumn Header="Всего" Binding="{Binding TotalPatients}" Width="55"/>
+                                    <DataGridTextColumn Header="1 раз" Binding="{Binding OneVisitPatients}" Width="55"/>
+                                    <DataGridTextColumn Header="2 раза" Binding="{Binding TwoVisitPatients}" Width="55"/>
+                                    <DataGridTextColumn Header="&gt;3" Binding="{Binding ThreeOrMoreVisitPatients}" Width="55"/>
+                                    <DataGridTextColumn Header="Среднее" Binding="{Binding AverageVisits, StringFormat={}{0:N2}}" Width="70"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+                            <TextBlock Text="Пациенты" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,8"/>
+                            <DataGrid Grid.Row="1" x:Name="PrimaryPatientsGrid" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Пациент" Binding="{Binding PatientName}" Width="*"/>
+                                    <DataGridTextColumn Header="№ карты" Binding="{Binding CardNumber}" Width="85"/>
+                                    <DataGridTextColumn Header="Тип" Binding="{Binding PrimaryType}" Width="55"/>
+                                    <DataGridTextColumn Header="Врач" Binding="{Binding DoctorName}" Width="140"/>
+                                    <DataGridTextColumn Header="Дата" Binding="{Binding FirstAppointmentDate, StringFormat={}{0:dd.MM.yyyy}}" Width="90"/>
+                                    <DataGridTextColumn Header="Визитов" Binding="{Binding VisitCount}" Width="65"/>
+                                    <DataGridTextColumn Header="Администратор" Binding="{Binding AdministratorName}" Width="140"/>
+                                    <DataGridTextColumn Header="Причина ухода" Binding="{Binding DepartureReasonName}" Width="150"/>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </TabItem>
         </TabControl>
     </Grid>
 </UserControl>

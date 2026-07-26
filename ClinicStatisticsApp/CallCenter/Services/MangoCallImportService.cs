@@ -32,7 +32,9 @@ public sealed class MangoCallImportService(AppDbContext db, IMangoApiClient api)
     public Task ImportCallsAsync(DateTime from, DateTime to, CancellationToken cancellationToken)
         => ImportCallsAsync(from, to, progress: null, cancellationToken);
 
-    public async Task ImportCallsAsync(DateTime from, DateTime to, IProgress<string>? progress = null, CancellationToken cancellationToken = default)
+    /// <param name="includeCall">Optional local filter. MANGO still returns the day's list,
+    /// but only matching calls are stored and have their tag details requested.</param>
+    public async Task ImportCallsAsync(DateTime from, DateTime to, IProgress<string>? progress = null, CancellationToken cancellationToken = default, Func<MangoCallDto, bool>? includeCall = null)
     {
         var log = new CallCenterSyncLog { SyncType = "Calls", StartedAt = DateTime.Now, PeriodFrom = from, PeriodTo = to };
         db.CallCenterSyncLogs.Add(log);
@@ -41,7 +43,10 @@ public sealed class MangoCallImportService(AppDbContext db, IMangoApiClient api)
         {
             progress?.Report($"Получаем звонки за {from:dd.MM.yyyy}…");
             var calls = await api.GetCallsAsync(from, to, cancellationToken);
-            progress?.Report($"Получено звонков: {calls.Count:N0}. Сохраняем данные…");
+            var selectedCalls = includeCall is null ? calls : calls.Where(includeCall).ToList();
+            progress?.Report(includeCall is null
+                ? $"Получено звонков: {calls.Count:N0}. Сохраняем данные…"
+                : $"Получено звонков MANGO: {calls.Count:N0}; соответствует файлу №1: {selectedCalls.Count:N0}. Сохраняем только их…");
             var employees = await db.CallCenterEmployees.ToListAsync(cancellationToken);
             var groups = await db.CallCenterGroups.ToListAsync(cancellationToken);
             var topics = await db.CallCenterTopics.ToListAsync(cancellationToken);
@@ -52,10 +57,13 @@ public sealed class MangoCallImportService(AppDbContext db, IMangoApiClient api)
                 .ToDictionaryAsync(x => x.MangoCallId, StringComparer.OrdinalIgnoreCase, cancellationToken);
             var topicLookupBudget = Stopwatch.StartNew();
 
-            foreach (var dto in calls.Where(x => !string.IsNullOrWhiteSpace(x.CallId)))
+            foreach (var dto in selectedCalls.Where(x => !string.IsNullOrWhiteSpace(x.CallId)))
             {
                 known.TryGetValue(dto.CallId!, out var existingEntity);
-                if ((string.IsNullOrWhiteSpace(dto.TopicMangoId) || string.IsNullOrWhiteSpace(dto.TopicName)) &&
+                // The daily call list already contains tag_id.  Once the tag directory is
+                // synchronized, a separate request for every call is unnecessary and makes
+                // a monthly import much slower.
+                if (string.IsNullOrWhiteSpace(dto.TopicMangoId) &&
                     (existingEntity == null || existingEntity.TopicId == null) &&
                     IsCallCenterCandidateSafe(dto) &&
                     topicLookupBudget.Elapsed < TimeSpan.FromSeconds(90) &&
@@ -69,6 +77,8 @@ public sealed class MangoCallImportService(AppDbContext db, IMangoApiClient api)
                         dto.TopicName = callTopic?.Name;
                         if (!string.IsNullOrWhiteSpace(dto.TopicMangoId) || !string.IsNullOrWhiteSpace(dto.TopicName))
                             mangoTopicsReceived++;
+                        if (topicLookupRequests % 25 == 0)
+                            progress?.Report($"Уточняем тематики в MANGO: {topicLookupRequests:N0} запросов…");
                     }
                     catch when (!cancellationToken.IsCancellationRequested) { }
                 }

@@ -169,10 +169,24 @@ public class CrmAnalyticsAppointment
     public long SourcePatientId { get; set; }
     public DateTime AppointmentDate { get; set; }
     public string? DoctorName { get; set; }
+    public string? AdministratorName { get; set; }
+    public int? DepartureReasonCode { get; set; }
+    public string? AppointmentType { get; set; }
     public string? Room { get; set; }
     public bool IsNoShow { get; set; }
+    public bool IsCancelled { get; set; }
     public string? Info { get; set; }
     public DateTime SyncedAt { get; set; }
+}
+
+/// <summary>CRM-owned translation of a legacy Firebird departure-reason code.</summary>
+public class CrmDepartureReasonMapping
+{
+    public int Id { get; set; }
+    public int SourceCode { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public bool IsConfirmed { get; set; }
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }
 
 public class FirebirdImportRun

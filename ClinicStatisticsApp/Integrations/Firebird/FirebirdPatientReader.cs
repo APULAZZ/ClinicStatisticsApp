@@ -67,7 +67,10 @@ public sealed class FirebirdPatientReader
             Database = _options.DatabasePath,
             UserID = _options.User,
             Password = _options.Password,
-            Charset = _options.Charset,
+            // Older MedM Firebird installations used by the clinics do not
+            // expose the legacy WIN1251 alias to the client.  NONE is accepted
+            // by them and is sufficient for the read-only directory copy.
+            Charset = "NONE",
             Dialect = 3,
             Pooling = false,
             ConnectionTimeout = _options.ConnectionTimeoutSeconds

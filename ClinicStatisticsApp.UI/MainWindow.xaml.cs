@@ -304,6 +304,11 @@ namespace ClinicStatisticsApp.UI
         private void CrmAppointmentsButton_Click(object sender, RoutedEventArgs e) => OpenCrmAnalytics(1, "CRM · Записи");
         private void CrmFinanceButton_Click(object sender, RoutedEventArgs e) => OpenCrmAnalytics(2, "CRM · Финансы");
         private void CrmRetentionButton_Click(object sender, RoutedEventArgs e) => OpenCrmAnalytics(3, "CRM · Удержание");
+        private void ImplantFunnelButton_Click(object sender, RoutedEventArgs e)
+        {
+            CallCenterPageTitleTextBlock.Text = "CRM · Воронка имплантов";
+            ShowWorkspaceContent(new ImplantFunnelPage());
+        }
         private void OpenCrmAnalytics(int tabIndex, string title)
         {
             CallCenterPageTitleTextBlock.Text = title;
