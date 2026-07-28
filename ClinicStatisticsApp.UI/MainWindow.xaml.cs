@@ -83,6 +83,7 @@ namespace ClinicStatisticsApp.UI
                     ? Visibility.Visible
                     : Visibility.Collapsed;
                 FirebirdSyncButton.Visibility = _currentUser.RoleCode == ModuleAccessPolicy.AdminRole ? Visibility.Visible : Visibility.Collapsed;
+                ScheduleExpander.Visibility = Visibility.Collapsed;
                 OpenCallCenterJournal();
                 return;
             }
@@ -276,6 +277,17 @@ namespace ClinicStatisticsApp.UI
             ShowWorkspaceContent(new CalendarPage(_currentUser));
         }
 
+        private void ScheduleButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ModuleAccessPolicy.CanUseSchedule(_currentUser.RoleCode))
+            {
+                MessageBox.Show("Для вашей роли расписание недоступно.", "Доступ запрещён", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+            CallCenterPageTitleTextBlock.Text = "Расписание";
+            ShowWorkspaceContent(new SchedulePage(_currentUser));
+        }
+
         private void TasksButton_Click(object sender, RoutedEventArgs e)
         {
             CallCenterPageTitleTextBlock.Text = "Задачи";
@@ -301,6 +313,11 @@ namespace ClinicStatisticsApp.UI
         }
 
         private void CrmFunnelButton_Click(object sender, RoutedEventArgs e) => OpenCrmAnalytics(0, "CRM · Воронка");
+        private void VisitFunnelButton_Click(object sender, RoutedEventArgs e)
+        {
+            CallCenterPageTitleTextBlock.Text = "CRM · Воронка посещений";
+            ShowWorkspaceContent(new VisitFunnelPage());
+        }
         private void CrmAppointmentsButton_Click(object sender, RoutedEventArgs e) => OpenCrmAnalytics(1, "CRM · Записи");
         private void CrmFinanceButton_Click(object sender, RoutedEventArgs e) => OpenCrmAnalytics(2, "CRM · Финансы");
         private void CrmRetentionButton_Click(object sender, RoutedEventArgs e) => OpenCrmAnalytics(3, "CRM · Удержание");

@@ -136,6 +136,25 @@
                     </DataGrid>
                 </StackPanel>
             </Border>
+
+            <Border Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Padding="18" Margin="0,18,0,0">
+                <StackPanel>
+                    <TextBlock Text="Проверка сопоставления лидов" FontSize="17" FontWeight="SemiBold" Foreground="#172033"/>
+                    <TextBlock Text="Строки «Не найдена запись» помогут адресно проверить случаи, которые автоматике пока не удалось связать с MedM. Данные только для просмотра." Foreground="#64748B" FontSize="12" Margin="0,3,0,10" TextWrapping="Wrap"/>
+                    <DataGrid x:Name="MatchingAuditGrid" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" MaxHeight="300">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Лид" Binding="{Binding LeadDate, StringFormat={}{0:dd.MM.yyyy HH:mm}}" Width="145"/>
+                            <DataGridTextColumn Header="Тип" Binding="{Binding LeadType}" Width="80"/>
+                            <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}" Width="150"/>
+                            <DataGridTextColumn Header="Сотрудник" Binding="{Binding OperatorName}" Width="150"/>
+                            <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="230"/>
+                            <DataGridTextColumn Header="Филиал" Binding="{Binding BranchName}" Width="*"/>
+                            <DataGridTextColumn Header="Карта" Binding="{Binding PatientCardNumber}" Width="90"/>
+                            <DataGridTextColumn Header="Приём" Binding="{Binding AppointmentDate, StringFormat={}{0:dd.MM.yyyy}}" Width="105"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </StackPanel>
+            </Border>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

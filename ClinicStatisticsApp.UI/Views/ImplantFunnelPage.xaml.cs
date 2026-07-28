@@ -25,13 +25,14 @@ public partial class ImplantFunnelPage : UserControl
 
     private async void ImportLeadsButton_Click(object sender, RoutedEventArgs e)
     {
+        if (!TryGetPeriod(out var from, out var to)) return;
         var dialog = new OpenFileDialog { Filter = "Excel (*.xlsx)|*.xlsx", Title = "Выберите выгрузку колл-трекинга" };
         if (dialog.ShowDialog() != true) return;
         try
         {
             ImportLeadsButton.IsEnabled = false;
             StatusTextBlock.Text = "Читаем заявки и звонки из файла…";
-            var leads = ReadLeads(dialog.FileName);
+            var leads = ReadLeads(dialog.FileName, from, to);
             var imported = await _service.ImportAsync(System.IO.Path.GetFileName(dialog.FileName), leads);
             FileStatusTextBlock.Text = $"Выбран файл: {System.IO.Path.GetFileName(dialog.FileName)} · найдено лидов: {leads.Count:N0} · добавлено новых: {imported:N0}.";
             StatusTextBlock.Text = $"Готово: в файле найдено {leads.Count:N0} лидов, добавлено новых {imported:N0}.";
@@ -51,12 +52,13 @@ public partial class ImplantFunnelPage : UserControl
         try
         {
             UpdateWarehouseButton.IsEnabled = false;
-            StatusTextBlock.Text = "Загружаем журнал MedM, записи и оплаты. Firebird используется только для чтения…";
-            var events = await _service.ImportMedmEventsAsync(from, to, new Progress<string>(x => StatusTextBlock.Text = x));
+            var outcomeTo = DateTime.Today < to.Date ? to.Date : DateTime.Today;
+            StatusTextBlock.Text = $"Загружаем результаты записей до {outcomeTo:dd.MM.yyyy}. Firebird используется только для чтения…";
+            var events = await _service.ImportMedmEventsAsync(from, outcomeTo, new Progress<string>(x => StatusTextBlock.Text = x));
             await using var metadataDb = DbContextFactory.Create();
             var sourceIds = await metadataDb.ClinicDataSources.AsNoTracking().Where(x => !x.IsTest).Select(x => x.Id).ToListAsync();
-            var result = await new CrmAnalyticsWarehouseService().ImportAsync(from, to.AddDays(90), sourceIds, new Progress<string>(x => StatusTextBlock.Text = x));
-            StatusTextBlock.Text = $"Обновлено: событий MedM — {events.Sources.Sum(x => x.Events):N0}, источников записей/оплат — {result.Sources.Count}, ошибок — {events.Sources.Count(x => x.Error is not null) + result.Sources.Count(x => x.Error is not null)}.";
+            var result = await new CrmAnalyticsWarehouseService().ImportAsync(from, outcomeTo, sourceIds, new Progress<string>(x => StatusTextBlock.Text = x));
+            StatusTextBlock.Text = $"Обновлено до {outcomeTo:dd.MM.yyyy}: событий MedM — {events.Sources.Sum(x => x.Events):N0}, источников записей/оплат — {result.Sources.Count}, ошибок — {events.Sources.Count(x => x.Error is not null) + result.Sources.Count(x => x.Error is not null)}.";
             await LoadDashboardAsync();
         }
         catch (Exception ex) { StatusTextBlock.Text = $"Не удалось обновить медицинские данные: {ex.Message}"; }
@@ -188,6 +190,7 @@ public partial class ImplantFunnelPage : UserControl
         try
         {
             var dashboard = await _service.GetDashboardAsync(from, to);
+            MatchingAuditGrid.ItemsSource = await _service.GetMatchingAuditAsync(from, to);
             LeadCountText.Text = dashboard.LeadCount.ToString("N0");
             MangoBookedCountText.Text = dashboard.MangoBookedCount.ToString("N0");
             AppointmentCountText.Text = dashboard.AppointmentCount.ToString("N0");
@@ -222,36 +225,57 @@ public partial class ImplantFunnelPage : UserControl
         return false;
     }
 
-    private static List<ImplantLeadInput> ReadLeads(string fileName)
+    private static List<ImplantLeadInput> ReadLeads(string fileName, DateTime from, DateTime to)
     {
         // Excel commonly keeps an editable workbook open. Shared read access
         // allows import in that normal case without ever changing the file.
         using var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
         using var workbook = new XLWorkbook(stream);
         var leads = new List<ImplantLeadInput>();
-        var forms = workbook.Worksheets.FirstOrDefault(x => x.Name.Equals("Заявки", StringComparison.OrdinalIgnoreCase));
+        var forms = workbook.Worksheets.FirstOrDefault(x => x.Name.StartsWith("Заявки", StringComparison.OrdinalIgnoreCase));
         if (forms is not null)
         {
-            foreach (var row in forms.RowsUsed().Skip(1))
+            var header = FindHeader(forms, "phone", "date") ?? forms.FirstRowUsed();
+            if (header is not null)
             {
-                var phone = row.Cell(3).GetFormattedString();
-                if (ImplantFunnelService.NormalizePhone(phone) is null || !TryReadDate(row.Cell(5), out var occurredAt)) continue;
-                leads.Add(new($"form:{row.Cell(4).GetFormattedString()}:{row.RowNumber()}", "Заявка", occurredAt, phone, null, $"{row.Cell(2).GetFormattedString()} · {row.Cell(8).GetFormattedString()}"));
+                var columns = HeaderColumns(header);
+                if (!columns.ContainsKey("phone")) columns["phone"] = 3;
+                if (!columns.ContainsKey("date")) columns["date"] = 5;
+                if (!columns.ContainsKey("tranid")) columns["tranid"] = 4;
+                foreach (var row in forms.RowsUsed().Where(x => x.RowNumber() > header.RowNumber()))
+                {
+                    var phone = Cell(row, columns, "phone");
+                    if (ImplantFunnelService.NormalizePhone(phone) is null || !TryReadDate(CellObject(row, columns, "date"), out var occurredAt) || occurredAt.Date < from.Date || occurredAt.Date > to.Date) continue;
+                    leads.Add(new($"form:{Cell(row, columns, "tranid")}:{row.RowNumber()}", "Заявка", occurredAt, phone, null, $"{Cell(row, columns, "name")} · {Cell(row, columns, "utm_source")}"));
+                }
             }
         }
-        var calls = workbook.Worksheets.FirstOrDefault(x => x.Name.Equals("Звонки", StringComparison.OrdinalIgnoreCase));
+        var calls = workbook.Worksheets.FirstOrDefault(x => x.Name.StartsWith("Звонки", StringComparison.OrdinalIgnoreCase));
         if (calls is not null)
         {
-            foreach (var row in calls.RowsUsed().Skip(3))
+            Dictionary<string, int>? columns = null;
+            foreach (var row in calls.RowsUsed())
             {
-                var operatorName = row.Cell(5).GetFormattedString();
-                var phone = row.Cell(3).GetFormattedString();
-                if (!operatorName.Contains("коллцентр", StringComparison.OrdinalIgnoreCase) || ImplantFunnelService.NormalizePhone(phone) is null || !TryReadDate(row.Cell(1), out var occurredAt)) continue;
-                leads.Add(new($"call:{occurredAt:O}:{phone}:{operatorName}", "Звонок", occurredAt, phone, operatorName, $"Длительность: {row.Cell(6).GetFormattedString()} сек."));
+                if (IsCallHeader(row)) { columns = HeaderColumns(row); continue; }
+                if (columns is null) continue;
+                var operatorName = Cell(row, columns, "участники");
+                var phone = Cell(row, columns, "кто звонил");
+                if (!operatorName.Contains("коллцентр", StringComparison.OrdinalIgnoreCase) || ImplantFunnelService.NormalizePhone(phone) is null || !TryReadDate(CellObject(row, columns, "время"), out var occurredAt) || occurredAt.Date < from.Date || occurredAt.Date > to.Date) continue;
+                leads.Add(new($"call:{occurredAt:O}:{phone}:{operatorName}", "Звонок", occurredAt, phone, operatorName, $"Длительность: {Cell(row, columns, "длительность, сек")} сек."));
             }
         }
         return leads;
     }
+
+    private static IXLRow? FindHeader(IXLWorksheet sheet, params string[] required) => sheet.RowsUsed().Take(10).FirstOrDefault(row => required.All(x => HeaderColumns(row).ContainsKey(x)));
+    private static bool IsCallHeader(IXLRow row) { var columns = HeaderColumns(row); return columns.ContainsKey("время") && columns.ContainsKey("кто звонил") && columns.ContainsKey("участники"); }
+    private static Dictionary<string, int> HeaderColumns(IXLRow row) => row.CellsUsed()
+        .Select(x => new { Name = x.GetFormattedString().Trim().ToLowerInvariant(), Column = x.Address.ColumnNumber })
+        .Where(x => !string.IsNullOrWhiteSpace(x.Name))
+        .GroupBy(x => x.Name, StringComparer.OrdinalIgnoreCase)
+        .ToDictionary(x => x.Key, x => x.First().Column, StringComparer.OrdinalIgnoreCase);
+    private static string Cell(IXLRow row, IReadOnlyDictionary<string, int> columns, string header) => columns.TryGetValue(header, out var column) ? row.Cell(column).GetFormattedString() : string.Empty;
+    private static IXLCell CellObject(IXLRow row, IReadOnlyDictionary<string, int> columns, string header) => columns.TryGetValue(header, out var column) ? row.Cell(column) : row.Cell(1);
 
     private static bool TryReadDate(IXLCell cell, out DateTime value)
     {

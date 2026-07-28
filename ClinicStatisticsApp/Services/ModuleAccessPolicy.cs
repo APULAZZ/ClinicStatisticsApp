@@ -12,6 +12,9 @@ public static class ModuleAccessPolicy
     public static bool CanUseGeneralStatistics(string? roleCode)
         => roleCode is AdminRole or ManagerRole or BranchUserRole or StatisticsRole;
 
+    public static bool CanUseSchedule(string? roleCode)
+        => roleCode is AdminRole or ManagerRole or BranchUserRole or StatisticsRole;
+
     public static bool CanUseCallCenter(string? roleCode)
         => roleCode is AdminRole or CallCenterRole or CallCenterAdminRole;
 

@@ -48,6 +48,11 @@ namespace ClinicStatisticsApp.Data
         public DbSet<CrmPatientNote> CrmPatientNotes => Set<CrmPatientNote>();
         public DbSet<CrmAnalyticsPayment> CrmAnalyticsPayments => Set<CrmAnalyticsPayment>();
         public DbSet<CrmAnalyticsAppointment> CrmAnalyticsAppointments => Set<CrmAnalyticsAppointment>();
+        public DbSet<CrmScheduleBlock> CrmScheduleBlocks => Set<CrmScheduleBlock>();
+        public DbSet<CrmScheduleDoctorProfile> CrmScheduleDoctorProfiles => Set<CrmScheduleDoctorProfile>();
+        public DbSet<CrmScheduleDoctorProfileLink> CrmScheduleDoctorProfileLinks => Set<CrmScheduleDoctorProfileLink>();
+        public DbSet<CrmScheduleFavoriteDoctor> CrmScheduleFavoriteDoctors => Set<CrmScheduleFavoriteDoctor>();
+        public DbSet<CrmVisitFunnelEntry> CrmVisitFunnelEntries => Set<CrmVisitFunnelEntry>();
         public DbSet<CrmDepartureReasonMapping> CrmDepartureReasonMappings => Set<CrmDepartureReasonMapping>();
         public DbSet<FirebirdImportRun> FirebirdImportRuns => Set<FirebirdImportRun>();
         public DbSet<PatientDuplicateReviewDecision> PatientDuplicateReviewDecisions => Set<PatientDuplicateReviewDecision>();
@@ -522,8 +527,32 @@ namespace ClinicStatisticsApp.Data
             modelBuilder.Entity<CrmAnalyticsAppointment>(entity =>
             {
                 entity.ToTable("CrmAnalyticsAppointments"); entity.HasKey(x => x.Id);
-                entity.Property(x => x.DoctorName).HasMaxLength(200); entity.Property(x => x.AppointmentType).HasMaxLength(50); entity.Property(x => x.Room).HasMaxLength(100); entity.Property(x => x.Info).HasMaxLength(2000);
+                entity.Property(x => x.DoctorName).HasMaxLength(200); entity.Property(x => x.PatientName).HasMaxLength(300); entity.Property(x => x.AppointmentType).HasMaxLength(50); entity.Property(x => x.Room).HasMaxLength(100); entity.Property(x => x.Info).HasMaxLength(2000);
                 entity.HasIndex(x => new { x.ClinicDataSourceId, x.SourceAppointmentId }).IsUnique(); entity.HasIndex(x => x.AppointmentDate);
+            });
+            modelBuilder.Entity<CrmScheduleBlock>(entity =>
+            {
+                entity.ToTable("CrmScheduleBlocks"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.Title).HasMaxLength(300).IsRequired(); entity.Property(x => x.Kind).HasMaxLength(50).IsRequired();
+                entity.HasIndex(x => new { x.ClinicDataSourceId, x.SourceDoctorId, x.StartsAt });
+            });
+            modelBuilder.Entity<CrmScheduleDoctorProfile>(entity =>
+            {
+                entity.ToTable("CrmScheduleDoctorProfiles"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.Name).HasMaxLength(200).IsRequired(); entity.HasIndex(x => x.Name).IsUnique();
+            });
+            modelBuilder.Entity<CrmScheduleDoctorProfileLink>(entity =>
+            {
+                entity.ToTable("CrmScheduleDoctorProfileLinks"); entity.HasKey(x => x.Id);
+                entity.Property(x => x.DoctorName).HasMaxLength(200).IsRequired();
+                entity.HasIndex(x => new { x.ClinicDataSourceId, x.SourceDoctorId }).IsUnique();
+                entity.HasIndex(x => new { x.ProfileId, x.ClinicDataSourceId });
+            });
+            modelBuilder.Entity<CrmScheduleFavoriteDoctor>(entity => { entity.ToTable("CrmScheduleFavoriteDoctors"); entity.HasKey(x => x.Id); entity.Property(x => x.DoctorName).HasMaxLength(200).IsRequired(); entity.HasIndex(x => new { x.UserId, x.DoctorName }).IsUnique(); });
+            modelBuilder.Entity<CrmVisitFunnelEntry>(entity =>
+            {
+                entity.ToTable("CrmVisitFunnelEntries"); entity.HasKey(x => x.Id);
+                entity.HasIndex(x => new { x.ClinicDataSourceId, x.SourceVisitId }).IsUnique(); entity.HasIndex(x => x.VisitDate);
             });
             modelBuilder.Entity<CrmDepartureReasonMapping>(entity =>
             {

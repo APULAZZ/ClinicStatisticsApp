@@ -58,15 +58,17 @@
                     <Button x:Name="ChatButton" Content="Чат" Style="{StaticResource NavButton}" Click="ChatButton_Click"/>
                     <Button x:Name="MailButton" Content="Почта" Style="{StaticResource NavButton}" Click="MailButton_Click"/>
                     </StackPanel></Expander>
+                    <Expander x:Name="ScheduleExpander" Header="Расписание" Foreground="#CBD5E1" Margin="10,2" Padding="6">
+                        <StackPanel>
+                            <Button x:Name="ScheduleButton" Content="Сетка врачей" Style="{StaticResource NavButton}" Click="ScheduleButton_Click"/>
+                        </StackPanel>
+                    </Expander>
                     <Expander Header="CRM" Foreground="#CBD5E1" Margin="10,2" Padding="6"><StackPanel>
                     <Button x:Name="PatientsButton" Content="Пациенты CRM" Style="{StaticResource NavButton}" Click="PatientsButton_Click"/>
                     <Button x:Name="DuplicatesButton" Content="Проверка дублей" Style="{StaticResource NavButton}" Click="DuplicatesButton_Click"/>
                     <Button x:Name="FirebirdSyncButton" Content="Импорт пациентов" Style="{StaticResource NavButton}" Visibility="Collapsed" Click="FirebirdSyncButton_Click"/>
                     <Separator Background="#2B3B58" Margin="12,7"/>
-                    <Button Content="Воронка" Style="{StaticResource NavButton}" Click="CrmFunnelButton_Click"/>
-                    <Button Content="Записи" Style="{StaticResource NavButton}" Click="CrmAppointmentsButton_Click"/>
-                    <Button Content="Финансы" Style="{StaticResource NavButton}" Click="CrmFinanceButton_Click"/>
-                    <Button Content="Удержание" Style="{StaticResource NavButton}" Click="CrmRetentionButton_Click"/>
+                    <Button Content="Воронка посещений" Style="{StaticResource NavButton}" Click="VisitFunnelButton_Click"/>
                     <Button Content="Воронка имплантов" Style="{StaticResource NavButton}" Click="ImplantFunnelButton_Click"/>
                     </StackPanel></Expander>
 

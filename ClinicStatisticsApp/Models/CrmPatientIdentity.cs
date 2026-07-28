@@ -168,7 +168,10 @@ public class CrmAnalyticsAppointment
     public long SourceAppointmentId { get; set; }
     public long SourcePatientId { get; set; }
     public DateTime AppointmentDate { get; set; }
+    public long? SourceDoctorId { get; set; }
     public string? DoctorName { get; set; }
+    public string? PatientName { get; set; }
+    public int DurationMinutes { get; set; } = 30;
     public string? AdministratorName { get; set; }
     public int? DepartureReasonCode { get; set; }
     public string? AppointmentType { get; set; }
@@ -177,6 +180,44 @@ public class CrmAnalyticsAppointment
     public bool IsCancelled { get; set; }
     public string? Info { get; set; }
     public DateTime SyncedAt { get; set; }
+}
+
+/// <summary>CRM-owned time block; it never changes the MedM schedule.</summary>
+public class CrmScheduleBlock
+{
+    public int Id { get; set; }
+    public int ClinicDataSourceId { get; set; }
+    public long SourceDoctorId { get; set; }
+    public DateTime StartsAt { get; set; }
+    public DateTime EndsAt { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Kind { get; set; } = "Служебное";
+    public int CreatedByUserId { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+}
+
+/// <summary>CRM-owned unified doctor identity across independent clinic databases.</summary>
+public class CrmScheduleDoctorProfile
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+}
+
+public class CrmScheduleDoctorProfileLink
+{
+    public int Id { get; set; }
+    public int ProfileId { get; set; }
+    public int ClinicDataSourceId { get; set; }
+    public long SourceDoctorId { get; set; }
+    public string DoctorName { get; set; } = string.Empty;
+}
+
+public class CrmScheduleFavoriteDoctor
+{
+    public int Id { get; set; }
+    public int UserId { get; set; }
+    public string DoctorName { get; set; } = string.Empty;
 }
 
 /// <summary>CRM-owned translation of a legacy Firebird departure-reason code.</summary>

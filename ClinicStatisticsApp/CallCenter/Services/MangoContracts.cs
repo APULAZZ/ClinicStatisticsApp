@@ -52,6 +52,7 @@ public sealed class MangoTopicDto
 }
 public sealed record MangoRecordingCategoryDto(string? RecordingId, int? CategoryId, string? CategoryName);
 public sealed record MangoRecordingFile(byte[] Content, string ContentType);
+public sealed record MangoCallSearchProgress(string Message, int FoundCount, DateTime From, DateTime To);
 
 public interface IMangoApiClient
 {
@@ -59,6 +60,7 @@ public interface IMangoApiClient
     Task<List<MangoGroupDto>> GetGroupsAsync(CancellationToken cancellationToken = default);
     Task<List<MangoTopicDto>> GetTopicsAsync(CancellationToken cancellationToken = default);
     Task<List<MangoCallDto>> GetCallsAsync(DateTime from, DateTime to, CancellationToken cancellationToken = default);
+    Task<List<MangoCallDto>> GetRecentCallsByPhonesAsync(IEnumerable<string?> phoneNumbers, int maxResults = 5, int lookbackDays = 30, IProgress<MangoCallSearchProgress>? progress = null, CancellationToken cancellationToken = default);
     Task<string?> GetCallTopicIdAsync(string entryId, CancellationToken cancellationToken = default);
     Task<MangoTopicDto?> GetCallTopicAsync(string entryId, CancellationToken cancellationToken = default);
     Task<MangoRecordingFile> GetRecordingAsync(string recordingId, bool forDownload, CancellationToken cancellationToken = default);

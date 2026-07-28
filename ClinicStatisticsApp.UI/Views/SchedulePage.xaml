@@ -1,0 +1,67 @@
+<UserControl x:Class="ClinicStatisticsApp.UI.Views.SchedulePage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <UserControl.Resources>
+        <Style x:Key="FilterChip" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="#334155"/><Setter Property="Margin" Value="0,0,8,6"/><Setter Property="Padding" Value="10,5"/>
+            <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="CheckBox"><Border x:Name="Chip" Background="#F1F5F9" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="14" Padding="{TemplateBinding Padding}"><ContentPresenter/></Border><ControlTemplate.Triggers><Trigger Property="IsChecked" Value="True"><Setter TargetName="Chip" Property="Background" Value="#DBEAFE"/><Setter TargetName="Chip" Property="BorderBrush" Value="#60A5FA"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+        </Style>
+    </UserControl.Resources>
+    <Grid Margin="20">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+        <Grid>
+            <StackPanel>
+                <TextBlock Text="Расписание" FontSize="26" FontWeight="SemiBold" Foreground="#172033"/>
+                <TextBlock Text="Сетка формируется из снимка CRM. Firebird используется только для чтения." Margin="0,5,0,0" Foreground="#64748B"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <Button Content="‹" FontSize="20" Width="36" Height="32" Click="PreviousDay_Click"/>
+                <TextBlock Text="с:" VerticalAlignment="Center" Margin="8,0,4,0" Foreground="#475569"/>
+                <DatePicker x:Name="DayPicker" Width="132" Margin="8,0" SelectedDateChanged="DayPicker_SelectedDateChanged"/>
+                <Button Content="Сегодня" Padding="12,6" Click="Today_Click"/>
+                <Button Content="›" FontSize="20" Width="36" Height="32" Margin="8,0,0,0" Click="NextDay_Click"/>
+            </StackPanel>
+        </Grid>
+        <Border Grid.Row="1" Margin="0,18,0,14" Padding="14" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12">
+            <StackPanel>
+                <TextBlock Text="Филиалы" FontWeight="SemiBold" Foreground="#334155"/>
+                <WrapPanel Margin="0,6,0,0"><Button Content="Выбрать все" Padding="10,4" Click="SelectAllSources_Click"/><Button Content="Снять все" Padding="10,4" Margin="8,0,0,0" Click="ClearSources_Click"/></WrapPanel>
+                <WrapPanel x:Name="SourcesPanel" Margin="0,8,0,3"/>
+                <WrapPanel>
+                    <TextBlock Text="Врач:" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#475569"/>
+                    <ComboBox x:Name="DoctorComboBox" Width="300" DisplayMemberPath="Display" TextSearch.TextPath="Name" IsTextSearchEnabled="True" IsEditable="True" StaysOpenOnEdit="True" SelectionChanged="DoctorComboBox_SelectionChanged" ToolTip="Начните вводить фамилию или имя врача"/>
+                    <Button Content="★ В избранное" Margin="8,0,0,0" Padding="10,6" Click="ToggleFavoriteDoctor_Click"/>
+                    <TextBlock Text="Вид:" VerticalAlignment="Center" Margin="14,0,8,0" Foreground="#475569"/>
+                    <ComboBox x:Name="ViewModeComboBox" Width="100" SelectedIndex="0" SelectionChanged="ViewModeComboBox_SelectionChanged"><ComboBoxItem Content="День"/><ComboBoxItem Content="Неделя"/><ComboBoxItem Content="Период"/></ComboBox>
+                    <TextBlock Text="по:" VerticalAlignment="Center" Margin="10,0,5,0" Foreground="#475569"/>
+                    <DatePicker x:Name="PeriodEndPicker" Width="120" SelectedDateChanged="PeriodEndPicker_SelectedDateChanged"/>
+                    <Button Content="‹ Врачи" Margin="14,0,0,0" Padding="10,6" Click="PreviousResources_Click"/>
+                    <TextBlock x:Name="ResourcesPageTextBlock" VerticalAlignment="Center" Margin="8,0" Foreground="#64748B"/>
+                    <Button Content="Врачи ›" Padding="10,6" Click="NextResources_Click"/>
+                    <Button x:Name="RefreshButton" Content="Обновить из Firebird" Margin="14,0,0,0" Padding="13,6" Click="RefreshButton_Click"/>
+                    <Button Content="Служебный блок" Margin="8,0,0,0" Padding="13,6" Click="AddServiceBlock_Click"/>
+                    <Button Content="Связать филиалы" Margin="8,0,0,0" Padding="13,6" Click="LinkDoctorBranches_Click"/>
+                    <Button Content="Профили врачей" Margin="8,0,0,0" Padding="13,6" Click="ManageDoctorProfiles_Click"/>
+                    <Button Content="Контроль данных" Margin="8,0,0,0" Padding="13,6" Click="ScheduleQualityCheck_Click"/>
+                    <TextBlock x:Name="StatusTextBlock" VerticalAlignment="Center" Margin="12,0,0,0" Foreground="#64748B" TextWrapping="Wrap"/>
+                </WrapPanel>
+                <WrapPanel Margin="0,10,0,0">
+                    <TextBlock Text="Статусы:" FontWeight="SemiBold" Foreground="#475569" Margin="0,0,10,0"/>
+                    <CheckBox x:Name="ShowVisitsCheckBox" Content="Приёмы" IsChecked="True" Margin="0,0,10,0" Checked="ScheduleFilterChanged" Unchecked="ScheduleFilterChanged"/>
+                    <CheckBox x:Name="ShowReservesCheckBox" Content="Резервы" IsChecked="True" Margin="0,0,10,0" Checked="ScheduleFilterChanged" Unchecked="ScheduleFilterChanged"/>
+                    <CheckBox x:Name="ShowNoShowsCheckBox" Content="Неявки" IsChecked="True" Margin="0,0,10,0" Checked="ScheduleFilterChanged" Unchecked="ScheduleFilterChanged"/>
+                    <CheckBox x:Name="ShowServiceBlocksCheckBox" Content="Служебные" IsChecked="True" Margin="0,0,14,0" Checked="ScheduleFilterChanged" Unchecked="ScheduleFilterChanged"/>
+                    <TextBlock Text="● Приём" Foreground="#2563EB" Margin="0,0,12,0"/>
+                    <TextBlock Text="● Резерв" Foreground="#B45309" Margin="0,0,12,0"/>
+                    <TextBlock Text="● Неявка" Foreground="#DC2626" Margin="0,0,12,0"/>
+                    <TextBlock Text="● Служебный блок" Foreground="#64748B"/>
+                </WrapPanel>
+            </StackPanel>
+        </Border>
+        <Border Grid.Row="2" Background="White" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="12">
+            <ScrollViewer x:Name="ScheduleScrollViewer" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Padding="12" SizeChanged="ScheduleScrollViewer_SizeChanged" ScrollChanged="ScheduleScrollViewer_ScrollChanged">
+                <Grid x:Name="ScheduleGrid"/>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

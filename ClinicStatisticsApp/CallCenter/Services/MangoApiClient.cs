@@ -53,6 +53,43 @@ public sealed class MangoApiClient(HttpClient httpClient, MangoApiOptions option
         return calls.GroupBy(x => x.CallId, StringComparer.OrdinalIgnoreCase).Select(x => x.First()).ToList();
     }
 
+    /// <summary>
+    /// MANGO returns statistics for a period rather than for one telephone number.
+    /// Short ranges from newest to oldest avoid loading an unnecessary full month.
+    /// </summary>
+    public async Task<List<MangoCallDto>> GetRecentCallsByPhonesAsync(
+        IEnumerable<string?> phoneNumbers,
+        int maxResults = 5,
+        int lookbackDays = 30,
+        IProgress<MangoCallSearchProgress>? progress = null,
+        CancellationToken cancellationToken = default)
+    {
+        var phones = phoneNumbers.Select(NormalizePhone).Where(x => x is not null).Cast<string>()
+            .ToHashSet(StringComparer.Ordinal);
+        if (phones.Count == 0 || maxResults <= 0 || lookbackDays <= 0) return [];
+
+        var found = new List<MangoCallDto>();
+        var to = DateTime.Now;
+        var earliest = to.AddDays(-lookbackDays);
+        const int periodDays = 7;
+
+        while (to > earliest && found.Select(x => x.CallId).Distinct(StringComparer.OrdinalIgnoreCase).Count() < maxResults)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var from = to.AddDays(-periodDays);
+            if (from < earliest) from = earliest;
+            progress?.Report(new MangoCallSearchProgress(
+                $"MANGO: проверяем {from:dd.MM.yyyy}–{to:dd.MM.yyyy}…", found.Count, from, to));
+
+            var calls = await GetCallsAsync(from, to, cancellationToken);
+            found.AddRange(calls.Where(x => NormalizePhone(x.PhoneNumber) is string phone && phones.Contains(phone)));
+            found = found.GroupBy(x => x.CallId, StringComparer.OrdinalIgnoreCase).Select(x => x.First()).ToList();
+            to = from.AddSeconds(-1);
+        }
+
+        return found.OrderByDescending(x => x.CallDateTime).Take(maxResults).ToList();
+    }
+
     public async Task<string?> GetCallTopicIdAsync(string entryId, CancellationToken cancellationToken = default)
     {
         using var requestTimeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
@@ -206,6 +243,13 @@ public sealed class MangoApiClient(HttpClient httpClient, MangoApiOptions option
     }
 
     private static string? StringAt(JsonElement item, string name) => item.TryGetProperty(name, out var value) ? value.ValueKind switch { JsonValueKind.String => value.GetString(), JsonValueKind.Number => value.ToString(), _ => null } : null;
+    private static string? NormalizePhone(string? phone)
+    {
+        if (string.IsNullOrWhiteSpace(phone)) return null;
+        var digits = new string(phone.Where(char.IsDigit).ToArray());
+        if (digits.Length == 11 && digits[0] == '8') digits = "7" + digits[1..];
+        return digits.Length >= 10 ? "+" + digits : null;
+    }
     private static string? StringAt(JsonElement item, string parent, string name) => item.TryGetProperty(parent, out var node) ? StringAt(node, name) : null;
     private static int? IntAt(JsonElement item, string name) => int.TryParse(StringAt(item, name), out var value) ? value : null;
     private static long? LongAt(JsonElement item, string name) => long.TryParse(StringAt(item, name), out var value) ? value : null;

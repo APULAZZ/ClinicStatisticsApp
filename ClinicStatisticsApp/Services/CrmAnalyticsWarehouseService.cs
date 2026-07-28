@@ -129,6 +129,9 @@ IF COL_LENGTH(N'dbo.CrmAnalyticsAppointments', N'AppointmentType') IS NULL ALTER
 IF COL_LENGTH(N'dbo.CrmAnalyticsAppointments', N'IsCancelled') IS NULL ALTER TABLE dbo.CrmAnalyticsAppointments ADD IsCancelled bit NOT NULL CONSTRAINT DF_CrmAnalyticsAppointments_IsCancelled_Existing DEFAULT(0)
 IF COL_LENGTH(N'dbo.CrmAnalyticsAppointments', N'AdministratorName') IS NULL ALTER TABLE dbo.CrmAnalyticsAppointments ADD AdministratorName nvarchar(200) NULL
 IF COL_LENGTH(N'dbo.CrmAnalyticsAppointments', N'DepartureReasonCode') IS NULL ALTER TABLE dbo.CrmAnalyticsAppointments ADD DepartureReasonCode int NULL
+IF COL_LENGTH(N'dbo.CrmAnalyticsAppointments', N'SourceDoctorId') IS NULL ALTER TABLE dbo.CrmAnalyticsAppointments ADD SourceDoctorId bigint NULL
+IF COL_LENGTH(N'dbo.CrmAnalyticsAppointments', N'PatientName') IS NULL ALTER TABLE dbo.CrmAnalyticsAppointments ADD PatientName nvarchar(300) NULL
+IF COL_LENGTH(N'dbo.CrmAnalyticsAppointments', N'DurationMinutes') IS NULL ALTER TABLE dbo.CrmAnalyticsAppointments ADD DurationMinutes int NOT NULL CONSTRAINT DF_CrmAnalyticsAppointments_DurationMinutes DEFAULT(30)
 IF OBJECT_ID(N'dbo.CrmDepartureReasonMappings', N'U') IS NULL
 CREATE TABLE dbo.CrmDepartureReasonMappings (Id int IDENTITY(1,1) NOT NULL PRIMARY KEY, SourceCode int NOT NULL, Name nvarchar(200) NOT NULL, IsConfirmed bit NOT NULL, UpdatedAt datetime2 NOT NULL, CONSTRAINT UQ_CrmDepartureReasonMappings_SourceCode UNIQUE(SourceCode))
 IF NOT EXISTS (SELECT 1 FROM dbo.CrmDepartureReasonMappings WHERE SourceCode = 0)
@@ -159,6 +162,26 @@ INSERT INTO dbo.CrmDepartureReasonMappings (SourceCode, Name, IsConfirmed, Updat
         return new CrmAnalyticsImportResult(from, to, rows);
     }
 
+    public async Task<CrmAnalyticsImportResult> ImportAppointmentsAsync(DateTime from, DateTime to, IReadOnlyCollection<int> sourceIds, IProgress<string>? progress = null, CancellationToken token = default)
+    {
+        if (from.Date > to.Date) throw new InvalidOperationException("Дата начала периода не может быть позже даты окончания.");
+        await EnsureStorageAsync(token);
+        var sources = FirebirdClinicOptionsLoader.Load().Where(x => sourceIds.Contains(x.ClinicDataSourceId)).ToList();
+        var rows = new List<CrmAnalyticsImportSourceResult>();
+        for (var index = 0; index < sources.Count; index++)
+        {
+            var source = sources[index]; progress?.Report($"Источник {index + 1} из {sources.Count}: получаем расписание…");
+            try
+            {
+                var data = await new FirebirdAnalyticsReader(source).ReadAsync(from, to, token, includePayments: false);
+                await ReplaceSourceAppointmentsPeriodAsync(source.ClinicDataSourceId, from, to, data.Appointments, token);
+                rows.Add(new(source.ClinicDataSourceId, 0, data.Appointments.Count, null));
+            }
+            catch (Exception ex) { rows.Add(new(source.ClinicDataSourceId, 0, 0, ex.Message)); }
+        }
+        return new CrmAnalyticsImportResult(from, to, rows);
+    }
+
     private static async Task ReplaceSourcePeriodAsync(int sourceId, DateTime from, DateTime to, IReadOnlyList<FirebirdPaymentRow> payments, IReadOnlyList<FirebirdAppointmentRow> appointments, CancellationToken token)
     {
         await using var db = DbContextFactory.Create();
@@ -167,7 +190,16 @@ INSERT INTO dbo.CrmDepartureReasonMappings (SourceCode, Name, IsConfirmed, Updat
         await db.CrmAnalyticsAppointments.Where(x => x.ClinicDataSourceId == sourceId && x.AppointmentDate >= from.Date && x.AppointmentDate < to.Date.AddDays(1)).ExecuteDeleteAsync(token);
         var stamp = DateTime.UtcNow;
         foreach (var batch in payments.Chunk(500)) { db.CrmAnalyticsPayments.AddRange(batch.Select(x => new CrmAnalyticsPayment { ClinicDataSourceId = sourceId, SourcePaymentId = x.Id, SourcePatientId = x.PatientId, PaymentDate = x.Date, Amount = x.Amount, Description = x.Description, CashDesk = x.CashDesk, SyncedAt = stamp })); await db.SaveChangesAsync(token); }
-        foreach (var batch in appointments.Chunk(500)) { db.CrmAnalyticsAppointments.AddRange(batch.Select(x => new CrmAnalyticsAppointment { ClinicDataSourceId = sourceId, SourceAppointmentId = x.Id, SourcePatientId = x.PatientId, AppointmentDate = x.Date, DoctorName = x.Doctor, AdministratorName = x.Administrator, DepartureReasonCode = x.DepartureReasonCode, AppointmentType = x.AppointmentType, Room = x.Room, IsNoShow = x.IsNoShow, IsCancelled = x.IsCancelled, Info = x.Info, SyncedAt = stamp })); await db.SaveChangesAsync(token); }
+        foreach (var batch in appointments.Chunk(500)) { db.CrmAnalyticsAppointments.AddRange(batch.Select(x => new CrmAnalyticsAppointment { ClinicDataSourceId = sourceId, SourceAppointmentId = x.Id, SourcePatientId = x.PatientId, AppointmentDate = x.Date, SourceDoctorId = x.DoctorId, DoctorName = x.Doctor, PatientName = x.PatientName, DurationMinutes = x.DurationMinutes, AdministratorName = x.Administrator, DepartureReasonCode = x.DepartureReasonCode, AppointmentType = x.AppointmentType, Room = x.Room, IsNoShow = x.IsNoShow, IsCancelled = x.IsCancelled, Info = x.Info, SyncedAt = stamp })); await db.SaveChangesAsync(token); }
+        await transaction.CommitAsync(token);
+    }
+
+    private static async Task ReplaceSourceAppointmentsPeriodAsync(int sourceId, DateTime from, DateTime to, IReadOnlyList<FirebirdAppointmentRow> appointments, CancellationToken token)
+    {
+        await using var db = DbContextFactory.Create(); await using var transaction = await db.Database.BeginTransactionAsync(token);
+        await db.CrmAnalyticsAppointments.Where(x => x.ClinicDataSourceId == sourceId && x.AppointmentDate >= from.Date && x.AppointmentDate < to.Date.AddDays(1)).ExecuteDeleteAsync(token);
+        var stamp = DateTime.UtcNow;
+        foreach (var batch in appointments.Chunk(500)) { db.CrmAnalyticsAppointments.AddRange(batch.Select(x => new CrmAnalyticsAppointment { ClinicDataSourceId = sourceId, SourceAppointmentId = x.Id, SourcePatientId = x.PatientId, AppointmentDate = x.Date, SourceDoctorId = x.DoctorId, DoctorName = x.Doctor, PatientName = x.PatientName, DurationMinutes = x.DurationMinutes, AdministratorName = x.Administrator, DepartureReasonCode = x.DepartureReasonCode, AppointmentType = x.AppointmentType, Room = x.Room, IsNoShow = x.IsNoShow, IsCancelled = x.IsCancelled, Info = x.Info, SyncedAt = stamp })); await db.SaveChangesAsync(token); }
         await transaction.CommitAsync(token);
     }
 }

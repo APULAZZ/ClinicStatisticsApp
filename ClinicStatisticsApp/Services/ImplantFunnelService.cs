@@ -204,7 +204,7 @@ WITH RelevantLeads AS (
    SELECT TOP (1) e2.OccurredAt AS AttendedAt
    FROM dbo.ImplantFunnelMedmEvents e2
    WHERE e2.ClinicDataSourceId = e.ClinicDataSourceId AND e2.SourcePatientId = e.SourcePatientId AND e2.EventTypeCode = 22
-     AND e2.OccurredAt >= a.AppointmentDate AND e2.OccurredAt < DATEADD(day, 1, a.AppointmentDate)
+     AND CAST(e2.OccurredAt AS date) = CAST(a.AppointmentDate AS date)
    ORDER BY e2.OccurredAt
  ) attended
 ), UniqueMapped AS (
@@ -231,7 +231,7 @@ SELECT
  SUM(CASE WHEN ClinicDataSourceId IS NOT NULL AND IsNoShow = 1 THEN 1 ELSE 0 END) AS NoShowCount,
  SUM(CASE WHEN ClinicDataSourceId IS NOT NULL AND IsCancelled = 1 THEN 1 ELSE 0 END) AS CancelledCount,
  (SELECT COALESCE(SUM(p.Amount), 0) FROM dbo.CrmAnalyticsPayments p WHERE EXISTS (
-   SELECT 1 FROM MatchedPatients m WHERE m.ClinicDataSourceId = p.ClinicDataSourceId AND m.SourcePatientId = p.SourcePatientId AND p.PaymentDate >= m.AppointmentDate AND p.PaymentDate < @toExclusive
+   SELECT 1 FROM MatchedPatients m WHERE m.ClinicDataSourceId = p.ClinicDataSourceId AND m.SourcePatientId = p.SourcePatientId AND p.PaymentDate >= m.AppointmentDate
  )) AS PaymentTotal
 FROM MatchedPatients;
 """;
@@ -248,7 +248,7 @@ FROM MatchedPatients;
  , PaymentsByMatch AS (
  SELECT m.Id, COALESCE(SUM(p.Amount), 0) AS PaymentTotal
  FROM MatchedPatients m
- LEFT JOIN dbo.CrmAnalyticsPayments p ON p.ClinicDataSourceId = m.ClinicDataSourceId AND p.SourcePatientId = m.SourcePatientId AND p.PaymentDate >= m.AppointmentDate AND p.PaymentDate < @toExclusive
+ LEFT JOIN dbo.CrmAnalyticsPayments p ON p.ClinicDataSourceId = m.ClinicDataSourceId AND p.SourcePatientId = m.SourcePatientId AND p.PaymentDate >= m.AppointmentDate
  GROUP BY m.Id
  )
  , BranchTotals AS (
@@ -279,6 +279,66 @@ ORDER BY COALESCE(t.Appointments, 0) DESC, s.Name;
         var budget = await GetBudgetAsync(from, to, token);
         var dynamics = await GetDynamicsAsync(db, from, to, token);
         return new(leads, mangoBooked, mangoNotBooked, mangoDropped, mangoWithoutTag, appointments, notNoShow, noShows, cancelled, payments, appointments == 0 ? 0m : payments / appointments, budget.Amount, budget.IsConfigured, stages, branches, dynamics);
+    }
+
+    /// <summary>CRM-only audit list for checking automatic lead-to-MedM matching.</summary>
+    public async Task<IReadOnlyList<ImplantFunnelAuditRow>> GetMatchingAuditAsync(DateTime from, DateTime to, CancellationToken token = default)
+    {
+        await EnsureStorageAsync(token);
+        await using var db = DbContextFactory.Create();
+        await db.Database.OpenConnectionAsync(token);
+        var connection = db.Database.GetDbConnection();
+        await using var command = connection.CreateCommand();
+        command.CommandTimeout = 120;
+        command.CommandText = """
+WITH RelevantLeads AS (
+ SELECT Id, LeadType, OccurredAt, Phone, NormalizedPhone, OperatorName
+ FROM dbo.ImplantFunnelLeads
+ WHERE OccurredAt >= @from AND OccurredAt < @toExclusive
+), Mapped AS (
+ SELECT l.*, e.ClinicDataSourceId, e.SourcePatientId, e.OccurredAt AS EventOccurredAt
+ FROM RelevantLeads l
+ OUTER APPLY (
+   SELECT TOP (1) e.ClinicDataSourceId, e.SourcePatientId, e.OccurredAt
+   FROM dbo.CrmPatientContactPhones c
+   JOIN dbo.ImplantFunnelMedmEvents e ON e.ClinicDataSourceId = c.ClinicDataSourceId AND e.SourcePatientId = c.SourcePatientId
+   WHERE e.EventTypeCode = 12 AND c.NormalizedPhone = l.NormalizedPhone
+     AND e.OccurredAt >= l.OccurredAt AND e.OccurredAt < DATEADD(day, 7, l.OccurredAt)
+     AND (l.OperatorName IS NULL OR EXISTS (
+       SELECT 1 FROM dbo.ImplantFunnelOperatorMappings m
+       WHERE l.OperatorName LIKE N'%' + m.CallTrackingOperator + N'%'
+         AND e.MedmUserId = m.MedmUserId))
+   ORDER BY e.OccurredAt
+ ) e
+), WithAppointment AS (
+ SELECT m.*, ap.AppointmentDate
+ FROM Mapped m
+ OUTER APPLY (
+   SELECT TOP (1) a.AppointmentDate
+   FROM dbo.CrmAnalyticsAppointments a
+   WHERE a.ClinicDataSourceId = m.ClinicDataSourceId AND a.SourcePatientId = m.SourcePatientId AND a.AppointmentDate >= m.EventOccurredAt
+   ORDER BY a.AppointmentDate
+ ) ap
+)
+SELECT OccurredAt, LeadType, Phone, COALESCE(OperatorName, N'—') AS OperatorName,
+ CASE WHEN ClinicDataSourceId IS NULL THEN N'Не найдена запись'
+      WHEN AppointmentDate IS NULL THEN N'Запись найдена, дата приёма не загружена'
+      ELSE N'Запись найдена' END AS Status,
+ COALESCE(s.Name, N'—') AS BranchName, SourcePatientId, AppointmentDate
+FROM WithAppointment a
+LEFT JOIN dbo.ClinicDataSources s ON s.Id = a.ClinicDataSourceId
+ORDER BY CASE WHEN ClinicDataSourceId IS NULL THEN 0 ELSE 1 END, OccurredAt;
+""";
+        Add(command, "@from", from.Date); Add(command, "@toExclusive", to.Date.AddDays(1));
+        var result = new List<ImplantFunnelAuditRow>();
+        await using var reader = await command.ExecuteReaderAsync(token);
+        while (await reader.ReadAsync(token))
+        {
+            result.Add(new ImplantFunnelAuditRow(
+                reader.GetDateTime(0), reader.GetString(1), reader.GetString(2), reader.GetString(3), reader.GetString(4), reader.GetString(5),
+                reader.IsDBNull(6) ? null : Convert.ToInt64(reader.GetValue(6)), reader.IsDBNull(7) ? null : reader.GetDateTime(7)));
+        }
+        return result;
     }
 
     /// <summary>Builds local CRM comparison rows; no Mango or Firebird request is made here.</summary>
@@ -517,6 +577,7 @@ public sealed record ImplantFunnelBranchRow(string BranchName, int Appointments,
 }
 public sealed record ImplantFunnelMonthlyRaw(DateTime MonthStart, int Leads, int MangoBooked);
 public sealed record ImplantFunnelMonthlyRow(string Month, int Leads, int MangoBooked, decimal MangoPercent, double LeadBarWidth, double MangoBarWidth);
+public sealed record ImplantFunnelAuditRow(DateTime LeadDate, string LeadType, string Phone, string OperatorName, string Status, string BranchName, long? PatientCardNumber, DateTime? AppointmentDate);
 public sealed record ImplantFunnelBudgetValue(decimal Amount, bool IsConfigured);
 public enum ImplantFunnelComparisonGranularity { Month, Year }
 public sealed record ImplantFunnelComparisonRow(string Period, int Leads, int MangoBooked, int MedmAppointments, int Attended, decimal Revenue, decimal AverageCheck, decimal Budget, decimal? LeadDeltaPercent, decimal? AppointmentDeltaPercent, decimal? VisitDeltaPercent, decimal? RevenueDeltaPercent, double LeadBarWidth, double MedmBarWidth, double VisitBarWidth);
